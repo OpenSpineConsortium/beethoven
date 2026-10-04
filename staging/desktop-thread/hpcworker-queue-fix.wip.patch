@@ -1,0 +1,909 @@
+diff --git a/framework/README.md b/framework/README.md
+index 0494530..a8daf28 100644
+--- a/framework/README.md
++++ b/framework/README.md
+@@ -1202,44 +1202,76 @@ words), and it is Slurm only (a PBS or LSF site is told so in one line, exit 1).
+ hpcworker queue report [--days N] [--limits]      # N from 1 to 90; 14 when not given
+ ```
+ 
+-What it runs on the login node: one `sacct -u $USER -S now-Ndays -X -n -P --format=JobID,JobName,
+-Partition,QOS,Submit,Start,End,State,Timelimit,NodeList` under `timeout 60` (`-X`: each job's
+-allocation line only, no `.batch` or `.extern` steps), and with `--limits` one `sinfo -h -o
+-'%P|%l|%a|%D|%T'` under `timeout 10`. Two queries typed by a person now and then is within the
+-one-scheduler-command-per-action etiquette, as `discover` and `diag` keep it; the 60 s floor binds
+-clients that poll, and nothing here polls. Nothing is written anywhere. The header names the account,
+-the window, the number of records read and the `sacct` line word for word, so the count can be checked
+-against the grid by typing that line.
+-
+-The arithmetic is POSIX awk (the login node's awk has no `mktime` or `strftime`): a Slurm time,
+-`YYYY-MM-DDTHH:MM:SS` in the cluster's local clock with no zone, becomes seconds by the days-from-civil
+-formula (`HPCW_QUEUE_AWK` in `bin/hpcworker`; `tests/test_queue.py` holds it to python's `calendar`
+-over a sweep of dates), and only differences are used (Start minus Submit; End minus Start), so the
+-zone never enters. Per partition and QoS: the jobs that started (a Start that is a time), the median,
+-p90 (nearest rank: the value at ceil(0.9 n)) and maximum of their waits, written as `Nd Nh Nm`, `Nh Nm`
+-or `Nm Ns`, whichever fits; the jobs pending now (State `PENDING`), preempted (`PREEMPTED`), cancelled
+-(`CANCELLED`, with or without "by <uid>") and timed out (`TIMEOUT`); and the median run time (End minus
+-Start) of the jobs that ended. A Start before its Submit (the clocks the scheduler recorded disagree)
+-counts as no wait, and a line after the table says how many did. A line that is not a record (a notice
+-the site prints first) is left out and counted. Rows are sorted by partition, then QoS. The footer is
+-the one sentence the maintainer asked for, `shortest median wait: <partition> <qos> (<median>)`, over
+-every row that started a job (a tie keeps the first in table order), and nothing more: the numbers
+-decide. An account with no jobs in the window gets one line and exit 0; a failed query gets the
+-scheduler's message on one line and exit 1; `hpcworker queue` alone, or with another word, a usage line
+-and exit 2.
++What it runs on the login node: one `TZ=UTC0 SLURM_TIME_FORMAT=standard sacct -u $USER -S now-Ndays -X -D
++-n -P --format=JobID,Partition,QOS,Submit,Eligible,Start,End,State,Timelimit,NodeList` under `timeout 60`,
++and with `--limits` one `sinfo -h -o '%P|%l|%a|%D|%T'` under `timeout 10`. Two queries typed by a person
++now and then is within the one-scheduler-command-per-action etiquette, as `discover` and `diag` keep it;
++the 60 s floor binds clients that poll, and nothing here polls. The report itself writes nothing; like
++every verb that reads the profile, it may write the profile reader's cache, `~/.hpcworker/profile.env`
++(on the first load after an install, or after the profile changed). The header names the account, the
++number of records read and the `sacct` line word for word, its two environment assignments first, so
++the count can be checked against the grid by typing that line.
++
++What `sacct` lists, and so what the report counts:
++
++- **The window is `sacct`'s.** With `-S` and no `-s`, `sacct` lists the jobs that were eligible to run
++  or running at any time between the start it is given and now. A job that became eligible before the
++  window and was still in line or running when the window began is listed, its whole wait with it; a
++  job held, or waiting on a dependency (the worker's queued successor, until its predecessor ends), has
++  no eligible time yet and is not listed. So "pending" counts the jobs in line and eligible now.
++- **The wait is Start minus Eligible.** Eligible is the moment the job could first run. A chain
++  successor is submitted minutes after its predecessor starts (`afterany`) and becomes eligible only
++  when that one ends, so Start minus Submit would count the predecessor's whole run as queue time on
++  every link of an always-on chain. Submit stands in only where Eligible is not a time.
++- **Each attempt of a requeued job is a record of its own** (`-D`, `--duplicates`; without it `sacct`
++  prints a requeued job's last attempt only). A job preempted on the requeue QoS goes back in line
++  under its own id and waits for a node again, so each attempt that started is one wait in the figures
++  and one in "started". An attempt that ended `PREEMPTED` counts under "preempted", one that ended
++  `REQUEUED` (or `REQUEUE_HOLD`, `REQUEUE_FED`) under "requeued".
++- **Times are UTC.** `sacct` prints its times in the zone of its own environment and in the form
++  `SLURM_TIME_FORMAT` names; both are set for that one call, in its environment and never on its
++  argument list, whatever the caller's own say. UTC has no daylight saving, so a difference is a true
++  interval; in the cluster's own zone one autumn hour reads twice and one spring hour never happens, so
++  a wait or a run across either came out an hour off, or as no wait at all. `standard` is
++  `YYYY-MM-DDTHH:MM:SS`, the one form the report reads.
++- **No free-text field.** `-P` puts a `|` between fields and does not escape one inside a field, so a
++  job name with a `|` in it would shift every field after it; the job name is not asked for. A line
++  with any other number of fields is not read.
++
++The arithmetic is awk, POSIX only, like `lib/profile.awk`: one text that runs the same under mawk (the
++ubuntu CI lane, a laptop) and gawk 4.0.2 (warrior, the centos 7 lane). `mktime`, `strftime` and
++`systime` are extensions outside POSIX, and `mktime` reads a time in the local zone; instead a time
++becomes seconds since 1970-01-01T00:00:00Z by the days-from-civil formula (`HPCW_QUEUE_AWK` in
++`bin/hpcworker`; `tests/test_queue.py` holds it to python's `calendar` over a sweep of dates). Per
++partition and QoS: the records that started (a Start that is a time), the median, p90 (nearest rank:
++the value at ceil(0.9 n)) and maximum of their waits, written as `Nd Nh Nm`, `Nh Nm` or `Nm Ns`,
++whichever fits; the records pending (State `PENDING`), preempted (`PREEMPTED`), requeued (`REQUEUED`),
++cancelled (`CANCELLED`, with or without "by <uid>") and timed out (`TIMEOUT`); and the median run time
++(End minus Start) of those that ended. A Start before its Eligible (or Submit) time (the clocks the
++scheduler recorded disagree) counts as no wait, and a line after the table says how many did. A record
++whose Submit is not a time this report reads is counted by its state, its wait and run time left out,
++and a line says how many; the footer then says the shortest wait is not known when nothing else
++started. A line that is not a record (a notice the site prints first) is left out and counted; when
++every line `sacct` printed is such a line, the report fails (exit 1) and names the first. Rows are
++sorted by partition, then QoS. The footer is the one sentence the maintainer asked for, `shortest median
++wait: <partition> <qos> (<median>)`, over every row that started a job (a tie keeps the first in table
++order), and nothing more: the numbers decide. An account with no jobs in the window gets one line and
++exit 0; a failed query gets the scheduler's message on one line and exit 1; `hpcworker queue` alone, or
++with another word, a usage line and exit 2.
+ 
+ A sample, made-up data for the shape of it, not a measurement (nothing has been measured on the grid
+-yet: "not yet measured"):
++yet: "not yet measured"); it is what the tool prints for the records `tests/test_queue.py` plants:
+ 
+ ```
+-queue report for st1234, the last 14 days: 13 records read by `sacct -u st1234 -S now-14days -X -n -P --format=JobID,JobName,Partition,QOS,Submit,Start,End,State,Timelimit,NodeList`
++queue report for st1234: 16 records of jobs eligible or running at any time in the last 14 days, read by `TZ=UTC0 SLURM_TIME_FORMAT=standard sacct -u st1234 -S now-14days -X -D -n -P --format=JobID,Partition,QOS,Submit,Eligible,Start,End,State,Timelimit,NodeList`
++one record per attempt of a requeued job; a wait is Start minus Eligible (minus Submit where Eligible is not a time); times in UTC
+ 
+-partition  qos         started  median wait  p90 wait     max wait     pending  preempted  cancelled  timed out  median run
+-gvohp      gpu               1  1m 0s        1m 0s        1m 0s              0          0          0          0  -
+-reqp       requeue           5  10m 0s       2d 0h 0m     2d 0h 0m           1          1          1          1  2h 0m
+-secp       secondary         5  0m 45s       6m 0s        6m 0s              0          0          0          0  30m 0s
++partition  qos         started  median wait  p90 wait     max wait     pending  preempted  requeued  cancelled  timed out  median run
++gvohp      gpu               1  1m 0s        1m 0s        1m 0s              0          0         0          0          0  -
++reqp       requeue           8  7m 30s       2d 0h 0m     2d 0h 0m           1          1         1          1          1  3h 0m
++secp       secondary         5  0m 45s       6m 0s        6m 0s              0          0         0          0          0  30m 0s
+ 
+-1 job started before being submitted, by the clocks the scheduler recorded; each counts as no wait
++1 record whose Start is before its Eligible (or Submit) time, by the clocks the scheduler recorded; each counts as no wait
+ shortest median wait: secp secondary (0m 45s)
+ 
+ partitions now (sinfo -h -o '%P|%l|%a|%D|%T'):
+@@ -1250,8 +1282,11 @@ partitions now (sinfo -h -o '%P|%l|%a|%D|%T'):
+ 
+ (The last block is `--limits`: one line per partition from `sinfo`, the time limit, whether it is up,
+ and its nodes by state; `*` on the default partition is written "(default)".) Not yet measured on the
+-grid: `sacct -S now-Ndays` and the field names against Wayne State's Slurm, the `Unknown` and `None`
+-spellings in its `Start` and `End` columns, and `sinfo`'s `%D|%T` form there. The adapter calls are
++grid: `sacct -S now-Ndays` and the field names against Wayne State's Slurm; the `Unknown` and `None`
++spellings in its `Eligible`, `Start` and `End` columns; that its `sacct` prints UTC under `TZ=UTC0` and
++`YYYY-MM-DDTHH:MM:SS` under `SLURM_TIME_FORMAT=standard`; whether it hides a requeued job's earlier
++attempts without `-D`, which state word it gives them (`REQUEUED` or `PREEMPTED`), and whether Submit
++and Eligible are reset at a requeue; and `sinfo`'s `%D|%T` form there. The adapter calls are
+ `adapter_history DAYS` and `adapter_partitions` with their `_query` twins, which print the line each
+ runs (`lib/adapters/common.sh`); PBS and LSF define `adapter_history` as exit 2 and nothing printed.
+ 
+@@ -1403,10 +1438,13 @@ clearing them, a restrict of no run taking no name) and the watch slots (none fo
+ exist); and the real verbs against the fake scheduler with no python3 on PATH),
+ `test_profile_awk.py` (`lib/profile.awk` and `lib/profile_sh.sh` against `profile.py`, byte for byte, as
+ "The login node" says), `test_queue.py` (`queue report` against records planted in the fake
+-scheduler's `sacct`: every row, count and the footer, the one exact `sacct` argv and nothing else run,
+-`--limits`'s `sinfo`, the refusals, a PBS site, and the days-from-civil formula against python's
+-`calendar`), `test_watch_json.py` (each line of `worker watch --json`, the keepalive, a
+-heartbeat that is no change, the ends and their exit statuses, the poll floor, a reader that goes and a
++scheduler's `sacct`: every row, count and the footer, a chain successor's wait from Eligible, each
++attempt of a requeued job, nearest-rank p90 against the maximum, a partition whose name is a prefix of
++another's, waits across a daylight-saving change and under a caller's own `TZ` and `SLURM_TIME_FORMAT`,
++the one exact `sacct` argument list and environment and nothing else run, nothing written in any folder
++of the fake grid or under `TMPDIR`, `--limits`'s `sinfo`, the refusals, a PBS site, diag's partition
++check on the five-field `sinfo`, and the days-from-civil formula against python's `calendar`),
++`test_watch_json.py` (each line of `worker watch --json`, the keepalive, a heartbeat that is no change, the ends and their exit statuses, the poll floor, a reader that goes and a
+ hang-up giving back the slot), `PlainExec` in `test_connect.py` (connect and `claude login --plain`
+ with no terminal: no `--pty`, the code from standard input and never written back; the setup of an
+ account never set up; no sign-in under the gate), the gate's verbs and `browser-key add` in the
+diff --git a/framework/bin/hpcworker b/framework/bin/hpcworker
+index 0030cb0..9c34a04 100644
+--- a/framework/bin/hpcworker
++++ b/framework/bin/hpcworker
+@@ -42,8 +42,11 @@
+ #   hpcworker gate    that line's forced command: SSH_ORIGINAL_COMMAND, eight fixed verbs, never a sign-in
+ #   hpcworker diag [--json]                                      one line per check
+ #   hpcworker queue report [--days N] [--limits]                 maintainers and lab leads: how long this account's jobs waited
+-#                                                                per partition and QoS, from one sacct over the last N days
+-#                                                                (default 14, up to 90); --limits adds one sinfo. Slurm sites only
++#                                                                per partition and QoS (Start minus Eligible, or minus Submit
++#                                                                where Eligible is not a time; each attempt of a requeued job
++#                                                                its own), from one sacct of the jobs eligible or running at
++#                                                                any time in the last N days (default 14, up to 90), times in
++#                                                                UTC; --limits adds one sinfo. Slurm sites only
+ #   hpcworker version                                            the number; "(shared copy at DIR)" on the lab's copy
+ #
+ # Rules this command keeps: it never reads, copies or prints a Claude credential (Claude Code keeps
+@@ -1900,24 +1903,35 @@ cmd_login_setup() {
+ # policy he wants the numbers from the grid itself. So: ONE sacct over the account's own history, and with
+ # --limits ONE sinfo, both bounded by timeout; two queries on the login node for a report a person types
+ # now and then is within the one-scheduler-command-per-action etiquette as discover and diag keep it (the
+-# 60 s floor binds clients that poll, and nothing here polls). Nothing is written anywhere.
++# 60 s floor binds clients that poll, and nothing here polls). The report itself writes nothing; load_profile,
++# as for every verb, may write its cache ~/.hpcworker/profile.env (on the first load after an install, or
++# after the profile changed).
+ #
+-# The arithmetic is awk, POSIX only: the login node's awk has no mktime, strftime or systime, so a
+-# Slurm time (YYYY-MM-DDTHH:MM:SS, the cluster's local clock, no zone) becomes seconds by the
+-# days-from-civil formula below. The report uses differences only (Start minus Submit, End minus
+-# Start), so the zone never enters it. Values reach awk in the environment and on stdin, never as
+-# operands or -v (both read escapes), as HPCW_JSON_AWK has them.
+-#   HPCW_Q_MODE=epoch   stdin: one time a line -> its seconds since 1970-01-01T00:00:00 of the same clock,
+-#                       an empty line for anything that is not a time (the tests check the formula so)
++# The wait is Start minus Eligible, the moment the job could first run: a chain successor is submitted while its
++# predecessor runs and becomes eligible only when that one ends, so Start minus Submit counted the predecessor's
++# whole run as queue time on every link of an always-on chain. Submit stands in only where Eligible is not a
++# time. Each attempt of a requeued job is its own record (adapter_history's -D) and
++# its own wait: each attempt waited for a node.
++#
++# The arithmetic is awk, POSIX only, like lib/profile.awk: one text that runs the same under mawk (the ubuntu
++# CI lane, a laptop) and gawk 4.0.2 (warrior, the centos 7 lane). mktime, strftime and systime are extensions
++# outside POSIX, and mktime reads a time in the local zone. sacct runs under TZ=UTC0 and
++# SLURM_TIME_FORMAT=standard (adapter_history), so a time arrives here as YYYY-MM-DDTHH:MM:SS in UTC, which the
++# days-from-civil formula below turns into seconds since 1970-01-01T00:00:00Z; a difference is then a true
++# interval, across a daylight-saving change too (in the cluster's own zone one autumn hour reads twice and one
++# spring hour never happens, so a wait or a run that spans either came out an hour off, or clamped to nothing). Values reach awk in the
++# environment and on stdin, never as operands or -v (both read escapes), as HPCW_JSON_AWK has them.
++#   HPCW_Q_MODE=epoch   stdin: one time a line -> its seconds since 1970-01-01T00:00:00 UTC, an empty line for
++#                       anything that is not a time (the tests check the formula so)
+ #   HPCW_Q_MODE=report  stdin: adapter_history's records -> the report; HPCW_Q_USER, HPCW_Q_DAYS and
+-#                       HPCW_Q_QUERY fill the header
++#                       HPCW_Q_QUERY fill the header. Exit 4 and nothing printed when lines came and none was a record
+ # shellcheck disable=SC2016
+ HPCW_QUEUE_AWK='
+ function days_from_civil(y, m, d,   era, yoe, doy, doe) {
+   # days-from-civil (Howard Hinnant): the days from 1970-01-01 to a proleptic Gregorian date. The year
+   # is taken to start in March so the leap day is its last day, in 400-year eras of 146097 days;
+-  # integer arithmetic throughout. 2026-10-04 -> 20730 (times 86400: 1791072000, the UTC epoch of
+-  # that midnight; here the clock is the cluster clock, and only differences are used)
++  # integer arithmetic throughout. 2026-10-04 -> 20730 (times 86400: 1791072000, the epoch of that
++  # midnight in UTC, the zone sacct prints in for this report)
+   if (m <= 2) y--
+   era = int((y >= 0 ? y : y - 399) / 400)
+   yoe = y - era * 400
+@@ -1946,22 +1960,28 @@ mode == "epoch" { print epoch($0); next }
+ {
+   sub(/\r$/, "")
+   if ($0 ~ /^[ \t]*$/) next
+-  if (NF < 8) { odd++; next }   # a line that is not a record (a notice sacct printed first): left out, counted
++  # the ten fields adapter_history asks for, none of them free text: any other count is not a record (a notice
++  # sacct printed first, or fields that do not line up), left out and counted rather than read one column off
++  if (NF != 10) { odd++; next }
+   nrec++
+-  part = $3; qos = $4; gsub(/^[ \t]+|[ \t]+$/, "", part); gsub(/^[ \t]+|[ \t]+$/, "", qos)
++  part = $2; qos = $3; gsub(/^[ \t]+|[ \t]+$/, "", part); gsub(/^[ \t]+|[ \t]+$/, "", qos)
+   # SUBSEP sorts before every printable byte, so a plain string sort of the keys is partition first, then QoS
+   k = part SUBSEP qos
+   if (!(k in seen)) { seen[k] = 1; nk++; keys[nk] = k }
+   st = $8; sub(/ .*/, "", st)   # "CANCELLED by 12345" -> CANCELLED
+   if (st ~ /^PENDING/) pend[k]++
+   if (st ~ /^PREEMPTED/) pre[k]++
++  if (st ~ /^REQUEUE/) req[k]++   # REQUEUED, and REQUEUE_HOLD or REQUEUE_FED where a site has them
+   if (st ~ /^CANCELLED/) canc[k]++
+   if (st ~ /^TIMEOUT/) tout[k]++
+-  es = epoch($5); eb = epoch($6); ee = epoch($7)
+-  if (es != "" && eb != "") {
+-    w = eb - es
+-    # a Start before its Submit: the clocks of the submit host and the controller disagree, or the record
+-    # is odd; it counts as no wait rather than a negative one, and the report says how many did
++  es = epoch($4); el = epoch($5); eb = epoch($6); ee = epoch($7)
++  # Submit is a time on every record sacct keeps; when it is not, sacct printed a form this awk does not read, and
++  # the record is counted by its state and said, never quietly read as a job that did not start
++  if (es == "") { notime++; next }
++  if (eb != "") {
++    w = eb - (el != "" ? el : es)
++    # a Start before its Eligible (or Submit): the clocks of the submit host and the controller disagree, or the
++    # record is odd; it counts as no wait rather than a negative one, and the report says how many did
+     if (w < 0) { w = 0; before++ }
+     nw[k]++; wait[k, nw[k]] = w
+     if (ee != "" && ee >= eb) { nr[k]++; run[k, nr[k]] = ee - eb }
+@@ -1970,10 +1990,13 @@ mode == "epoch" { print epoch($0); next }
+ END {
+   if (mode != "report") exit
+   user = ENVIRON["HPCW_Q_USER"]; days = ENVIRON["HPCW_Q_DAYS"]; query = ENVIRON["HPCW_Q_QUERY"]
+-  if (nrec == 0) { print "no jobs of " user " in the history the scheduler keeps for the last " days " days (" query ")"; exit 0 }
+-  printf "queue report for %s, the last %s days: %d records read by `%s`\n\n", user, days, nrec, query
+-  fmt = "%-9s  %-10s  %7s  %-11s  %-11s  %-11s  %7s  %9s  %9s  %9s  %s\n"
+-  printf fmt, "partition", "qos", "started", "median wait", "p90 wait", "max wait", "pending", "preempted", "cancelled", "timed out", "median run"
++  if (nrec == 0 && odd > 0) exit 4
++  if (nrec == 0) { print "no jobs of " user " eligible or running at any time in the last " days " days, in the history the scheduler keeps (" query ")"; exit 0 }
++  printf "queue report for %s: %d record%s of jobs eligible or running at any time in the last %s days, read by `%s`\n", user, nrec, (nrec > 1 ? "s" : ""), days, query
++  print "one record per attempt of a requeued job; a wait is Start minus Eligible (minus Submit where Eligible is not a time); times in UTC"
++  print ""
++  fmt = "%-9s  %-10s  %7s  %-11s  %-11s  %-11s  %7s  %9s  %8s  %9s  %9s  %s\n"
++  printf fmt, "partition", "qos", "started", "median wait", "p90 wait", "max wait", "pending", "preempted", "requeued", "cancelled", "timed out", "median run"
+   for (i = 2; i <= nk; i++) { t = keys[i]; for (j = i - 1; j >= 1 && keys[j] > t; j--) keys[j + 1] = keys[j]; keys[j + 1] = t }
+   best = ""
+   for (i = 1; i <= nk; i++) {
+@@ -1987,13 +2010,15 @@ END {
+     }
+     n = nr[k] + 0
+     if (n > 0) { for (j = 1; j <= n; j++) a[j] = run[k, j]; ssort(a, n); rm = dur(median(a, n)) }
+-    printf fmt, kp[1], kp[2], nw[k] + 0, md, p9, mx, pend[k] + 0, pre[k] + 0, canc[k] + 0, tout[k] + 0, rm
++    printf fmt, kp[1], kp[2], nw[k] + 0, md, p9, mx, pend[k] + 0, pre[k] + 0, req[k] + 0, canc[k] + 0, tout[k] + 0, rm
+   }
+   print ""
+-  if (before > 0) printf "%d job%s started before being submitted, by the clocks the scheduler recorded; each counts as no wait\n", before, (before > 1 ? "s" : "")
++  if (before > 0) printf "%d record%s whose Start is before %s Eligible (or Submit) time, by the clocks the scheduler recorded; each counts as no wait\n", before, (before > 1 ? "s" : ""), (before > 1 ? "their" : "its")
++  if (notime > 0) printf "%d record%s whose times are not in the form this report reads (YYYY-MM-DDTHH:MM:SS): counted by state, %s wait and run time left out\n", notime, (notime > 1 ? "s" : ""), (notime > 1 ? "their" : "its")
+   if (odd > 0) printf "%d line%s that %s not a record left out\n", odd, (odd > 1 ? "s" : ""), (odd > 1 ? "were" : "was")
+-  if (best == "") print "shortest median wait: none (no job in the window has started)"
+-  else print "shortest median wait: " best " (" dur(bestm) ")"
++  if (best != "") print "shortest median wait: " best " (" dur(bestm) ")"
++  else if (notime > 0) print "shortest median wait: not known (the times of " notime " record" (notime > 1 ? "s" : "") " could not be read)"
++  else print "shortest median wait: none (no job in the window has started)"
+ }'
+ queue_usage() { echo "usage: hpcworker queue report [--days N] [--limits]   (N from 1 to 90; 14 when not given)" >&2; exit 2; }
+ cmd_queue() {
+@@ -2013,8 +2038,12 @@ cmd_queue() {
+     2) die "the queue report reads Slurm's history (sacct); this site's scheduler is $P_scheduler";;
+     *) die "the scheduler's history could not be read: $(printf '%s' "$hist" | tr '\n' ' ' | sed 's/[[:space:]]*$//')";;
+   esac
+-  printf '%s\n' "$hist" | HPCW_Q_MODE=report HPCW_Q_USER="$USER" HPCW_Q_DAYS="$days" HPCW_Q_QUERY="$(adapter_history_query "$days")" LC_ALL=C awk "$HPCW_QUEUE_AWK" \
+-    || die "the report could not be made from what the scheduler printed"
++  printf '%s\n' "$hist" | HPCW_Q_MODE=report HPCW_Q_USER="$USER" HPCW_Q_DAYS="$days" HPCW_Q_QUERY="$(adapter_history_query "$days")" LC_ALL=C awk "$HPCW_QUEUE_AWK"
++  case $? in
++    0) ;;
++    4) die "none of the lines sacct printed is a record this report reads; the first: $(printf '%s\n' "$hist" | grep -m1 '[^[:space:]]' | tr -d '\r')";;
++    *) die "the report could not be made from what the scheduler printed";;
++  esac
+   [ $limits = 1 ] || return 0
+   # the second query: what each partition allows now, so a wait can be read against its limit and its nodes
+   local parts; parts=$(adapter_partitions)
+@@ -2049,6 +2078,12 @@ emit() { # ID OK(true|false) WARN(true|false) SKIP(true|false) DETAIL
+   if [ $DIAG_JSON = 1 ]; then [ $DIAG_FIRST = 1 ] || printf ','; DIAG_FIRST=0; printf '{"id":%s,"ok":%s,"warn":%s,"skip":%s,"detail":%s}' "$(json_str "$1")" "$2" "$3" "$4" "$(json_str "$5")"
+   else local tag=FAIL; [ "$2" = true ] && tag=ok; [ "$3" = true ] && tag=warn; [ "$4" = true ] && tag=skip; printf '%-5s %-24s %s\n' "$tag" "$1" "$5"; fi
+ }
++diag_partitions() { # the profile's partitions against sinfo's names
++  # one line per partition and node state since adapter_partitions carries both (queue report --limits): each name once
++  local parts; parts=$(adapter_partitions | cut -d'|' -f1 | sed 's/\*$//' | sort -u | tr '\n' ' ')
++  local want="$P_partition_cpu $P_partition_cpu_batch $P_partitions_gpu" bad="" p; for p in $want; do case " $parts " in *" $p "*) ;; *) bad="$bad $p";; esac; done
++  if [ -z "$bad" ]; then emit hpcw.partitions true false false "profile partitions exist: $want"; else emit hpcw.partitions false false false "not in sinfo:$bad (have: $parts)"; fi
++}
+ diag_slurm_in_worker() { # Slurm inside the worker's container (framework 9): what the newest worker heartbeat says about it
+   if [ "${P_scheduler_in_worker:-false}" = true ]; then
+     local sbest="" sbt=0 sd sm; for sd in "$STATE_DIR"/*/; do [ -s "$sd/status.json" ] || continue; sm=$(stat -c %Y "$sd/status.json"); [ "$sm" -gt "$sbt" ] && { sbt=$sm; sbest="$sd/status.json"; }; done
+@@ -2099,10 +2134,7 @@ cmd_diag() {
+   else local n; n=$(ps -u "$USER" --no-headers 2>/dev/null | wc -l | tr -d ' '); local cap="$P_login_node_rules_max_processes"
+     if [ "$n" -ge "$cap" ]; then emit hpcw.login-node false false false "$n processes of yours on $(hostname -s); the site's cap is $cap"; elif [ "$n" -ge $((cap * 3 / 4)) ]; then emit hpcw.login-node true true false "$n processes of yours on $(hostname -s) (cap $cap)"; else emit hpcw.login-node true false false "$n processes of yours on $(hostname -s) (cap $cap)"; fi; fi
+   if [ "$fam" = slurm ]; then
+-    # one line per partition and node state since adapter_partitions carries both (queue report --limits): the names once
+-    local parts; parts=$(adapter_partitions | cut -d'|' -f1 | sed 's/\*$//' | sort -u | tr '\n' ' ')
+-    local want="$P_partition_cpu $P_partition_cpu_batch $P_partitions_gpu" bad="" p; for p in $want; do case " $parts " in *" $p "*) ;; *) bad="$bad $p";; esac; done
+-    if [ -z "$bad" ]; then emit hpcw.partitions true false false "profile partitions exist: $want"; else emit hpcw.partitions false false false "not in sinfo:$bad (have: $parts)"; fi
++    diag_partitions
+     local q; q=$(adapter_my_qos); local qb="" x; for x in $P_qos_cpu $P_qos_batch; do case " $q " in *" $x "*) ;; *) qb="$qb $x";; esac; done
+     if [ -z "$q" ]; then emit hpcw.qos true true false "QoS list not readable (sacctmgr); profile wants $P_qos_cpu/$P_qos_batch"; elif [ -z "$qb" ]; then emit hpcw.qos true false false "QoS available: $q"; else emit hpcw.qos false false false "QoS not on your account:$qb (have: $q)"; fi
+   fi
+diff --git a/framework/lib/adapters/common.sh b/framework/lib/adapters/common.sh
+index 91c07a8..1815423 100644
+--- a/framework/lib/adapters/common.sh
++++ b/framework/lib/adapters/common.sh
+@@ -17,11 +17,13 @@
+ #   adapter_run_short   PART QOS TIME NAME MEM -- CMD...   the same without a terminal
+ #   adapter_status_many ID[,ID...]  -> one line per id: ID|STATE|NODE|RAW, in ONE scheduler call where the scheduler allows it
+ #   adapter_submit_after SCRIPT PARENT_ID [OPT...] -> id of a job the scheduler starts when PARENT_ID has ended (the always-on chain)
+-#   adapter_partitions              -> NAME(*=default)|TIMELIMIT|AVAIL[|NODES|NODE_STATE] per line (diag, discover, queue report --limits)
+-#   adapter_history DAYS            -> one record per job of this account's from the last DAYS days, for `queue report`:
+-#                                      JobID|JobName|Partition|QOS|Submit|Start|End|State|Timelimit|NodeList; exit 1 with the
+-#                                      scheduler's message on stderr when the query failed; exit 2 and nothing where the
+-#                                      scheduler keeps no such history for this tool (PBS, LSF)
++#   adapter_partitions              -> NAME(*=default)|TIMELIMIT|AVAIL[|NODES|NODE_STATE] per line (diag, queue report --limits;
++#                                      discover runs its own three-field sinfo before any profile is there)
++#   adapter_history DAYS            -> for `queue report`, one record per job of this account's eligible or running at any time
++#                                      in the last DAYS days, and one per earlier attempt of a requeued job:
++#                                      JobID|Partition|QOS|Submit|Eligible|Start|End|State|Timelimit|NodeList, times in UTC as
++#                                      YYYY-MM-DDTHH:MM:SS; exit 1 with the scheduler's message on stderr when the query
++#                                      failed; exit 2 and nothing where the scheduler keeps no such history for this tool (PBS, LSF)
+ #   adapter_partitions_query, adapter_history_query DAYS -> the command each of the two runs, as a person would type it
+ #                                      (the report's header, so its count can be checked against the grid); nothing for a
+ #                                      history the adapter does not read
+diff --git a/framework/lib/adapters/slurm.sh b/framework/lib/adapters/slurm.sh
+index fa7f39d..d633ce1 100644
+--- a/framework/lib/adapters/slurm.sh
++++ b/framework/lib/adapters/slurm.sh
+@@ -131,21 +131,35 @@ adapter_run_short() { # PART QOS TIME NAME MEM -- CMD... : the same without a te
+ # cost 9 ms of CPU on warrior; with %D and %T added, not measured there). The *_query twins print the command as a
+ # person would type it, for the report's header: the format lives in one variable so the two cannot drift apart
+ HPCW_SINFO_FORMAT='%P|%l|%a|%D|%T'
+-HPCW_SACCT_FORMAT=JobID,JobName,Partition,QOS,Submit,Start,End,State,Timelimit,NodeList
++# No free-text field: -P does not escape the '|' between fields, so a job name holding one shifted every field after
++# it. Eligible is the moment the job could first run: a chain successor's is when its predecessor ended, not when it
++# was submitted
++HPCW_SACCT_FORMAT=JobID,Partition,QOS,Submit,Eligible,Start,End,State,Timelimit,NodeList
+ adapter_partitions() { timeout 10 sinfo -h -o "$HPCW_SINFO_FORMAT" 2>/dev/null | sort -u; }   # NAME(*=default)|TIMELIMIT|AVAIL|NODES|NODE_STATE
+ adapter_partitions_query() { printf "sinfo -h -o '%s'\n" "$HPCW_SINFO_FORMAT"; }
+-adapter_history_query() { printf 'sacct -u %s -S now-%sdays -X -n -P --format=%s\n' "$USER" "$1" "$HPCW_SACCT_FORMAT"; }   # DAYS -> the line adapter_history runs
+-adapter_history() { # DAYS -> one record per job of this account's from the last DAYS days: JobID|JobName|Partition|QOS|Submit|Start|End|State|Timelimit|NodeList
+-  # ONE sacct, for `queue report` (a maintainer at a terminal). -X keeps each job's allocation line and drops its
+-  # .batch and .extern steps, -n prints no header, -P puts a pipe between fields with nothing padded. Submit, Start
+-  # and End are YYYY-MM-DDTHH:MM:SS in the cluster's local time with no zone; Start and End read "Unknown" while a
+-  # job has not started (or ended), and Start reads "None" for one cancelled before it started; State may carry a
+-  # word after it ("CANCELLED by 12345"). Bounded by `timeout 60`: the accounting database can be slow, and a person
+-  # is waiting. Exit 1 with sacct's message on stderr when it failed. The argv is adapter_history_query's line, word
+-  # for word, so the header's count can be checked against the grid by typing that line.
++# DAYS -> the line adapter_history runs, its two environment assignments first, so a person typing it sees what the report read
++adapter_history_query() { printf 'TZ=UTC0 SLURM_TIME_FORMAT=standard sacct -u %s -S now-%sdays -X -D -n -P --format=%s\n' "$USER" "$1" "$HPCW_SACCT_FORMAT"; }
++adapter_history() { # DAYS -> JobID|Partition|QOS|Submit|Eligible|Start|End|State|Timelimit|NodeList, one record per job and per earlier attempt of a requeued job
++  # ONE sacct, for `queue report` (a maintainer at a terminal). With -S and no -s, sacct lists the jobs that were
++  # eligible to run or running at any time between the start it is given and now: a job that became eligible
++  # before the window and was still in line or running when it began is listed, and a job held or waiting on a
++  # dependency (no eligible time yet, as the worker's queued successor has none) is not. -X keeps each job's allocation line and drops its .batch and
++  # .extern steps; -D (--duplicates) keeps every attempt of a job the scheduler requeued (a preemption on the
++  # requeue QoS) as its own record, where sacct would otherwise print the last one only; -n prints no header; -P
++  # puts a pipe between fields with nothing padded.
++  # The times: sacct prints them in its own environment's zone and in the form SLURM_TIME_FORMAT names, so it runs
++  # under TZ=UTC0 (UTC, with no daylight saving to make an hour read twice or not at all) and SLURM_TIME_FORMAT=standard
++  # (YYYY-MM-DDTHH:MM:SS), whatever the caller's own TZ or SLURM_TIME_FORMAT say; in the environment only, so the
++  # argv stays sacct's own. Start and End read "Unknown" while the job has not got there (Eligible too, though a job
++  # with no eligible time is not listed), and Start reads "None" for one cancelled before it started; State may
++  # carry a word after it ("CANCELLED by 12345").
++  # Bounded by `timeout 60`: the accounting database can be slow, and a person is waiting. Exit 1 with sacct's
++  # message on stderr when it failed. The argv and the two assignments are adapter_history_query's line, word for
++  # word, so the header's count can be checked against the grid by typing that line.
+   local days="$1" out rc
+-  local -a cmd=(sacct -u "$USER" -S "now-${days}days" -X -n -P "--format=$HPCW_SACCT_FORMAT")
+-  if command -v timeout >/dev/null 2>&1; then out=$(LC_ALL=C timeout 60 "${cmd[@]}" 2>&1); rc=$?; else out=$(LC_ALL=C "${cmd[@]}" 2>&1); rc=$?; fi
++  local -a cmd=(sacct -u "$USER" -S "now-${days}days" -X -D -n -P "--format=$HPCW_SACCT_FORMAT")
++  if command -v timeout >/dev/null 2>&1; then out=$(LC_ALL=C TZ=UTC0 SLURM_TIME_FORMAT=standard timeout 60 "${cmd[@]}" 2>&1); rc=$?
++  else out=$(LC_ALL=C TZ=UTC0 SLURM_TIME_FORMAT=standard "${cmd[@]}" 2>&1); rc=$?; fi
+   [ $rc = 124 ] && { echo "sacct did not answer within 60 s" >&2; return 1; }
+   [ $rc = 0 ] || { printf '%s\n' "$out" >&2; return 1; }
+   printf '%s\n' "$out"
+diff --git a/framework/tests/fakegrid.py b/framework/tests/fakegrid.py
+index b6fe489..ad2fb23 100644
+--- a/framework/tests/fakegrid.py
++++ b/framework/tests/fakegrid.py
+@@ -2,8 +2,9 @@
+ with a site profile, "testsite", that names it and keeps the state directory under a scratch home), and
+ a fake scheduler on PATH: sbatch, squeue, scancel and scontrol that keep their jobs in a file, an
+ srun that plays the plain sign-in sitting (lib/login_plain.sh's lines) instead of allocating anything,
+-and a sacct and sinfo that print what a test plants (FAKE_SACCT, FAKE_SINFO) for `queue report`.
+-Every call is logged in <sched>/calls. Nothing here reaches a real scheduler or the network."""
++and a sacct and sinfo that print what a test plants (FAKE_SACCT, FAKE_SINFO) for `queue report` and diag.
++Every call is logged in <sched>/calls; sacct's and sinfo's also in <sched>/argv, each argument apart.
++Nothing here reaches a real scheduler or the network."""
+ import json
+ import os
+ import shutil
+@@ -68,21 +69,36 @@ echo "scontrol $*" >> "$d/calls"
+ exit 0
+ """
+ 
++# Both also log each call to <sched>/argv with its arguments kept apart, which "calls" (joined by spaces) cannot: a
++# record is the name, TZ and SLURM_TIME_FORMAT as the program saw them ("(unset)" when not set), the number of
++# arguments, then each argument on a line of its own (Grid.argvs reads it back).
++FAKE_ARGV_LOG = r"""{ printf '%s\n%s\n%s\n%d\n' "${0##*/}" "${TZ-(unset)}" "${SLURM_TIME_FORMAT-(unset)}" $#; [ $# -gt 0 ] && printf '%s\n' "$@"; } >> "$d/argv"
++"""
++
+ # the account's history, for `queue report`: FAKE_SACCT holds the records sacct prints (its -P lines, planted by
+-# the test; nothing when unset, as for an account with no jobs), FAKE_SACCT_FAIL the message it fails with instead
++# the test; nothing when unset, as for an account with no jobs), FAKE_SACCT_FAIL the message it fails with instead.
++# A field written @SECONDS is an instant, printed the way sacct prints a time: in the zone of its own environment's TZ
++# and in the form SLURM_TIME_FORMAT names (standard or unset: YYYY-MM-DDTHH:MM:SS; relative: a short day and time;
++# anything else: a date format), so a test sees what a caller's zone and format would do to the report
+ FAKE_SACCT = r"""#!/bin/bash
+ d="${FAKE_SCHED_DIR:?}"
+ echo "sacct $*" >> "$d/calls"
+-if [ -n "${FAKE_SACCT_FAIL:-}" ]; then echo "$FAKE_SACCT_FAIL" >&2; exit 1; fi
+-[ -n "${FAKE_SACCT:-}" ] && printf '%s\n' "$FAKE_SACCT"
++""" + FAKE_ARGV_LOG + r"""if [ -n "${FAKE_SACCT_FAIL:-}" ]; then echo "$FAKE_SACCT_FAIL" >&2; exit 1; fi
++[ -n "${FAKE_SACCT:-}" ] || exit 0
++case "${SLURM_TIME_FORMAT:-standard}" in standard) f='+%Y-%m-%dT%H:%M:%S';; relative) f='+%d %b %H:%M';; *) f="+$SLURM_TIME_FORMAT";; esac
++while IFS= read -r line; do
++  out=""
++  while [[ "$line" =~ ^([^@]*)@([0-9]+)(.*)$ ]]; do out="$out${BASH_REMATCH[1]}$(date -d "@${BASH_REMATCH[2]}" "$f")"; line="${BASH_REMATCH[3]}"; done
++  printf '%s%s\n' "$out" "$line"
++done <<< "$FAKE_SACCT"
+ exit 0
+ """
+ 
+-# the partitions, for `queue report --limits`, discover and diag: FAKE_SINFO holds the lines sinfo prints (nothing when unset)
++# the partitions, for `queue report --limits` and diag's partition check: FAKE_SINFO holds the lines sinfo prints (nothing when unset)
+ FAKE_SINFO = r"""#!/bin/bash
+ d="${FAKE_SCHED_DIR:?}"
+ echo "sinfo $*" >> "$d/calls"
+-[ -n "${FAKE_SINFO:-}" ] && printf '%s\n' "$FAKE_SINFO"
++""" + FAKE_ARGV_LOG + r"""[ -n "${FAKE_SINFO:-}" ] && printf '%s\n' "$FAKE_SINFO"
+ exit 0
+ """
+ 
+@@ -230,6 +246,21 @@ class Grid(object):
+         with open(p) as fh:
+             return fh.read().splitlines()
+ 
++    def argvs(self):
++        """the calls the fake sacct and sinfo logged with each argument kept apart, in order:
++        [{"cmd": NAME, "argv": [ARG, ...], "TZ": ..., "SLURM_TIME_FORMAT": ...}]"""
++        p = os.path.join(self.sched, "argv")
++        if not os.path.exists(p):
++            return []
++        with open(p, newline="") as fh:
++            lines = fh.read().split("\n")[:-1]
++        out, i = [], 0
++        while i < len(lines):
++            n = int(lines[i + 3])
++            out.append({"cmd": lines[i], "TZ": lines[i + 1], "SLURM_TIME_FORMAT": lines[i + 2], "argv": lines[i + 4:i + 4 + n]})
++            i += 4 + n
++        return out
++
+     def jobs(self, lines=None):
+         p = os.path.join(self.sched, "jobs")
+         if lines is not None:
+diff --git a/framework/tests/test_queue.py b/framework/tests/test_queue.py
+index 73283d3..b6c25d5 100644
+--- a/framework/tests/test_queue.py
++++ b/framework/tests/test_queue.py
+@@ -1,9 +1,12 @@
+ """`hpcworker queue report` (greg, 2026-10-04 15:19Z: the requeue waits), against the fake scheduler of fakegrid.py:
+ records planted in its sacct cover waits of 30 s, 5 min, 4 h and 2 d on reqp/requeue, 20 s to 6 min on secp/secondary,
+-a job still pending, one preempted, one cancelled before it started, one that timed out, one whose Start is before its
+-Submit, and one running with no End. Then the per-partition lines, the counts, the footer, the header's count and
+-query, the one exact sacct argv (and no sbatch, squeue or scancel), the sinfo `--limits` adds, every refusal, and
+-the days-from-civil formula alone against dates python computes. Nothing reaches a real scheduler."""
++a job still pending, one preempted, one cancelled before it started, one that timed out, its chain successor (submitted
++hours before it could run), the two attempts of a requeued job, one whose Start is before its Submit, and one running
++with no End. Then the per-partition lines, the counts, the footer, the header's count and query, the one exact sacct
++argv and its environment (and no sbatch, squeue or scancel), the sinfo `--limits` adds, the waits across a
++daylight-saving change and under a caller's own time format, nearest-rank p90 against the maximum, the sort of a
++partition whose name is a prefix of another's, every refusal, diag's partition check on the five-field sinfo, and the
++days-from-civil formula alone against dates python computes. Nothing reaches a real scheduler."""
+ import calendar
+ import datetime
+ import os
+@@ -13,38 +16,68 @@ import unittest
+ 
+ import fakegrid as G
+ 
+-# sacct -X -n -P --format=JobID,JobName,Partition,QOS,Submit,Start,End,State,Timelimit,NodeList, as the comment in
+-# lib/adapters/slurm.sh describes the fields (the cluster's local time, no zone; Unknown and None where a job has not started)
++# sacct -X -D -n -P --format=JobID,Partition,QOS,Submit,Eligible,Start,End,State,Timelimit,NodeList, as the comment in
++# lib/adapters/slurm.sh describes the fields (UTC, as TZ=UTC0 makes sacct print them; Unknown and None where a job has not started)
+ RECORDS = [
+-    "40500001|hpcw_worker|reqp|requeue|2026-10-01T08:00:00|2026-10-01T08:00:30|2026-10-01T09:00:30|COMPLETED|08:00:00|asx10",   # 30 s, ran 1 h
+-    "40500002|hpcw_worker|reqp|requeue|2026-10-01T10:00:00|2026-10-01T10:05:00|2026-10-01T12:05:00|COMPLETED|08:00:00|asx11",   # 5 min, 2 h
+-    "40500003|hpcw_worker|reqp|requeue|2026-10-01T12:00:00|2026-10-01T16:00:00|2026-10-01T19:00:00|COMPLETED|08:00:00|asx12",   # 4 h, 3 h
+-    "40500004|hpcw_worker|reqp|requeue|2026-10-01T20:00:00|2026-10-03T20:00:00|2026-10-03T20:30:00|PREEMPTED|08:00:00|asx13",   # 2 d, 30 min
+-    "40500005|hpcw_worker|reqp|requeue|2026-10-02T09:00:00|2026-10-02T09:10:00|2026-10-02T17:10:00|TIMEOUT|08:00:00|asx14",     # 10 min, 8 h
+-    "40500006|hpcw_worker|reqp|requeue|2026-10-04T07:00:00|Unknown|Unknown|PENDING|08:00:00|None assigned",
+-    "40500007|hpcw_worker|reqp|requeue|2026-10-03T07:00:00|None|2026-10-03T07:05:00|CANCELLED by 1234|08:00:00|None assigned",
+-    "40500008|hpcw_probe|secp|secondary|2026-10-01T08:00:00|2026-10-01T08:00:20|2026-10-01T08:10:20|COMPLETED|00:10:00|asx15",  # 20 s, 10 min
+-    "40500009|hpcw_probe|secp|secondary|2026-10-01T09:00:00|2026-10-01T09:00:45|2026-10-01T09:20:45|COMPLETED|00:30:00|asx15",  # 45 s, 20 min
+-    "40500010|hpcw_probe|secp|secondary|2026-10-01T10:00:00|2026-10-01T10:02:00|2026-10-01T10:32:00|COMPLETED|00:30:00|asx15",  # 2 min, 30 min
+-    "40500011|hpcw_probe|secp|secondary|2026-10-01T11:00:00|2026-10-01T11:06:00|2026-10-01T11:46:00|COMPLETED|01:00:00|asx15",  # 6 min, 40 min
+-    "40500012|hpcw_probe|secp|secondary|2026-10-02T11:00:10|2026-10-02T11:00:00|2026-10-02T11:50:00|COMPLETED|01:00:00|asx15",  # Start 10 s before Submit: 0; 50 min
+-    "40500013|hpcw_worker|gvohp|gpu|2026-10-02T12:00:00|2026-10-02T12:01:00|Unknown|RUNNING|08:00:00|gpu01",                     # 1 min, still running
++    "40500001|reqp|requeue|2026-10-01T08:00:00|2026-10-01T08:00:00|2026-10-01T08:00:30|2026-10-01T09:00:30|COMPLETED|08:00:00|asx10",   # 30 s, ran 1 h
++    "40500002|reqp|requeue|2026-10-01T10:00:00|2026-10-01T10:00:00|2026-10-01T10:05:00|2026-10-01T12:05:00|COMPLETED|08:00:00|asx11",   # 5 min, 2 h
++    "40500003|reqp|requeue|2026-10-01T12:00:00|2026-10-01T12:00:00|2026-10-01T16:00:00|2026-10-01T19:00:00|COMPLETED|08:00:00|asx12",   # 4 h, 3 h
++    "40500004|reqp|requeue|2026-10-01T20:00:00|2026-10-01T20:00:00|2026-10-03T20:00:00|2026-10-03T20:30:00|PREEMPTED|08:00:00|asx13",   # 2 d, 30 min
++    "40500005|reqp|requeue|2026-10-02T09:00:00|2026-10-02T09:00:00|2026-10-02T09:10:00|2026-10-02T17:10:00|TIMEOUT|08:00:00|asx14",     # 10 min, 8 h
++    # its chain successor: submitted 5 s after it started, eligible when it ended, started 30 s later. A wait of 30 s,
++    # where Start minus Submit would count 8 h 0 min 25 s of its predecessor's run; ran 8 h
++    "40500014|reqp|requeue|2026-10-02T09:10:05|2026-10-02T17:10:00|2026-10-02T17:10:30|2026-10-03T01:10:30|COMPLETED|08:00:00|asx14",
++    "40500006|reqp|requeue|2026-10-04T07:00:00|2026-10-04T07:00:00|Unknown|Unknown|PENDING|08:00:00|None assigned",
++    "40500007|reqp|requeue|2026-10-03T07:00:00|2026-10-03T07:00:00|None|2026-10-03T07:05:00|CANCELLED by 1234|08:00:00|None assigned",
++    # one job requeued once (-D: each attempt its own record): 2 min then 3 h of running, requeued; eligible again at
++    # 11:04, started an hour later, ran 8 h. Two waits, 2 min and 1 h (from Submit the second would read 4 h 4 min)
++    "40500015|reqp|requeue|2026-10-03T08:00:00|2026-10-03T08:00:00|2026-10-03T08:02:00|2026-10-03T11:02:00|REQUEUED|08:00:00|asx15",
++    "40500015|reqp|requeue|2026-10-03T08:00:00|2026-10-03T11:04:00|2026-10-03T12:04:00|2026-10-03T20:04:00|COMPLETED|08:00:00|asx16",
++    "40500008|secp|secondary|2026-10-01T08:00:00|2026-10-01T08:00:00|2026-10-01T08:00:20|2026-10-01T08:10:20|COMPLETED|00:10:00|asx15",  # 20 s, 10 min
++    "40500009|secp|secondary|2026-10-01T09:00:00|2026-10-01T09:00:00|2026-10-01T09:00:45|2026-10-01T09:20:45|COMPLETED|00:30:00|asx15",  # 45 s, 20 min
++    "40500010|secp|secondary|2026-10-01T10:00:00|2026-10-01T10:00:00|2026-10-01T10:02:00|2026-10-01T10:32:00|COMPLETED|00:30:00|asx15",  # 2 min, 30 min
++    "40500011|secp|secondary|2026-10-01T11:00:00|2026-10-01T11:00:00|2026-10-01T11:06:00|2026-10-01T11:46:00|COMPLETED|01:00:00|asx15",  # 6 min, 40 min
++    "40500012|secp|secondary|2026-10-02T11:00:10|2026-10-02T11:00:10|2026-10-02T11:00:00|2026-10-02T11:50:00|COMPLETED|01:00:00|asx15",  # Start 10 s before Eligible: 0; 50 min
++    "40500013|gvohp|gpu|2026-10-02T12:00:00|2026-10-02T12:00:00|2026-10-02T12:01:00|Unknown|RUNNING|08:00:00|gpu01",                     # 1 min, still running
+ ]
+ SINFO = [
+     "secp*|7-00:00:00|up|30|allocated", "secp*|7-00:00:00|up|12|idle", "secp*|7-00:00:00|up|2|drained",
+     "reqp|14-00:00:00|up|100|allocated", "reqp|14-00:00:00|up|15|mixed",
+     "gvohp|7-00:00:00|up|6|allocated", "gvohp|7-00:00:00|up|2|idle",
+ ]
+-SACCT_ARGV = "sacct -u st1234 -S now-%ddays -X -n -P --format=JobID,JobName,Partition,QOS,Submit,Start,End,State,Timelimit,NodeList"
+-SINFO_ARGV = "sinfo -h -o %P|%l|%a|%D|%T"
++SACCT_FORMAT = "--format=JobID,Partition,QOS,Submit,Eligible,Start,End,State,Timelimit,NodeList"
++
++
++def sacct_argv(days):
++    return ["-u", "st1234", "-S", "now-%ddays" % days, "-X", "-D", "-n", "-P", SACCT_FORMAT]
++
++
++SINFO_ARGV = ["-h", "-o", "%P|%l|%a|%D|%T"]
++# what sacct runs under, in its environment only: every time UTC, in the one form the report reads
++SACCT_ENV = {"TZ": "UTC0", "SLURM_TIME_FORMAT": "standard"}
++
++
++def query(days):
++    """the line the header names: the two assignments, then sacct's argv as a person types it (no argument holds a space)"""
++    return "TZ=UTC0 SLURM_TIME_FORMAT=standard " + " ".join(["sacct"] + sacct_argv(days))
++
++
++def header(n, days=14):
++    return "queue report for st1234: %d record%s of jobs eligible or running at any time in the last %d days, read by `%s`" % (n, "s" if n > 1 else "", days, query(days))
++
++
++SECOND = "one record per attempt of a requeued job; a wait is Start minus Eligible (minus Submit where Eligible is not a time); times in UTC"
++COLUMNS = ["partition", "qos", "started", "median wait", "p90 wait", "max wait", "pending", "preempted", "requeued", "cancelled", "timed out", "median run"]
+ ROWS = {
+-    # partition, qos, started, median wait, p90 wait, max wait, pending, preempted, cancelled, timed out, median run
+-    "gvohp": ["gvohp", "gpu", "1", "1m 0s", "1m 0s", "1m 0s", "0", "0", "0", "0", "-"],
+-    # waits 30, 300, 600, 14400, 172800: median 600, p90 (the value at ceil(0.9 * 5) = 5) 172800; runs 1800..28800: median 7200
+-    "reqp": ["reqp", "requeue", "5", "10m 0s", "2d 0h 0m", "2d 0h 0m", "1", "1", "1", "1", "2h 0m"],
++    # partition, qos, started, median wait, p90 wait, max wait, pending, preempted, requeued, cancelled, timed out, median run
++    "gvohp": ["gvohp", "gpu", "1", "1m 0s", "1m 0s", "1m 0s", "0", "0", "0", "0", "0", "-"],
++    # waits 30, 30, 120, 300, 600, 3600, 14400, 172800: median (300 + 600) / 2 = 450; p90 (the value at ceil(0.9 * 8) = 8)
++    # 172800, here the maximum too (the p90 case is its own test); runs 1800 .. 28800: median (10800 + 10800) / 2
++    "reqp": ["reqp", "requeue", "8", "7m 30s", "2d 0h 0m", "2d 0h 0m", "1", "1", "1", "1", "1", "3h 0m"],
+     # waits 0, 20, 45, 120, 360: median 45; runs 600..3000: median 1800
+-    "secp": ["secp", "secondary", "5", "0m 45s", "6m 0s", "6m 0s", "0", "0", "0", "0", "30m 0s"],
++    "secp": ["secp", "secondary", "5", "0m 45s", "6m 0s", "6m 0s", "0", "0", "0", "0", "0", "30m 0s"],
+ }
++BEFORE = "1 record whose Start is before its Eligible (or Submit) time, by the clocks the scheduler recorded; each counts as no wait"
+ 
+ 
+ def cells(line):
+@@ -52,15 +85,24 @@ def cells(line):
+     return re.split(r" {2,}", line.strip())
+ 
+ 
+-def tree(root):
++def tree(root, leave_out=()):
+     out = []
+     for base, dirs, names in os.walk(root):
+         for n in dirs + names:
+             p = os.path.join(base, n)
+-            out.append((os.path.relpath(p, root), os.lstat(p).st_mtime if os.path.isfile(p) else None))
++            rel = os.path.relpath(p, root)
++            if rel in leave_out:
++                continue
++            st = os.lstat(p)
++            out.append((rel, st.st_mtime if os.path.isfile(p) else None, st.st_size if os.path.isfile(p) else None))
+     return sorted(out)
+ 
+ 
++def utc(t):
++    """an instant the fake sacct prints in its own zone: @SECONDS"""
++    return "@%d" % calendar.timegm(datetime.datetime.strptime(t, "%Y-%m-%dT%H:%M:%S").timetuple())
++
++
+ class Report(unittest.TestCase):
+     def setUp(self):
+         self.tmp = tempfile.TemporaryDirectory()
+@@ -70,8 +112,8 @@ class Report(unittest.TestCase):
+     def tearDown(self):
+         self.tmp.cleanup()
+ 
+-    def report(self, args="", **extra):
+-        rc, out, err = self.g.run("queue report " + args, FAKE_SACCT="\n".join(RECORDS), **extra)
++    def report(self, args="", records=None, **extra):
++        rc, out, err = self.g.run("queue report " + args, FAKE_SACCT="\n".join(RECORDS if records is None else records), **extra)
+         self.assertEqual(rc, 0, (out, err))
+         self.assertEqual(err, "")
+         return out.splitlines()
+@@ -80,55 +122,134 @@ class Report(unittest.TestCase):
+         got = {}
+         for line in lines:
+             c = cells(line)
+-            if len(c) == 11 and c[0] in ROWS:
+-                got[c[0]] = c
++            if len(c) == 12 and c[0] != "partition":
++                got[c[0] if c[0] in ROWS else (c[0], c[1])] = c
+         return got
+ 
++    def table(self, lines):
++        """the rows between the column line and the blank line after them"""
++        i = [cells(l) for l in lines].index(COLUMNS)
++        j = lines.index("", i)
++        return [cells(l) for l in lines[i + 1:j]]
++
+     def test_the_table(self):
+         lines = self.report()
+-        self.assertEqual(lines[0], "queue report for st1234, the last 14 days: 13 records read by `%s`" % (SACCT_ARGV % 14), "the header: account, window, count, query")
+-        self.assertEqual(lines[1], "")
+-        self.assertEqual(cells(lines[2]), ["partition", "qos", "started", "median wait", "p90 wait", "max wait", "pending", "preempted", "cancelled", "timed out", "median run"])
+-        self.assertEqual([cells(l)[0] for l in lines[3:6]], ["gvohp", "reqp", "secp"], "sorted by partition, then QoS")
++        self.assertEqual(lines[0], header(16), "the header: account, count, window as sacct reads it, query")
++        self.assertEqual(lines[1], SECOND)
++        self.assertEqual(lines[2], "")
++        self.assertEqual(cells(lines[3]), COLUMNS)
++        self.assertEqual([cells(l)[0] for l in lines[4:7]], ["gvohp", "reqp", "secp"], "sorted by partition, then QoS")
+         self.assertEqual(self.rows(lines), ROWS)
+-        self.assertEqual(lines[6], "")
+-        self.assertEqual(lines[7], "1 job started before being submitted, by the clocks the scheduler recorded; each counts as no wait")
+-        self.assertEqual(lines[8], "shortest median wait: secp secondary (0m 45s)", "the one sentence the maintainer asked for")
+-        self.assertEqual(len(lines), 9, "no recommendation beyond it")
++        self.assertEqual(lines[7], "")
++        self.assertEqual(lines[8], BEFORE)
++        self.assertEqual(lines[9], "shortest median wait: secp secondary (0m 45s)", "the one sentence the maintainer asked for")
++        self.assertEqual(len(lines), 10, "no recommendation beyond it")
++
++    def test_a_chained_successor_waits_from_eligible(self):
++        # submitted at 08:00:05 while its predecessor ran; eligible at 16:00:00, when that one ended; started 30 s later
++        succ = "40600001|reqp|requeue|2026-10-01T08:00:05|2026-10-01T16:00:00|2026-10-01T16:00:30|2026-10-02T00:00:30|COMPLETED|08:00:00|asx10"
++        lines = self.report(records=[succ])
++        self.assertEqual(self.table(lines), [["reqp", "requeue", "1", "0m 30s", "0m 30s", "0m 30s", "0", "0", "0", "0", "0", "8h 0m"]], "Start minus Eligible, not minus Submit")
++        self.assertEqual(lines[-1], "shortest median wait: reqp requeue (0m 30s)")
++        # Eligible not a time: Submit stands in, and the wait is the 8 h 0 min 25 s since it
++        lines = self.report(records=[succ.replace("|2026-10-01T16:00:00|", "|Unknown|")])
++        self.assertEqual(self.table(lines)[0][3:6], ["8h 0m", "8h 0m", "8h 0m"])
++
++    def test_each_attempt_of_a_requeued_job_is_its_own_record_and_wait(self):
++        # one job, three attempts: preempted, requeued, then completed; each waited for a node from its own Eligible
++        rec = ["40600010|reqp|requeue|2026-10-01T08:00:00|2026-10-01T08:00:00|2026-10-01T08:02:00|2026-10-01T11:02:00|PREEMPTED|08:00:00|asx10",
++               "40600010|reqp|requeue|2026-10-01T08:00:00|2026-10-01T11:04:00|2026-10-01T11:34:00|2026-10-01T12:34:00|REQUEUED|08:00:00|asx11",
++               "40600010|reqp|requeue|2026-10-01T08:00:00|2026-10-01T12:36:00|2026-10-01T14:36:00|2026-10-01T22:36:00|COMPLETED|08:00:00|asx12"]
++        lines = self.report(records=rec)
++        self.assertEqual(lines[0], header(3), "three records of one job id: sacct -D keeps every attempt")
++        # waits 120, 1800, 7200: median 30 min, p90 at ceil(2.7) = 3; runs 3 h, 1 h, 8 h: median 3 h
++        self.assertEqual(self.table(lines), [["reqp", "requeue", "3", "30m 0s", "2h 0m", "2h 0m", "0", "1", "1", "0", "0", "3h 0m"]])
++
++    def test_p90_is_the_nearest_rank_not_the_maximum_and_a_prefix_partition_sorts_first(self):
++        # "sec": 11 waits of 1 .. 11 min (p90 at ceil(9.9) = 10: 10 min, the maximum 11); "secp": 10 waits of 1 .. 10 min
++        # (p90 at ceil(9.0) = 9: 9 min, not rounded up to the 10th). "sec" before "secp": the key's separator sorts
++        # before every printable byte, so a shorter name that is a prefix of another comes first
++        rec = []
++        for part, n in (("secp", 10), ("sec", 11)):
++            for i in range(1, n + 1):
++                rec.append("4060%02d%02d|%s|normal|2026-10-01T%02d:00:00|2026-10-01T%02d:00:00|2026-10-01T%02d:%02d:00|2026-10-01T%02d:%02d:00|COMPLETED|01:00:00|asx1"
++                           % (n, i, part, i, i, i, i, i + 1, i))
++        lines = self.report(records=rec)
++        self.assertEqual(self.table(lines), [["sec", "normal", "11", "6m 0s", "10m 0s", "11m 0s", "0", "0", "0", "0", "0", "1h 0m"],
++                                             ["secp", "normal", "10", "5m 30s", "9m 0s", "10m 0s", "0", "0", "0", "0", "0", "1h 0m"]])
+ 
+     def test_two_qos_on_one_partition_are_two_rows(self):
+-        extra = ["40500020|hpcw_worker|secp|primary|2026-10-01T08:00:00|2026-10-01T08:30:00|2026-10-01T09:30:00|COMPLETED|08:00:00|asx16",
+-                 "40500021|hpcw_worker|secp|primary|2026-10-01T09:00:00|2026-10-01T09:40:00|2026-10-01T10:40:00|COMPLETED|08:00:00|asx16"]
+-        rc, out, err = self.g.run("queue report", FAKE_SACCT="\n".join(RECORDS + extra))
+-        self.assertEqual(rc, 0, (out, err))
+-        lines = out.splitlines()
+-        self.assertIn("15 records read", lines[0])
+-        table = [cells(l) for l in lines[3:7]]
++        extra = ["40500020|secp|primary|2026-10-01T08:00:00|2026-10-01T08:00:00|2026-10-01T08:30:00|2026-10-01T09:30:00|COMPLETED|08:00:00|asx16",
++                 "40500021|secp|primary|2026-10-01T09:00:00|2026-10-01T09:00:00|2026-10-01T09:40:00|2026-10-01T10:40:00|COMPLETED|08:00:00|asx16"]
++        lines = self.report(records=RECORDS + extra)
++        self.assertEqual(lines[0], header(18))
++        table = self.table(lines)
+         self.assertEqual([(c[0], c[1]) for c in table], [("gvohp", "gpu"), ("reqp", "requeue"), ("secp", "primary"), ("secp", "secondary")])
+         # waits 1800 and 2400: an even count averages the two middle values
+         self.assertEqual(table[2][2:6], ["2", "35m 0s", "40m 0s", "40m 0s"])
+         self.assertEqual(lines[-1], "shortest median wait: secp secondary (0m 45s)")
+ 
+     def test_one_sacct_and_nothing_else_and_nothing_written(self):
+-        lines = self.report()
+-        self.assertEqual(self.g.calls(), [SACCT_ARGV % 14], "one sacct: -X -n -P, the format, -S now-14days; no sbatch, squeue, scancel, srun or scontrol")
+-        self.assertIn("`%s`" % self.g.calls()[0], lines[0], "the header names the line that was run, word for word")
+-        # the profile reader keeps its cache (~/.hpcworker/profile.env) from the first load after an install; the report itself writes nothing
+-        before = tree(self.g.home)
+-        self.report("--limits", FAKE_SINFO="\n".join(SINFO))
+-        self.assertEqual(tree(self.g.home), before, "the report writes nothing")
++        # every folder the fake grid owns (the home, the shared copy, the scheduler's and its programs) and an empty
++        # TMPDIR, looked at before the first report; only the stand-ins' own logs and load_profile's cache may change
++        tmpd = os.path.join(self.tmp.name, "tmpdir")
++        os.makedirs(tmpd)
++        cache = os.path.join("home", ".hpcworker", "profile.env")
++        leave_out = (os.path.join("sched", "calls"), os.path.join("sched", "argv"), cache)
++        system_tmp = (lambda: sorted(n for n in os.listdir("/tmp") if n.startswith("hpcw"))) if os.path.isdir("/tmp") else (lambda: [])
++        before, before_tmp = tree(self.tmp.name, leave_out), system_tmp()
++        # a caller's own zone and time format are not what sacct runs under
++        lines = self.report(TMPDIR=tmpd, TZ="America/Detroit", SLURM_TIME_FORMAT="relative")
++        self.assertEqual(self.g.argvs(), [dict(cmd="sacct", argv=sacct_argv(14), **SACCT_ENV)],
++                         "one sacct with exactly these arguments (-X -D -n -P, the format, -S now-14days), TZ=UTC0 and SLURM_TIME_FORMAT=standard")
++        self.assertEqual(self.g.calls(), [" ".join(["sacct"] + sacct_argv(14))], "no sbatch, squeue, scancel, srun or scontrol")
++        a = self.g.argvs()[0]
++        self.assertIn("`TZ=%s SLURM_TIME_FORMAT=%s %s`" % (a["TZ"], a["SLURM_TIME_FORMAT"], " ".join([a["cmd"]] + a["argv"])), lines[0],
++                      "the header names the line that ran, its environment first, word for word")
++        self.report("--limits", FAKE_SINFO="\n".join(SINFO), TMPDIR=tmpd)
++        self.assertEqual(tree(self.tmp.name, leave_out), before, "the report writes nothing")
++        self.assertTrue(os.path.isfile(os.path.join(self.tmp.name, cache)), "load_profile's cache, as for every verb, is the one file written")
++        self.assertEqual(os.listdir(tmpd), [], "nothing under TMPDIR")
++        self.assertEqual(system_tmp(), before_tmp, "nothing of ours under /tmp")
+         self.assertFalse(os.path.exists(self.g.state), "no run directory is made")
+ 
++    def test_waits_across_a_daylight_saving_change_and_a_callers_time_format(self):
++        # The fake sacct prints an instant in the zone and the form of its own environment, as sacct does. On
++        # 2026-11-01 Detroit's clocks went from 02:00 EDT back to 01:00 EST: a job submitted 01:50 EDT and started 01:10
++        # EST waited 20 min; one that ran from 00:00:30 EDT to 08:00:30 EST ran 9 h. Under the caller's zone they would
++        # read as a Start before its Submit and an 8 h run, and under the caller's time format as no time at all.
++        rc, out, err = G.bash("TZ=America/Detroit date -d %s +%%H:%%M" % utc("2026-11-01T05:50:00"))
++        if out.strip() != "01:50":
++            self.skipTest("this machine has no America/Detroit zone for the stand-in to print in")
++        rec = ["40600020|reqp|requeue|%s|%s|%s|%s|COMPLETED|10:00:00|asx10" % (utc("2026-11-01T05:50:00"), utc("2026-11-01T05:50:00"), utc("2026-11-01T06:10:00"), utc("2026-11-01T15:10:00")),
++               "40600021|reqp|requeue|%s|%s|%s|%s|COMPLETED|10:00:00|asx11" % (utc("2026-11-01T04:00:00"), utc("2026-11-01T04:00:00"), utc("2026-11-01T04:00:30"), utc("2026-11-01T13:00:30"))]
++        for fmt in ("standard", "%F %T", "relative"):
++            lines = self.report(records=rec, TZ="America/Detroit", SLURM_TIME_FORMAT=fmt)
++            # waits 1200 and 30: median 615; runs 9 h and 9 h
++            self.assertEqual(self.table(lines), [["reqp", "requeue", "2", "10m 15s", "20m 0s", "20m 0s", "0", "0", "0", "0", "0", "9h 0m"]], fmt)
++            self.assertNotIn(BEFORE, lines, fmt)
++        self.assertEqual({(a["TZ"], a["SLURM_TIME_FORMAT"]) for a in self.g.argvs()}, {("UTC0", "standard")})
++
++    def test_times_in_a_form_the_report_does_not_read_are_said_not_dropped(self):
++        # what a sacct whose time format nobody pinned would print: the records count by state, and the report says so
++        rec = ["40600030|reqp|requeue|01 Oct 08:00|01 Oct 08:00|01 Oct 08:05|01 Oct 09:05|COMPLETED|08:00:00|asx10",
++               "40600031|reqp|requeue|01 Oct 10:00|01 Oct 10:00|Unknown|Unknown|PENDING|08:00:00|None assigned"]
++        lines = self.report(records=rec)
++        self.assertEqual(lines[0], header(2))
++        self.assertEqual(self.table(lines), [["reqp", "requeue", "0", "-", "-", "-", "1", "0", "0", "0", "0", "-"]])
++        self.assertEqual(lines[-2:], ["2 records whose times are not in the form this report reads (YYYY-MM-DDTHH:MM:SS): counted by state, their wait and run time left out",
++                                      "shortest median wait: not known (the times of 2 records could not be read)"])
++
+     def test_days(self):
+         self.report("--days 1")
+         self.report("--days 90")
+-        self.assertEqual(self.g.calls(), [SACCT_ARGV % 1, SACCT_ARGV % 90])
+-        self.assertIn("the last 1 days", self.report("--days 1")[0])
++        self.assertEqual([a["argv"] for a in self.g.argvs()], [sacct_argv(1), sacct_argv(90)])
++        self.assertEqual(self.report("--days 1")[0], header(16, 1))
+         for bad in ("400", "0", "91", "7.5", "abc", "-3"):
+             rc, out, err = self.g.run("queue report --days %s" % bad, FAKE_SACCT="\n".join(RECORDS))
+             self.assertEqual((rc, out), (1, ""), bad)
+             self.assertEqual(err.splitlines(), ["hpcworker: --days must be a whole number from 1 to 90"], bad)
+-        self.assertEqual(len(self.g.calls()), 3, "a refused --days asks the scheduler nothing")
++        self.assertEqual(len(self.g.argvs()), 3, "a refused --days asks the scheduler nothing")
+ 
+     def test_usage(self):
+         for args in ("queue", "queue bogus", "queue report --what", "queue report --days", "queue report 7"):
+@@ -139,10 +260,11 @@ class Report(unittest.TestCase):
+         rc, out, err = self.g.run("help")
+         self.assertEqual(rc, 0, err)
+         self.assertIn("hpcworker queue report [--days N] [--limits]", out, "the usage header at the top of the file")
++        self.assertIn("Start minus Eligible", out)
+ 
+     def test_limits_adds_one_sinfo(self):
+         lines = self.report("--limits", FAKE_SINFO="\n".join(SINFO))
+-        self.assertEqual(self.g.calls(), [SACCT_ARGV % 14, SINFO_ARGV], "two queries, in this order")
++        self.assertEqual([(a["cmd"], a["argv"]) for a in self.g.argvs()], [("sacct", sacct_argv(14)), ("sinfo", SINFO_ARGV)], "two queries, in this order")
+         self.assertEqual(self.rows(lines), ROWS, "the table is the same")
+         i = lines.index("partitions now (sinfo -h -o '%P|%l|%a|%D|%T'):")
+         self.assertEqual(lines[i - 2], "shortest median wait: secp secondary (0m 45s)")
+@@ -153,15 +275,15 @@ class Report(unittest.TestCase):
+         self.assertEqual(len(lines), i + 4)
+         # without the flag, no sinfo; with it and nothing from sinfo, one line says so
+         self.report()
+-        self.assertEqual(self.g.calls()[2:], [SACCT_ARGV % 14])
++        self.assertEqual([a["cmd"] for a in self.g.argvs()[2:]], ["sacct"])
+         lines = self.report("--limits")
+         self.assertEqual(lines[-1], "partitions now: nothing from sinfo -h -o '%P|%l|%a|%D|%T'")
+ 
+     def test_empty_history(self):
+         rc, out, err = self.g.run("queue report")
+         self.assertEqual((rc, err), (0, ""), out)
+-        self.assertEqual(out.splitlines(), ["no jobs of st1234 in the history the scheduler keeps for the last 14 days (%s)" % (SACCT_ARGV % 14)])
+-        self.assertEqual(self.g.calls(), [SACCT_ARGV % 14])
++        self.assertEqual(out.splitlines(), ["no jobs of st1234 eligible or running at any time in the last 14 days, in the history the scheduler keeps (%s)" % query(14)])
++        self.assertEqual(self.g.calls(), [" ".join(["sacct"] + sacct_argv(14))])
+ 
+     def test_failed_query(self):
+         rc, out, err = self.g.run("queue report", FAKE_SACCT_FAIL="sacct: error: Problem talking to the database: Connection refused")
+@@ -172,22 +294,26 @@ class Report(unittest.TestCase):
+ 
+     def test_only_started_jobs_have_waits(self):
+         # every record pending or cancelled before a start: rows with counts and dashes, and a footer that says so
+-        pend = ["4050010%d|hpcw_worker|reqp|requeue|2026-10-04T0%d:00:00|Unknown|Unknown|PENDING|08:00:00|None assigned" % (i, i) for i in range(3)]
+-        canc = ["40500110|hpcw_worker|secp|secondary|2026-10-03T07:00:00|None|2026-10-03T07:05:00|CANCELLED by 1234|00:10:00|None assigned"]
+-        rc, out, err = self.g.run("queue report", FAKE_SACCT="\n".join(pend + canc))
+-        self.assertEqual(rc, 0, (out, err))
+-        lines = out.splitlines()
+-        self.assertEqual(cells(lines[3]), ["reqp", "requeue", "0", "-", "-", "-", "3", "0", "0", "0", "-"])
+-        self.assertEqual(cells(lines[4]), ["secp", "secondary", "0", "-", "-", "-", "0", "0", "1", "0", "-"])
++        pend = ["4050010%d|reqp|requeue|2026-10-04T0%d:00:00|2026-10-04T0%d:00:00|Unknown|Unknown|PENDING|08:00:00|None assigned" % (i, i, i) for i in range(3)]
++        canc = ["40500110|secp|secondary|2026-10-03T07:00:00|2026-10-03T07:00:00|None|2026-10-03T07:05:00|CANCELLED by 1234|00:10:00|None assigned"]
++        lines = self.report(records=pend + canc)
++        self.assertEqual(self.table(lines), [["reqp", "requeue", "0", "-", "-", "-", "3", "0", "0", "0", "0", "-"],
++                                             ["secp", "secondary", "0", "-", "-", "-", "0", "0", "0", "1", "0", "-"]])
+         self.assertEqual(lines[-1], "shortest median wait: none (no job in the window has started)")
+ 
+-    def test_a_notice_among_the_records_is_left_out(self):
+-        rc, out, err = self.g.run("queue report", FAKE_SACCT="\n".join(["sacct: a notice the site prints first"] + RECORDS + ["", "\r"]))
+-        self.assertEqual(rc, 0, (out, err))
+-        lines = out.splitlines()
+-        self.assertIn("13 records read", lines[0])
++    def test_a_line_that_is_not_a_record_is_left_out(self):
++        # a notice sacct printed first, and a line with one field too many (a '|' where none belongs): left out and
++        # counted, never read one column off
++        shifted = "40500030|secp|x|secondary|2026-10-01T08:00:00|2026-10-01T08:00:00|2026-10-01T08:00:20|2026-10-01T08:10:20|COMPLETED|00:10:00|asx15"
++        lines = self.report(records=["sacct: a notice the site prints first"] + RECORDS + [shifted, "", "\r"])
++        self.assertEqual(lines[0], header(16))
+         self.assertEqual(self.rows(lines), ROWS)
+-        self.assertIn("1 line that was not a record left out", lines)
++        self.assertIn("2 lines that were not a record left out", lines)
++
++    def test_nothing_but_lines_that_are_not_records_is_a_failure(self):
++        rc, out, err = self.g.run("queue report", FAKE_SACCT="sacct: a notice the site prints first\nsomething|else")
++        self.assertEqual((rc, out), (1, ""))
++        self.assertEqual(err.splitlines(), ["hpcworker: none of the lines sacct printed is a record this report reads; the first: sacct: a notice the site prints first"])
+ 
+ 
+ class OtherSchedulers(unittest.TestCase):
+@@ -212,7 +338,35 @@ class OtherSchedulers(unittest.TestCase):
+             rc, out, err = G.bash("source '%s/lib/adapters/%s.sh' && adapter_history 14; echo \"rc=$?\"; adapter_history_query 14; echo \"q=$?\"" % (G.posix(G.ROOT), fam))
+             self.assertEqual(out.splitlines(), ["rc=2", "q=0"], (fam, err))
+         rc, out, err = G.bash("source '%s/lib/adapters/slurm.sh' && adapter_history_query 14 && adapter_partitions_query" % G.posix(G.ROOT), env={"USER": "st1234"})
+-        self.assertEqual(out.splitlines(), [SACCT_ARGV % 14, "sinfo -h -o '%P|%l|%a|%D|%T'"], err)
++        self.assertEqual(out.splitlines(), [query(14), "sinfo -h -o '%P|%l|%a|%D|%T'"], err)
++
++
++class DiagPartitions(unittest.TestCase):
++    """diag's partition check on the five-field sinfo: one line per partition and node state, each name once"""
++    SINFO = ["secp|2-00:00:00|up|10|idle", "secp|2-00:00:00|up|5|mixed", "secp|2-00:00:00|up|1|drained",
++             "reqp*|7-00:00:00|up|4|idle", "reqp*|7-00:00:00|up|2|mixed", "gvohp|7-00:00:00|up|3|allocated", "gvohp|7-00:00:00|up|1|idle"]
++
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.g = G.Grid(self.tmp.name)
++        self.g.setup()
++
++    def tearDown(self):
++        self.tmp.cleanup()
++
++    def test_a_missing_partition_names_the_rest_once_each(self):
++        # the site profile wants secp, reqp, gmsap and gvohp; gmsap is not there
++        rc, out, err = self.g.source("load_profile && diag_partitions", FAKE_SINFO="\n".join(self.SINFO))
++        self.assertEqual(out.splitlines(), ["%-5s %-24s %s" % ("FAIL", "hpcw.partitions", "not in sinfo: gmsap (have: gvohp reqp secp )")], err)
++        self.assertEqual([(a["cmd"], a["argv"]) for a in self.g.argvs()], [("sinfo", SINFO_ARGV)])
++
++    def test_every_partition_there(self):
++        rc, out, err = self.g.source("load_profile && diag_partitions", FAKE_SINFO="\n".join(self.SINFO + ["gmsap|7-00:00:00|up|2|idle", "gmsap|7-00:00:00|up|2|mixed"]))
++        self.assertEqual(out.splitlines(), ["%-5s %-24s %s" % ("ok", "hpcw.partitions", "profile partitions exist: secp reqp gmsap gvohp")], err)
++
++    def test_diag_runs_it(self):
++        rc, out, err = self.g.run("diag", FAKE_SINFO="\n".join(self.SINFO))
++        self.assertIn("%-5s %-24s %s" % ("FAIL", "hpcw.partitions", "not in sinfo: gmsap (have: gvohp reqp secp )"), out.splitlines(), (out, err))
+ 
+ 
+ class Arithmetic(unittest.TestCase):
+@@ -226,7 +380,7 @@ class Arithmetic(unittest.TestCase):
+         return out.split("\n")[:-1]
+ 
+     def test_days_from_civil_against_known_dates(self):
+-        # 2026-10-04T00:00:00 is 1791072000 were the clock UTC; the report takes differences only, so the zone never matters
++        # 2026-10-04T00:00:00 UTC is 1791072000; sacct prints UTC for the report (TZ=UTC0), so these are true epochs
+         self.assertEqual(self.epochs(["1970-01-01T00:00:00", "2000-02-29T12:00:00", "2026-10-04T00:00:00"]), ["0", "951825600", "1791072000"])
+ 
+     def test_the_formula_over_a_sweep_of_dates(self):

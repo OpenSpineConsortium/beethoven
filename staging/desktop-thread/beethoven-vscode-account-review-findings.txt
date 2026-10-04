@@ -1,0 +1,161 @@
+=== 1. [should-fix/code] extension/src/core/accounts.ts:67 Accounts the engine lists at Claude Code's default place ("path": null) are dropped, so the RUNBOOK's first laptop account can never be picked
+SCENARIO: accounts.json written by `bee account add personal --default-location --no-login` followed by `bee account add work`: {"version":1,"accounts":[{"label":"personal","path":null,"enabled":true,"order":0,"hibernate_until":null},{"label":"work","path":"/home/s/.beethoven/accounts/work/claude",...}]}. With beethoven.account = "personal", chooseAccount returns invalid: 'which is not in your account list (work). ... add the account with "bee account add personal"'. Running that fix makes bee refuse with 'personal is already listed'. Reproduced with a scratch build of accounts.ts.
+FIX: In extension/src/core/accounts.ts:
+- Make `Account.path` and the `'account'` variant of `AccountChoice` `string | null`, with null meaning Claude Code's default place (CLAUDE_CONFIG_DIR unset), as in the engine's AccountRecord.
+- In `readAccounts`, accept `a.path === null` before the string check, e.g. `if (a.path !== null && (typeof a.path !== 'string' || !a.path)) return;`, and pass null through without the `~` expansion.
+- `accountEnvironment`: for a null path return `{ BEE_ACCOUNT: label }` only, with no CLAUDE_CONFIG_DIR, matching `bee-use` and `run_login`.
+- `ensureAccountDir`: return early when `choice.path === null`.
+
+Where the path is shown (extension.ts:190 and diagNodes.ts:286), say "Claude Code's default place" instead of the path. Add a unit test: a row `{"label":"personal","path":null,...}` is kept, and `chooseAccount('personal')` gives kind `'account'` with path null and environment `{BEE_ACCOUNT:'personal'}`.
+
+=== 2. [should-fix/code] extension/src/core/accounts.ts:68 A relative path is accepted: the sign-in folder lands in each terminal's working directory, and ensureAccountDir creates it somewhere else
+SCENARIO: A hand-edited accounts.json row {"label":"work","path":"work-claude","enabled":true,"order":1}. Every `bee` command now refuses the file, but VS Code accepts the row (verified: chooseAccount returns kind 'account' with path 'work-claude'). Terminals get CLAUDE_CONFIG_DIR=work-claude. `claude auth login` in a terminal opened on ~/code/thesis writes ~/code/thesis/work-claude/.credentials.json (Linux/Windows), and the wizard's ensureAccountDir makes <extension-host cwd>/work-claude instead.
+FIX: In extension/src/core/accounts.ts readAccounts, after the `~` expansion on line 68, drop a row whose path is not absolute, as the engine refuses it: `if (!path.isAbsolute(p)) return;` before `accounts.push(...)`. Optionally add a unit case in accounts.test.ts showing that a relative path is dropped, so `chooseAccount('work')` comes back 'invalid' ("not in your account list") and the terminals keep the default sign-in.
+
+=== 3. [should-fix/code] extension/src/extension.ts:93 The terminals' CLAUDE_CONFIG_DIR is only recomputed when the setting changes, so an edit to the engine's list leaves a stale value that the view says is not applied
+SCENARIO: beethoven.account = work (collection: CLAUDE_CONFIG_DIR=~/.beethoven/accounts/work/claude). In a terminal: `bee account remove work && bee account add work --path D:/claude-work`. The Beethoven view now reports work at D:/claude-work, not signed in. Clicking Sign in opens a terminal whose CLAUDE_CONFIG_DIR is still the old folder, so the login lands there, and the re-check under D:/claude-work stays 'not signed in'. With `bee account disable work` instead, the row says the setting is not used while new terminals keep running as work.
+FIX: In activate(), after the onDidChangeConfiguration handler, add a watcher on the list and push it to context.subscriptions:
+
+`const w = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(vscode.Uri.file(path.dirname(accountsFile())), 'accounts.json'));`
+
+Wire w.onDidCreate, w.onDidChange and w.onDidDelete to `() => void hydrate().then(() => tree.refresh())`. Also call `await store.hydrateEnvironment()` at the start of commandStepOnly (extension.ts ~284), before runWizard, so the sign-in terminal's collection carries the same path chooseAccount just read and cannot override the terminal's own env.
+
+=== 4. [should-fix/code] extension/src/core/accounts.ts:90 A label the engine quarantined (enabled:false) cannot be signed in again from VS Code, and the failing step stops the setup
+SCENARIO: beethoven.account = work. Work's laptop sign-in expires, and the next `bee switch` (or any rotation pass) quarantines it: enabled becomes false. In VS Code, 'Beethoven: Sign in to Claude on this laptop' does nothing beyond the 'turned off' message. 'Run again' on the grid install step answers 'first finish Claude on this laptop', and the student is stuck until they run `bee account login work` and `bee account enable work` by hand.
+FIX: In extension/src/core/accounts.ts, change chooseAccount so a listed label with enabled:false returns kind 'account' with a flag (e.g. outOfRotation: true) instead of 'invalid'. enabled is only the engine's rotation flag, and bee-use and `bee account login` ignore it. account.choice can then report it as a warn ("out of the engine's rotation; `bee account enable <label>` after signing in"), and stepClaudeLocal checks and signs in under that directory as for any listed account. Separately, in wizard.ts stepClaudeLocal.check, a choice that is still 'invalid' (unknown or unreadable label) should not return 'failed'. It should check the default sign-in, which accountEnvironment already gives as {} and which is what the terminals actually use, and add choice.problem to the detail. Then the setting really "changes nothing" and runWizard does not stop at step 5.
+
+=== 5. [should-fix/code] extension/src/vscode/store.ts:162 The laptop's CLAUDE_CONFIG_DIR and BEE_ACCOUNT also reach terminals in remote windows (Remote-SSH to the grid, WSL)
+SCENARIO: Windows laptop, beethoven.account = work. Open a Remote-SSH window on the grid node (or a WSL window) and run `claude` in its terminal. The process sees CLAUDE_CONFIG_DIR=C:\Users\alice\.beethoven\accounts\work\claude, which is not an absolute path on Linux, so it reports not signed in or uses a folder relative to the cwd. A `bee switch` there takes BEE_ACCOUNT=work as the current account. Not yet measured on a real remote window.
+FIX: In extension/src/vscode/store.ts hydrateEnvironment, add the account variables only in a local window. The local extension host sets vscode.env.remoteName in remote windows, so it is the right test:
+
+    // the chosen account is a directory on this laptop; a Remote-SSH or WSL window's terminals run elsewhere
+    if (!vscode.env.remoteName)
+      for (const [k, v] of Object.entries(accountEnvironment(this.accountChoice()))) {
+        col.replace(k, v);
+        names.push(k);
+      }
+
+Optionally, the account.choice diagnostic and the output line could say "not applied in a remote window". The trade-off: a local terminal opened inside a remote window also loses the account, which is acceptable because the collection has no per-terminal location scope.
+
+=== 6. [minor/code] extension/src/extension.ts:76 Clearing the setting while the license gate refuses hydrate leaves the old account in every terminal, across restarts
+SCENARIO: Licensed, with beethoven.account = work. The trial key expires (or is revoked), so license.allowed('beethoven.hydrate') fails. The student sets beethoven.account to "" and reloads. Terminals still get CLAUDE_CONFIG_DIR=<work's folder> and BEE_ACCOUNT=work, while the account.choice diagnostic says the default is in use.
+FIX: In extension.ts hydrate(), make the refused branch take the account variables out instead of leaving the last persisted set in place. For example:
+  if (!license.allowed('beethoven.hydrate').ok) { const col = context.environmentVariableCollection; col.delete('CLAUDE_CONFIG_DIR'); col.delete('BEE_ACCOUNT'); return; }
+Calling col.clear() there also works and drops the stale GITHUB_TOKEN and HF_TOKEN as well, which matches the comment "tokens go into terminals only for a licensed person". Either way, what the terminals get then matches what accountChoice() and the diagnostics report.
+
+=== 7. [minor/code] extension/src/core/accounts.ts:14 The label pattern accepts a leading hyphen, which the engine forbids, and the fix it then suggests is an invalid bee command
+SCENARIO: beethoven.account = "-work": no pattern error in Settings. The warning says to add it with "bee account add -work", and bee fails with 'the following arguments are required: label'.
+FIX: Use the engine's rule in both places. In extension/src/core/accounts.ts:14, `export const ACCOUNT_LABEL = /^[a-z0-9][a-z0-9-]{0,31}$/;`. In extension/package.json:421, `"pattern": "^([a-z0-9][a-z0-9-]{0,31})?$"`, and say "not starting with a hyphen" in patternErrorMessage and in the plain-words problem text at accounts.ts:80. Add '-work' to the `bad` list in accounts.test.ts:30.
+
+=== 8. [should-fix/rules] extension/LICENSE.txt:106 Agreement 5(a), the setting, README and PRIVACY limit the account to 'the terminals Beethoven opens', but every integrated terminal gets it
+SCENARIO: Set beethoven.account to `second`. Open a new bash terminal with the + button, which Beethoven did not open. `echo $CLAUDE_CONFIG_DIR` prints the `second` sign-in folder, and `claude` there runs as `second`. Section 5(a) says only the terminals Beethoven opens are affected.
+FIX: Make the texts match the code. Version 7 is unshipped (5.0.0 is merged but not built), so the wording can be amended within version 7 without a new TERMS_VERSION. In LICENSE.txt:106-108 and LICENSE-FULL.txt:103-105, replace "which one the Claude Code terminals Beethoven for VS Code opens on your laptop sign in with" with "which one Claude Code signs in with in every integrated terminal of Visual Studio Code on your laptop, including those you open yourself". Make the same change in package.json:423 (and drop "those terminals" in favour of "every integrated terminal"), README.md:60-61, CHANGELOG.md:8 and 53, and PRIVACY.md:16. The alternative keeps the narrow promise and changes the code instead: drop the account loop from hydrateEnvironment (store.ts:159-164) and pass accountEnvironment(...) only as the `env` of the terminals Beethoven creates (ui.ts:49, panel.ts:85), or through a contributed terminal profile.
+
+=== 9. [should-fix/rules] extension/src/vscode/store.ts:161 The terminal environment is set once per hydrate, while the view and diagnostics re-read the list, so they report a state the terminals do not have
+SCENARIO: Set the label `second` before it exists. The warning says to run "bee account add second" and that 'Until then the Claude Code terminals use the usual sign-in'. The student runs `bee account add second`, which signs in. The view now shows 'signed in as …, as second' and account.choice passes with the folder, but new terminals still have no CLAUDE_CONFIG_DIR until a reload. The reverse also happens: the engine turns `second` off, the diagnostics say the terminals use the usual sign-in, and they still get second's folder, persistently across restarts.
+FIX: In extension.ts, next to the onDidChangeConfiguration handler, watch the engine's list and re-hydrate when it changes:
+
+const list = accountsFile();
+const w = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(vscode.Uri.file(path.dirname(list)), path.basename(list)));
+const again = () => void hydrate().then(() => tree.refresh());
+context.subscriptions.push(w, w.onDidCreate(again), w.onDidChange(again), w.onDidDelete(again));
+
+hydrate already calls warnAboutAccount, so the warning follows the list too. If watching a folder outside the workspace turns out unreliable on some platform, fall back to fs.watchFile(list, { interval: 60_000 }, again). As a backstop, account.choice can compare context.environmentVariableCollection.get('CLAUDE_CONFIG_DIR')?.value with accountEnvironment(choice).CLAUDE_CONFIG_DIR, and on a mismatch fail with a repair that calls store.hydrateEnvironment(). That way the diagnostics never report a folder the terminals do not get.
+
+=== 10. [should-fix/rules] extension/src/vscode/mcpRegister.ts:44 The MCP bridge is registered in the default config, so Claude Code under the chosen account has no beethoven tools, yet the check says it is registered
+SCENARIO: Set beethoven.account=`second` and run the setup (MCP auto-register). In a new terminal, `claude` runs with CLAUDE_CONFIG_DIR set to second's folder and `/mcp` lists no `beethoven` server, so 'check the grid status' has no tool. The MCP diagnostics and extraRequirements still pass, because `claude mcp get beethoven` is asked in the default config.
+FIX: 1. Add an `env: Record<string, string> = {}` parameter to `registerMcp` and `isMcpRegistered` in `extension/src/vscode/mcpRegister.ts`, and pass `{ env, timeoutMs }` to each of their `run(claude, ['mcp', …])` calls (lines 43, 44, 47, 48, 69).
+2. Pass `accountEnvironment(store.accountChoice())` at every call site: `extension.ts:275`, `extension.ts:551`, the two Reset `remove` calls at `extension.ts:617` and `:620`, `store.ts:295`–`296`, and `diagNodes.ts:427`–`428` (there, the account choice from the store in `ctx`).
+3. In the `onDidChangeConfiguration` handler for `beethoven.account` (`extension.ts:~92`), check `isMcpRegistered(env)` again and, when `mcp.autoRegister` is on, register again. A newly chosen account's `.claude.json` starts without the server.
+
+=== 11. [should-fix/rules] extension/media/manual.html:832 The bundled manual still says 'One person, one Claude account', against agreement version 7
+SCENARIO: A student who accepted agreement v7 ('you may hold several') opens Beethoven's manual from the command palette and reads 'One person, one Claude account', which contradicts the agreement they just signed.
+FIX: From the repository root, run `python -X utf8 docs/manual/build_manual.py`. It needs pandoc, and Edge for the PDF. It regenerates docs/manual.html and docs/manual.pdf and copies the HTML to extension/media/manual.html, so the "Credentials" bullet and the new "Several accounts of one person" section reach the bundled manual. Check that the two HTML copies come out byte-identical. While there, consider updating the accounts.svg caption in build_manual.py ("One sign-in, the student's own subscription"), which also states a single sign-in. If the manual cannot be built in this session, add it to the commit's list of outputs that wait on a later run, so it is not missed before 5.0.0 is built.
+
+=== 12. [minor/rules] CLAUDE.md:53 Two places that record the terms version still say 6
+SCENARIO: A maintainer following CLAUDE.md or LICENSING.md to bump the terms next time takes 6 as the current version and bumps to 7, which collides with the version 7 shipped in this commit.
+FIX: CLAUDE.md:53: change "(integer; 6 since 5.0.0 dropped the API key)" to "(integer; 7 since 5.0.0 allowed several Claude accounts of one person, 6 when it dropped the API key)". docs/LICENSING.md:147: change "6 since 5.0.0 removed the API key, 5 since the rename" to "7 since 5.0.0 allowed several Claude accounts of one person, 6 when it removed the API key, 5 since the rename".
+
+=== 13. [minor/rules] extension/src/extension.ts:76 Without a valid license, emptying beethoven.account leaves the old CLAUDE_CONFIG_DIR in the persistent collection
+SCENARIO: Set the label `second` while licensed. The trial then ends, and license.onDidChange calls hydrate, which returns early. The student empties beethoven.account. Every terminal, across restarts, still runs Claude Code in second's folder, while the view row, asked with no account env, reports the default sign-in.
+FIX: Let the account variables follow the setting whatever the license state, since they are not tokens. In store.ts, split the account part out of hydrateEnvironment into a method that always deletes both variables first and then adds them back for a valid choice: `applyAccountEnvironment(): string[] { const col = this.context.environmentVariableCollection; col.persistent = true; col.delete('CLAUDE_CONFIG_DIR'); col.delete('BEE_ACCOUNT'); const env = accountEnvironment(this.accountChoice()); for (const [k, v] of Object.entries(env)) col.replace(k, v); return Object.keys(env); }`. hydrateEnvironment keeps calling it after col.clear(). In extension.ts, the unlicensed branch of hydrate becomes `if (!license.allowed('beethoven.hydrate').ok) { store.applyAccountEnvironment(); await warnAboutAccount(context); return; }`. If the variables should only ever exist for a licensed person, the minimal alternative is to call `col.delete('CLAUDE_CONFIG_DIR'); col.delete('BEE_ACCOUNT')` in that same branch.
+
+=== 14. [should-fix/diag-tests] extension/src/core/accounts.ts:67 Engine rows with path null (bee account add --default-location) are dropped, and the test enshrines it
+SCENARIO: Probe run in scratch: accounts.json = {version:1, accounts:[{label:'laptop', path:null, enabled:true, order:0, hibernate_until:null}, {label:'second', path:'/h/.beethoven/accounts/second/claude', ...}]} (exactly what `bee account add laptop --default-location` then `bee account add second` writes). readAccounts -> ['second']; chooseAccount('laptop') -> invalid: "not in your account list (second). ... add the account with \"bee account add laptop\"", a fix the engine refuses ("laptop is already listed"); account.list reports "1: second". `bee-use laptop` would unset CLAUDE_CONFIG_DIR and set BEE_ACCOUNT, the edition does neither.
+FIX: In extension/src/core/accounts.ts:
+1. Type `path` as `string | null` in `Account` and in the `kind: 'account'` choice, where null means Claude Code's default place.
+2. In `readAccounts`, keep a row whose `a.path === null`. Still drop a row whose path is missing or not a string. After the `~` expansion, also drop a string path that is not absolute (`!path.isAbsolute(p)`), to match the engine's "the directory must be absolute".
+3. `accountEnvironment` returns `{ BEE_ACCOUNT: label }` alone when `path` is null. When it is not null, it returns `CLAUDE_CONFIG_DIR` and `BEE_ACCOUNT` as now. For a null path, store.ts's hydrateEnvironment must also delete any CLAUDE_CONFIG_DIR an earlier choice left in the collection, as `bee-use` unsets it.
+4. `ensureAccountDir` returns early when `path` is null.
+5. Change the "account.choice" diagnostics text to say "Claude Code's default place" for a null path.
+
+In accounts.test.ts, replace the `{ label: 'noPath' }` expectation with:
+- a `{ label: 'laptop', path: null }` row that is kept and gives `{ BEE_ACCOUNT: 'laptop' }`;
+- a relative-path row that is dropped.
+Then use absolute paths in LIST.
+
+=== 15. [should-fix/diag-tests] extension/src/core/wizard.ts:551 An unlisted label blocks the wizard's grid steps and 9 grid diagnostic nodes
+SCENARIO: A student's laptop Claude Code is signed in at the default place, and their grid worker runs. They set beethoven.account = "lab" before running `bee account add lab`. Troubleshoot then shows grid.worker, grid.container, node.probe and grid.phone as blocked, so a real grid failure is hidden. Running Setup stops at "Claude on this laptop". Running Sign in to Claude on the grid is refused.
+FIX: Treat an unlisted label as a warning, not a failure.
+- wizard.ts stepClaudeLocal.check: remove the early `return report(..., 'failed', choice.problem)`. Check the sign-in the terminals actually get: accountEnvironment(invalid) is already {}, so it checks the default. Append the problem to the detail, e.g. `${s.detail}. ${choice.problem}`, and keep the status that the default sign-in earns.
+- run(): for an invalid choice, keep returning cur. It is now 'done' when the default sign-in is done.
+- diagNodes.ts account.choice: return `ok(c.problem, true)` (a warning) instead of `fail(c.problem)` for kind 'invalid'. The warning is still shown on every run, and it no longer blocks account.claude or the grid nodes below it.
+
+=== 16. [should-fix/diag-tests] extension/src/vscode/diagNodes.ts:282 account.choice reports what the setting means, not what the terminals actually get
+SCENARIO: (1) beethoven.account = "second" and the list lacks it, so the warning appears and the collection gets no CLAUDE_CONFIG_DIR. The student follows the warning's own fix, `bee account add second`. account.choice now says ok "as second: ~/.beethoven/accounts/second/claude" and the tree says ", as second", but a new terminal still runs Claude Code on ~/.claude until VS Code reloads. (2) Reverse: the account is turned off with bee. The diagnostic says the terminals use the usual sign-in, while the persisted collection still sets the turned-off account's directory. (3) VS Code was started from a shell after `bee-use second` and the setting is empty. The diagnostic says "the default", while terminal
+FIX: 1. In `store.ts` `hydrateEnvironment`, record the account environment it actually applied, for example `this.appliedAccount = accountEnvironment(choice)`, or read it back later with `context.environmentVariableCollection.get('CLAUDE_CONFIG_DIR')?.value`.
+2. In the `account.choice` check (diagNodes.ts:281-286), compare that applied value with `chooseAccount`'s path. On a mismatch, return a warn or fail naming both directories, with a fix that re-hydrates. Use the same comparison in `tree.ts` `claudeOnLaptop`.
+3. In `extension.ts`, re-hydrate when the list changes: watch the file with `vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(vscode.Uri.file(path.dirname(accountsFile())), 'accounts.json'))` and call `hydrate()` then `tree.refresh()` on create, change or delete.
+4. Have `commandStepOnly` (the claudeLocal sign-in path) call `store.hydrateEnvironment()` the way `commandTokenStep` does.
+
+=== 17. [should-fix/diag-tests] extension/src/extension.ts:93 A changed setting does not reach the terminals without a licence, and nothing tests the update
+SCENARIO: A licensed student sets beethoven.account = "second", and the collection gets CLAUDE_CONFIG_DIR=<second>. The trial key later expires. The student clears the setting, and hydrate returns early, so every new integrated terminal (after restarts too) still runs Claude Code under "second". Meanwhile account.choice and the tree say "the default: Claude Code's own sign-in". A vscode-test that updated the setting and read the collection would catch it.
+FIX: In extension.ts, make the account part of the environment independent of the license gate. It carries no token, only the student's own directory and label, so it can follow the setting either way.
+
+On the gate-closed branch of hydrate, before returning, bring the two variables in line with the setting:
+
+  const col = context.environmentVariableCollection;
+  col.delete('CLAUDE_CONFIG_DIR');
+  col.delete('BEE_ACCOUNT');
+  for (const [k, v] of Object.entries(accountEnvironment(store.accountChoice()))) col.replace(k, v);
+  await warnAboutAccount(context);
+  return;
+
+If the maintainer would rather an unlicensed Beethoven set nothing at all, call col.clear() there instead. That also stops the tokens from lingering, as the "tokens go into terminals only for a licensed person" comment intends.
+
+Add a vscode-test that sets beethoven.account to a listed label (with a temporary HOME holding accounts.json), reads CLAUDE_CONFIG_DIR through _internal/context.environmentVariableCollection, clears the setting and asserts the variable is gone. The test should cover both the licensed and the unlicensed state, and also check that warnAboutAccount warns only once per label.
+
+=== 18. [minor/diag-tests] extension/src/core/accounts.test.ts:99 The "never rewritten" assertion is a tautology: it writes the file back, then compares
+SCENARIO: Mutation run in scratch: add `fs.writeFileSync(file, 'CLOBBERED')` right after the read in readAccounts. All 8 accounts tests still pass ("# pass 8, # fail 0"). The fix is to compare the file's bytes (or mtime) before and after each readAccounts/chooseAccount call, without rewriting it first.
+FIX: In accounts.test.ts, check the file right after each read instead of after restoring it. After line 91, add `assert.equal(fs.readFileSync(accountsFile(h), 'utf8'), before, 'the file is the engine\'s; reading changed nothing');`. Keep the `{ version: 1 }` text in a variable, write it at line 96, and after line 98 add `assert.equal(fs.readFileSync(accountsFile(h), 'utf8'), noList);`. Delete lines 99 and 100, the write-back and the assertion that cannot fail. Optionally do the same byte comparison in the 'a listed, enabled label' test, after `readAccounts` and `chooseAccount` against LIST, so a valid list is covered too.
+
+=== 19. [minor/diag-tests] extension/src/vscode/diagnosticsUi.ts:163 account.choice's fix button re-checks before the student can change anything; the red status bar then stays up to an hour
+SCENARIO: A root cause is account.choice. The student clicks "Open the setting": the Settings editor opens and a full check with the grid node probe runs and fails again at once. The student then clears the setting. The panel and the status bar stay red for up to 60 minutes.
+FIX: Re-check when the setting changes, not when the editor opens.
+
+1. In `Troubleshooter.fix()`, skip the immediate re-run for a fix that only opens the Settings editor, for example: `if (fc.command === 'workbench.action.openSettings') return;` after the `executeCommand`. The webview text is then wrong for that button, so also change it there to something like "Change the setting; Beethoven checks again when it changes".
+2. Add a public method `Troubleshooter.recheckAfterSettingChange()`. It returns at once unless `this.last` is a failing report whose root causes include `account.choice` or `account.list`. Otherwise it runs `this.run({ repair: false, quick: true, quiet: true })`, which repaints the status bar and posts 'done' to an open panel; to post to the panel, keep a reference to it in a field. `run()`'s `running` guard already drops overlapping calls.
+3. In extension.ts, change the new configuration handler to `void hydrate().then(() => { tree.refresh(); void troubleshooter?.recheckAfterSettingChange(); })`.
+
+With this, a corrected or cleared `beethoven.account` turns the status bar back within one quick check, and opening the editor no longer starts a grid `--node` probe.
+
+=== 20. [minor/diag-tests] extension/src/vscode/diagNodes.ts:271 A missing list with a label set gives two root causes for one problem
+SCENARIO: No ~/.beethoven/engine/accounts.json, and beethoven.account = "second". The report says "2 root cause(s)", and the status bar says "2 problem(s)", with two near-identical texts (account.list: "no account list on this computer ... names second"; account.choice: "... this computer has no account list yet ...").
+FIX: In extension/src/vscode/diagNodes.ts, make account.choice wait on account.list: `dependsOn: ['laptop.os', 'account.list']`. A failed list then marks account.choice and account.claude "blocked" with root cause account.list, so the report shows one root cause.
+
+account.list must also stop returning skip. Otherwise the most common case (no list, setting empty) would cascade "skipped" into account.choice and then into account.claude, and account.claude would never be checked. Change the end of account.list's check to:
+
+```ts
+if (list.reason === 'unreadable') return ctx.env.settings.account ? fail(`${list.file} could not be read: ${list.detail}`) : ok(`${list.file} could not be read (${list.detail}); not used while the setting "account" is empty`, true);
+return ctx.env.settings.account ? fail(`no account list on this computer (${list.file}), and the setting "account" names "${ctx.env.settings.account}"`) : ok('no account list on this computer; none is needed while the setting "account" is empty');
+```
+
+With the setting empty, an unreadable list becomes a warning and blocks nothing. Claude Code then uses its usual sign-in and account.claude still gets checked.
+
+=== 21. [minor/diag-tests] extension/src/core/accounts.ts:14 The label rule is not the engine's rule: a leading hyphen is accepted, and the suggested fix cannot run
+SCENARIO: beethoven.account = "-lab" passes VS Code's validation. chooseAccount suggests running `bee account add -lab` in a terminal. argparse reads that as an option, so the command fails, and the engine would refuse the label anyway.
+FIX: extension/src/core/accounts.ts:14: `export const ACCOUNT_LABEL = /^[a-z0-9][a-z0-9-]{0,31}$/;`, and line 80's text becomes "(lower-case letters, digits and hyphens, not starting with a hyphen, up to 32)". extension/package.json:421: `"pattern": "^([a-z0-9][a-z0-9-]{0,31})?$"`, with patternErrorMessage saying the label does not start with a hyphen. extension/src/core/accounts.test.ts:30: add '-lab' to the list of bad labels.
+
+=== 22. [minor/diag-tests] docs/diagnostics_graph.json:1 The committed graph and DIAGNOSTICS.md are stale; test:vscode overwrites them and would not fail
+SCENARIO: A reader of docs/DIAGNOSTICS.md, or tools/diag_doc.py run before the next VS Code suite run, sees no account.list or account.choice nodes, and an account.claude that does not depend on the account setting.
+FIX: Regenerate docs/diagnostics_graph.json from this commit's buildGraph(). Either run `npm run test:vscode` on a machine with a display, or use the same buildGraph() mapping and REQUIRED_BY_FEATURE that extension.test.ts:117-122 writes; a scratch esbuild bundle with vscode and ssh2 stubbed yields the 49 nodes. Then run `python tools/diag_doc.py` and commit both files with the change. Optionally, have the test compare the generated graph against the committed copy so the next drift fails.
