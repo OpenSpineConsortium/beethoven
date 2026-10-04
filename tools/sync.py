@@ -132,7 +132,11 @@ def main():
 
     covered = {rel for _, rel in pairs}
     gone = []
-    for folder in FOLDERS + ["memory"]:
+    # A folder the source does not have at all says nothing about its files; only one it has does.
+    present = [f for f in FOLDERS if os.path.isdir(os.path.join(a.source, f))]
+    if a.memory and os.path.isdir(a.memory):
+        present.append("memory")
+    for folder in present:
         for d, _, files in os.walk(os.path.join(ROOT, folder)):
             for f in files:
                 rel = os.path.relpath(os.path.join(d, f), ROOT)
