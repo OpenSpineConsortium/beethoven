@@ -38,6 +38,7 @@ Two halves share one grid (Wayne State's, Slurm, CentOS 7 login node), one conta
 - **Wayne State as a site module (greg, 23:46:24Z):** separate the protocol from Wayne State's grid "while preserving the underlying functionality and put all the Wayne state specificities into its own 'theme' or 'module'" so another university is a new module; research first, then Linear issues, then the changes. Its own thread, "Wayne State as a site module", does it; issues it files in other threads' repositories go through the coordinator.
 - **Code-quality standards as independent gates (greg, 23:26Z):** the standards in his new Drive file become groups that pass or fail independently and block pull requests, in beethoven-qa or in repositories of their own, "whatever is most logical"; coaching prompts later. Its own thread, "Independent code-quality gates", works in beethoven-qa.
 - **All-queue launch (greg, 23:26Z):** "workers on all possible queues should be launched and the first to get allocated should respond to the client to minimize wait time". The desktop thread designs it in hpcworker; the queue list becomes part of the Wayne State module.
+- **How to talk to greg (2026-10-05 00:28Z):** "The only time I want you to interact with me is for decisions where you have a recommended approach and alternatives." Progress and results stay in each thread's status checklist; what he must do by hand goes to the coordinator's to-do notice; a decision goes to him as one message: the question, the recommendation and why, each alternative on its own line.
 
 **Accounts (D4, greg 02:30Z and 03:23Z):**
 - Several of greg's own accounts run at once. Each has one sign-in directory, `$HOME/.beethoven/accounts/<label>/claude`, selected by `CLAUDE_CONFIG_DIR`; `$HOME/.beethoven/claude` is the account `main`.
@@ -125,7 +126,7 @@ Two halves share one grid (Wayne State's, Slurm, CentOS 7 login node), one conta
 2. Copy desktop's `automerge.yml`, `rulesets.yml` and `rulesets/main.json` into hpcworker and beethoven-extension.
 3. The Apple Developer ID, Azure Artifact Signing and the Chrome Web Store item id.
 4. VS Code: 5.0.0 is not built, signed or published until the grid scripts 9 fix lands with the account-setting PR.
-5. The base decisions D1 to D8 (`base/DESIGN.md` section 12; the desktop thread asked at 23:35Z whether he takes all its recommendations).
+5. The base decision D2 (`base/DESIGN.md` section 12): he accepted D1 and D3 to D8 at 00:28Z and not D2; the desktop thread puts D2 to him again.
 6. The hub (OpenSpineConsortium/beethoven): merge its next pull request (the merge-policy text and the seams page) when it opens; before the next site build point `BEETHOVEN_REPO` at a beethoven-extension checkout (the site's `build_site.py` looked for the old tree), and merge hpcworker PR #4 before running `tools/push_org.sh` again.
 7. The grid steps: deploy framework 17, `tools/grid_ci.sh`, the engine image build (runbook G0, BEE-103), bee L1-L5 and G1-G4, probes M13 and BEE-101.
 8. The 15 desktop laptop checks.
