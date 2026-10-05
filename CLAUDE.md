@@ -47,22 +47,25 @@ Anthropic's marks, used here to say what it runs; "Open OnDemand" is the mark of
 | `base/`, `staging/desktop-thread/` | the desktop thread | Its design and its saved work |
 | `memory/` | the coordinator | A copy of the project memory; `MEMORY.md` is the index (16 KB limit) |
 | `linear/` | Linear | `ISSUES.md` and `issues.json` are a snapshot; change issues in Linear |
-| everything else | this repository | `README.md`, `REPOS.md`, `SEAMS.md`, `HISTORY.md`, `tools/` |
+| `projects/<id>/` | that Claude project | Its settings, records and `sync.json` |
+| everything else | this repository | `README.md`, `REPOS.md`, `SEAMS.md`, `IMPORT.md`, `LANES.md`, `HISTORY.md`, `tools/` |
 
 ## Keeping it up to date
 
-Inside the Claude project: `python3 tools/sync.py --push --trailer 'Co-Authored-By: ...'` from a
-clean checkout of the hub's working branch. It scans every file it would copy and copies nothing
-when one fails; it never deletes; it never overwrites a file whose last commit here lacks the
-`Hub-Sync:` trailer (a change made here by hand or from another account) and reports it as a
-conflict, which a person reconciles by hand. Never edit a file in a synced folder here while the
-project is still writing it, unless the project is gone or the change is meant to win.
+Inside a Claude project: `python3 tools/hub.py sync --push --trailer 'Co-Authored-By: ...'` from a
+clean checkout of `main` (a new account's project first runs `hub.py init --project-id <its id>`,
+[IMPORT.md](IMPORT.md)). It is a three-way sync per file between the project files, the project
+memory and this hub, against the record `projects/<id>/sync.json`: it scans everything it would
+write, either way, and writes nothing when one file fails; it never deletes; a file changed on both
+sides since the last sync is a CONFLICT left alone on both, for a person to reconcile. Specification
+and rules: `tools/HUB_SPEC.md`. Until its memory-index rule is built (that file's last section),
+check that no `MEMORY.md` was written into a memory folder; the coordinator owns the index.
 
 Outside the project there is no `/mnt/project-files`: edit the files here and commit them.
 
 ## Merging
 
-This repository has no CI and no auto-merge. A sync of the project files (`tools/sync.py`, commits
+This repository has no CI and no auto-merge. A sync of the project files (`tools/hub.py`, commits
 carrying the `Hub-Sync:` trailer) is pushed straight to `main`, with no pull request (greg's card
 of 2026-10-05 00:13Z). Any other change, to `README.md`, `tools/`, `REPOS.md`, `SEAMS.md` or
 `HISTORY.md`, goes through a pull request opened ready for review, never as a draft, and is his

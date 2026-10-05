@@ -144,7 +144,7 @@ and B, two memory dirs (each with a `.memory-sync` dotfile that must never be co
    `--prefer hub` resolves it.
 6. Both append rows to `ledger/LEDGER.md`: MERGED, both sides equal, no row lost or doubled.
 7. A file deleted on one side: GONE reported, nothing deleted anywhere, the file still on the other side.
-8. A planted secret (an `-----BEGIN OPENSSH PRIVATE KEY-----` block, or whatever `scan.FAIL` refuses)
+8. A planted secret (an OpenSSH private-key block, built by the test so no file holds one, or whatever `scan.FAIL` refuses)
    on either side: exit 2, nothing written on either side, no commit.
 9. `uploads/x.png` in a project: never reaches the hub; `projects/<id>/sync.json` never reaches a project.
 10. A CRLF file round-trips; a second `status` reports nothing to do.
