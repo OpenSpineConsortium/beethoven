@@ -4,14 +4,15 @@ Linear is where the project's work is tracked; this folder only points at it and
 for a session that has not signed in to Linear yet.
 
 - Workspace **ashl3y** (`https://linear.app/ashl3y`), one team, **Beethoven**, issue key `BEE`.
-  BEE-1 to BEE-97 are the launcher's backlog from before the engine; the engine and the newer
-  directions start at BEE-98 (`plan/LINEAR_BREAKDOWN.md` is the breakdown with acceptance
-  criteria; `memory/linear-engine-structure.md` the structure).
+  BEE-1 to BEE-97 are the launcher's backlog from before the engine (BEE-5 to BEE-97 archived
+  on 2026-10-03); the engine and the newer directions start at BEE-98. `plan/LINEAR_BREAKDOWN.md`
+  is the breakdown with acceptance criteria, `memory/linear-engine-structure.md` the structure.
 - Connect it: in a Claude Code session in this clone, `.mcp.json` names Linear's own MCP server
   (`https://mcp.linear.app/mcp`); the first Linear call opens Linear's sign-in in the browser. In
   the claude.ai app, connect Linear under Settings, Connectors. No Linear key is made or stored.
-- [ISSUES.md](ISSUES.md) is a snapshot of every open and closed issue, by project, with its status
-  and labels (titles only, no descriptions or comments). `issues.json` holds the same rows. Linear
+- [ISSUES.md](ISSUES.md) is a snapshot of every issue that is not archived, by project, with its
+  status and labels (titles only, no descriptions or comments); `issues.json` holds the same rows.
+  The hand-off thread refreshes it with the copy from the project when Linear is reachable. Linear
   is the record: when the two differ, Linear is right and the snapshot is old.
 
 ## Projects of the team
