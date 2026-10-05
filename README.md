@@ -56,7 +56,8 @@ to `v12.0.0` and their releases stay in its history.
 ## How it stays up to date
 
 Inside the Claude project, `python3 tools/sync.py --push` copies the project files and the memory
-here and pushes them. It runs after every refresh of the hand-off and on a schedule. Before it
+here and pushes them straight to `main` (greg's choice, 2026-10-05). It runs after every refresh of
+the hand-off and twice a day on a schedule. Before it
 copies anything it runs `tools/scan.py` over every file it would copy and copies nothing if one
 fails: no secret, credential, patient data or unexamined binary leaves the project this way.
 `.hub-exclude` names what never comes, each with its reason (people's attachments to project

@@ -62,8 +62,11 @@ Outside the project there is no `/mnt/project-files`: edit the files here and co
 
 ## Merging
 
-Pull requests open ready for review, never as drafts. This repository has no CI and no auto-merge;
-until greg decides otherwise, a pull request to `main` is his merge.
+This repository has no CI and no auto-merge. A sync of the project files (`tools/sync.py`, commits
+carrying the `Hub-Sync:` trailer) is pushed straight to `main`, with no pull request (greg's card
+of 2026-10-05 00:13Z). Any other change, to `README.md`, `tools/`, `REPOS.md`, `SEAMS.md` or
+`HISTORY.md`, goes through a pull request opened ready for review, never as a draft, and is his
+merge until he says otherwise.
 
 ## How to be useful here
 
