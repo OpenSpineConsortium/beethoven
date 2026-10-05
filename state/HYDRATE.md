@@ -2,6 +2,8 @@
 
 # Continue the Beethoven project from the hand-off
 
+**Start with `PUSH_NOTES.md` in this folder:** where every thread left its work when greg asked for an immediate push (2026-10-05 01:20Z), before he moved to another Claude account.
+
 Written 2026-10-04 by the project thread "Write the hand-off state file", on greg's ask of 18:34Z
 ("write all state to a file I can continue in another session using the memory skills") and
 18:34:48Z ("I also want repo specific hand offs"). It is the hydration prompt of the "Claude CLI
