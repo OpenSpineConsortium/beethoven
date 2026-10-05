@@ -1,0 +1,6 @@
+# Paths under the project files that never come into this repository, one per line, each with its
+# reason. tools/sync.py reads this; a pattern matches a path relative to /mnt/project-files.
+
+uploads/                          # people's attachments to project messages: their own files, never published
+staging/beethoven-qa.bundle       # superseded: the three-repo thread's snapshot from before beethoven-qa existed; its work is on GitHub (v1.0.0)
+staging/beethoven-agents.bundle   # superseded the same way; beethoven-agents main carries it, re-vendored from beethoven-qa v1.0.0

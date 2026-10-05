@@ -1,0 +1,9 @@
+{
+  "_comment": "MCP servers a Claude Code session in this repository may use. Linear's own server signs in by OAuth in the browser on first use; nothing here is a secret and no token is ever put in this file.",
+  "mcpServers": {
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp"
+    }
+  }
+}

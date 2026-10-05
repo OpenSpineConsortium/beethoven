@@ -1,5 +1,0 @@
-#!/bin/bash
-# mock squeue: the job table as Slurm prints it. Without -o, the 10.0.0 stand-in's own lines
-# ("id|STATE|node"); with -o, the fields asked for (%i %T %t %r %S %N %j %P %u %M), a pending job
-# reporting its reason and expected start (lib/jobs.mjs squeueLines)
-exec node "$MOCK_LIB/jobs.mjs" squeue "$@"

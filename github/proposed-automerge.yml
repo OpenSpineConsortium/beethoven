@@ -1,0 +1,28 @@
+name: automerge
+# Proposed by the skeleton thread, 2026-10-04 02:16Z; not yet in any repository (the cloud session's
+# auto mode refused to write it; add it as .github/workflows/automerge.yml in each PR-driven repo).
+# greg's rule (project thread, 02:11Z): no human step per pull request; whether a change lands is
+# decided by the tests. Every pull request opened ready for review gets GitHub's own auto-merge
+# armed the moment it opens; GitHub merges it when the checks the main ruleset requires are green.
+# A draft is left alone. This is GitHub's documented pattern (its Dependabot example): the
+# repository token with pull-requests and contents write, `gh pr merge --auto`. Nothing here
+# merges by itself; the ruleset decides, and a PR that cannot merge yet waits with auto-merge armed.
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  arm:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: arm auto-merge on this pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --merge "$PR_URL"
