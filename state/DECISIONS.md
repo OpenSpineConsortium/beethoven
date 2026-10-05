@@ -18,7 +18,7 @@ section 6, the three-repo thread's) and this file.
 | 2026-09-30 | One approved account, one installation (`install_id`); one store, one private Chrome Web Store listing whose testers are greg's Google Group |
 | 2026-10-02 | The extension may request `nativeMessaging` for its own bridge host only |
 
-## Decided on 2026-10-03 and 2026-10-04
+## Decided on 2026-10-03 to 2026-10-05
 
 | UTC | Decision or step | Where it is recorded |
 | --- | --- | --- |
@@ -73,6 +73,7 @@ section 6, the three-repo thread's) and this file.
 | 21:48-21:52Z | Hand steps: merged beethoven-vscode Dependabot #8 (mocha 12.0.3, which replaced #2, closed unmerged) and #9 (@modelcontextprotocol/sdk 1.31.0), and hpcworker PR #3 (the queue report, with `docs/V12_CONTRACT.md` made the extension 15.0.0 branch's text) | GitHub, read 00:05Z |
 | 23:26:09Z | In the desktop thread, four asks: (1) "workers on all possible queues should be launched and the first to get allocated should respond to the client to minimize wait time" (desktop thread, hpcworker); (2) the code-quality standards of his new Drive file as independent groups that "some can pass, and some can fail", each a pull-request blocker, in beethoven-qa or repositories of their own, "whatever arrangement is necessary to set that up. please do it" (thread "Independent code-quality gates"); (3) his Drive doc on native messaging for the direct pathway, "which you can incorporate" (desktop thread, the extension's docs); (4) "the original just Beethoven repo I don't believe is being used anymore. You can wipe it and replace it with whatever you need to separate the existing repos ... all the project files currently on the cloud I would like them to be pushed to get hub and it updated so that I can pick this up from another Claude account just by cloning one individual repo and maintain that tight integration with linear" (this thread: the hub, PR #1) | desktop thread; coordinator relays 23:31Z and 23:43Z |
 | 23:46:24Z | "separate this protocol as much as possible from the specificity of Wayne state's super computer while preserving the underlying functionality and put all the Wayne state specificities into its own 'theme' or 'module' so in the future I can expand onto other universities simply by writing a new module ... Do /deep-research ... add all the issues ... into linear issues and then start on them" | desktop thread; its own thread "Wayne State as a site module" from 23:48Z |
+| 10-05 00:13Z | Card in the hand-off thread, "Push to main": once PR #1 is merged, each sync of the project files into the hub is pushed straight to its `main`, with no pull request; until then syncs update PR #1 | this thread's card |
 
 ## Questions greg asked, and the answers on record
 
@@ -106,7 +107,6 @@ section 6, the three-repo thread's) and this file.
 | Roadmap decisions 2, 4, 5, 6 | BUILD_PLAN section 15.6 proposals | Nothing urgent |
 | PRIVACY.md debug log | How the in-memory debug log is described before any store upload | The next store upload |
 | Staging bundles | The two top-level `/mnt/project-files/staging/*.bundle` (agents and qa, 07:32Z) are superseded; removing them is his call, and the hub leaves them out (`.hub-exclude`). `staging/desktop-thread/` is the desktop thread's save of 20:27Z; its Mac release branches are now on the extension branch 9aa1171 and its hpcworker patches landed in PR #3 | Nothing |
-| The hub's merges | How hub updates reach `main` after PR #1: pushed straight to `main`, a pull request each time for his merge, or auto-merge after he allows it there | Keeping the hub current without a merge per refresh |
 
 ## Waiting on greg, most unblocking first
 

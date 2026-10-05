@@ -15,7 +15,7 @@ Be the one repository greg clones to continue the project from another Claude ac
 - Folders copied from the project under the same names: `state/`, `plan/`, `ledger/`, `base/`, `github/`, `promo/`, `staging/`; the project memory as `memory/`. `linear/` holds a snapshot of the team's issues and `linear/README.md`; `.mcp.json` names Linear's own server (OAuth in the browser; no token).
 - `tools/sync.py` does the copy: never deletes, never overwrites a file whose last commit lacks the `Hub-Sync:` trailer (a hand edit, say from another account; reported as a conflict, exit 3), and copies nothing when `tools/scan.py` fails on any file it would copy. The scan refuses secret shapes, credential-named files, files over 5 MB and unexamined binaries, and opens git bundles (borrowing prerequisite objects from sibling checkouts, `HUB_BUNDLE_BASES`). Tested 2026-10-04 with a planted key in a file and in a bundle commit, a hand edit and a partial source.
 - Never copied (`.hub-exclude`): `uploads/` (people's attachments; the one there on 2026-10-04 is a screenshot with greg's personal browser details) and the two superseded staging bundles of the three-repo thread.
-- No CI and no auto-merge here; how later syncs reach `main` is greg's open decision (`DECISIONS.md`, "The hub's merges"). Until then the hand-off thread pushes each sync to `claude/handoff-state-file-m0rg4r`, which updates PR #1 while it is open.
+- No CI and no auto-merge here. greg's card of 2026-10-05 00:13Z ("Push to main"): once PR #1 is merged, each sync is pushed straight to `main`, with no pull request; until then the hand-off thread pushes each sync to `claude/handoff-state-file-m0rg4r`, which updates PR #1. The card covered syncs only: a change to the hub's own files (`README.md`, `tools/`, `REPOS.md`, `SEAMS.md`) still goes through a pull request until he says otherwise.
 
 ## 3. Files Modified & State
 
@@ -35,7 +35,6 @@ Be the one repository greg clones to continue the project from another Claude ac
 ## 5. Active Blockers & Errors
 
 - PR #1 waits on greg's merge; until it merges, a clone of `main` gives the old tree.
-- How later syncs land on `main` is his decision.
 - The public site's `build_site.py` found the terms texts in a sibling checkout named `beethoven` (desktop thread's finding): set `BEETHOVEN_REPO` to a beethoven-extension checkout before the next site build. hpcworker's `tools/push_org.sh` pushes `main:main --tags` here; the desktop thread is retargeting it.
 - The repository description on GitHub still describes the browser extension (not changed).
 - Who besides greg can see the private repository through the organisation is not readable from a session (not yet measured).
