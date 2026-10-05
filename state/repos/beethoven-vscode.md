@@ -1,8 +1,10 @@
 # CLAUDE STATE SERIALIZATION
 
-**Timestamp:** 2026-10-04T21:25Z **Phase:** Implementation
+**Timestamp:** 2026-10-05T00:15Z **Phase:** Implementation
 
 Repository hand-off: `OpenSpineConsortium/beethoven-vscode` (private), Beethoven for VS Code (Ashley for VS Code up to 3.0.0; Marketplace item `openspineconsortium.beethoven`). Project-wide state, rules and greg's open steps: `/mnt/project-files/state/claude_context.md`; how to use this file: `/mnt/project-files/state/HYDRATE.md`. Checked against GitHub at 21:17Z (main cc76efd, PR #2 open, the pushed branch `claude/project-thread-fx3wkp` still aa44696), by building main in a clean copy at 21:00-21:13Z, and by an independent checker of the grid scripts at 21:18Z; whatever says "not yet measured" or "unverified" was not checked.
+
+**Update 2026-10-05T00:15Z** (read before the sections below, which describe 21:25Z; checked with `gh api` at 00:08Z): Dependabot #8 (mocha 12.0.3) and #9 (MCP SDK 1.31.0) merged at 21:48Z; #2 is closed; `main` is fa93c84. The branch `claude/project-thread-fx3wkp` is c065f25 (21:33Z, the account setting's second review), three ahead of `main` and four behind; its pull request is not opened yet. 5.0.0 stays on hold, and the five grid commands stay unrun, until grid scripts 9 merges with it.
 
 ## 1. Primary Objective
 

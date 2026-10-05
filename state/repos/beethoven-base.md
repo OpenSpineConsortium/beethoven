@@ -1,8 +1,10 @@
 # CLAUDE STATE SERIALIZATION
 
-**Timestamp:** 2026-10-04T21:25Z **Phase:** Planning
+**Timestamp:** 2026-10-05T00:15Z **Phase:** Planning
 
 Repository hand-off: `OpenSpineConsortium/beethoven-base` (private), the code the three client editions share. Created by greg at 20:25Z. This session cannot read the repository, so what is said about its contents comes from the desktop thread (coordinator relays 20:29Z and 20:59Z) and from `/mnt/project-files/staging/desktop-thread/beethoven-base-design-and-critiques.json`, read by an independent checker at 21:18Z. Project-wide state, rules and greg's open steps: `/mnt/project-files/state/claude_context.md`; how to use this file: `/mnt/project-files/state/HYDRATE.md`.
+
+**Update 2026-10-05T00:15Z** (read before the sections below, which describe 21:25Z): the desktop thread wrote the whole design to `/mnt/project-files/base/DESIGN.md` (42 KB, 23:34Z; in a clone of the hub, `base/DESIGN.md`) and at 23:35Z asked greg for its eight decisions, base D1 to D8 in its section 12 (not BUILD_PLAN's D6 or D8); a plain yes takes every recommendation (`DECISIONS.md`). D9 (`@types/vscode` pinned back to 1.100.0) is settled. This session still cannot read the repository itself.
 
 ## 1. Primary Objective
 

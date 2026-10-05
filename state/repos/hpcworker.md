@@ -1,8 +1,10 @@
 # CLAUDE STATE SERIALIZATION
 
-**Timestamp:** 2026-10-04T21:25Z **Phase:** Implementation
+**Timestamp:** 2026-10-05T00:15Z **Phase:** Implementation
 
 Repository hand-off: `OpenSpineConsortium/hpcworker` (private), the server half of the Beethoven launcher. Project-wide state, rules and greg's open steps: `/mnt/project-files/state/claude_context.md`; how to use this file: `/mnt/project-files/state/HYDRATE.md`. Checked against GitHub (`gh api` REST, `git fetch`) at 20:32Z, against the desktop thread's staging folder at 20:33Z, and earlier by an independent checker; whatever says "not yet measured" or "unverified" was not checked.
+
+**Update 2026-10-05T00:15Z** (read before the sections below, which describe 21:25Z; checked with `gh api` at 00:08Z): PR #3 (queue report) merged at 21:52Z; `main` is 5492d4d and the branch `claude/project-thread-fx3wkp` (86caaa2) is behind it by one and ahead by nothing. `docs/V12_CONTRACT.md` on `main` matches the extension's copy in the 15.0.0 branch. `tools/push_org.sh` still pushes `main:main --tags` to `OpenSpineConsortium/beethoven`, which is now the project hub: do not run it until the desktop thread's retarget lands (`repos/beethoven.md`). The Wayne State site-module thread (greg 23:46Z) builds on this repository's profile; its changes reach the desktop thread's branch through the coordinator.
 
 ## 1. Primary Objective
 

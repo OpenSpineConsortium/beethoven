@@ -1,4 +1,4 @@
-**Describes:** 2026-10-04 21:25Z (how to read the hand-off; the state itself is in the files it names)
+**Describes:** 2026-10-05 00:15Z (how to read the hand-off; the state itself is in the files it names)
 
 # Continue the Beethoven project from the hand-off
 
@@ -17,7 +17,7 @@ you. Do this, in order.
 | `/mnt/project-files/state/claude_context.md` | the project's six-section hand-off: goal, hard rules, every repository and thread in one view, what is done, what blocks, what to do first |
 | `/mnt/project-files/state/DECISIONS.md` | every decision greg made, with its UTC time and where it is recorded, and the decisions still open |
 | `/mnt/project-files/state/THREADS.md` | every thread: what it owns, where it stands, work on branches with no PR and in `staging/desktop-thread/`, how threads are metered |
-| `/mnt/project-files/state/repos/<repository>.md` | one six-section hand-off per repository (ten: beethoven-base, hpcworker, beethoven-extension, beethoven-research, beethoven-qa, beethoven-agents, beethoven-desktop, beethoven-vscode, spinesurg-ct-nnunet, u251-xenograft-rat-RNASeq-study) |
+| `/mnt/project-files/state/repos/<repository>.md` | one six-section hand-off per repository (eleven: beethoven, the hub; beethoven-base, hpcworker, beethoven-extension, beethoven-research, beethoven-qa, beethoven-agents, beethoven-desktop, beethoven-vscode, spinesurg-ct-nnunet, u251-xenograft-rat-RNASeq-study) |
 | `/tmp/claude/memory/team/silo/MEMORY.md` and its fact files | the project's shared memory (the "memory skills"): read with the memory tools or the file tools |
 
 Every file carries the UTC time it describes at its top: the first line of THREADS.md,
@@ -25,8 +25,12 @@ DECISIONS.md and this file, and the **Timestamp:** line under the heading of `cl
 and each repository file. It is a record of that moment,
 not a promise to stay current: where it and the world disagree, the world wins and you say so.
 
-Outside the project (Claude Code on a laptop, a grid job): `/mnt/project-files` does not exist
-there. Download the `state/` folder from the project's files, then, in the repository you work
+Outside the project (another Claude account, Claude Code on a laptop, a grid job):
+`/mnt/project-files` does not exist there. Clone the project hub,
+`git clone https://github.com/OpenSpineConsortium/beethoven` (private; greg's 23:26Z ask): it
+carries this folder as `state/`, the plan, the ledger, the base design and the staging folder
+under the same folder names, the project memory as `memory/`, and a Linear snapshot, kept current
+from the project by `tools/sync.py`. Read its README. Then, in the repository you work
 in, `bee handoff import state/repos/<repository>.md` puts that repository's hand-off where the
 `/hydrate` command and `bee continue` read it (`.claude/state/claude_context.md`, ignored by git;
 `bee` replaces any secret-shaped string with `[redacted]` and checks the six sections). The

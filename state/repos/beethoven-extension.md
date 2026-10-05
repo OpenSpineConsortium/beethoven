@@ -1,8 +1,10 @@
 # CLAUDE STATE SERIALIZATION
 
-**Timestamp:** 2026-10-04T21:25Z **Phase:** Implementation
+**Timestamp:** 2026-10-05T00:15Z **Phase:** Implementation
 
 Repository hand-off: `OpenSpineConsortium/beethoven-extension` (private), the client half of the Beethoven launcher. Project-wide state, rules and greg's open steps: `/mnt/project-files/state/claude_context.md`; how to use this file: `/mnt/project-files/state/HYDRATE.md`. Checked against GitHub at 20:32Z (main a7db369 and the pushed branch `claude/project-thread-fx3wkp` at d6db850), against the desktop thread's staging folder at 20:33Z, and earlier by an independent checker; whatever says "not yet measured" or "unverified" was not checked.
+
+**Update 2026-10-05T00:15Z** (read before the sections below, which describe 21:25Z; checked with `gh api` at 00:08Z): `main` is still a7db369; the branch `claude/project-thread-fx3wkp` is 9aa1171 (21:23Z, the signed-install merge with the Mac branches), 21 ahead of `main` and behind by nothing; the 15.0.0 pull request is not opened yet. hpcworker's `docs/V12_CONTRACT.md` on its `main` now carries the same words as this branch's copy. That repository is now the project hub (`repos/beethoven.md`), yet the branch still tells a reader to clone it (`README.md` line 240, "**Clone.**") and calls it this product's repository (`docs/ARCHITECTURE.md` line 3, `docs/STORE_LISTING.md` line 12; checked with `git grep` at 00:10Z); the desktop thread owns the fix.
 
 ## 1. Primary Objective
 
