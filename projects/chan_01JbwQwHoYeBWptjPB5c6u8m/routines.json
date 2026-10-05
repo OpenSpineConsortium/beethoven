@@ -1,0 +1,15 @@
+{
+ "read_utc": "2026-10-05T00:24Z",
+ "source": "claude-code-remote list_triggers",
+ "routines": [
+  {
+   "name": "Keep the project hub current",
+   "id_in_this_account": "trig_017z489cGKUvqigk9HQa8RgR",
+   "cron_utc": "10 */12 * * *",
+   "binding": "fires into the hand-off thread's own session (mode 1); in another account, create it from that account's hand-off thread",
+   "connectors": [],
+   "prompt_note": "recreate with the current prompt in IMPORT.md, not the one stored here, which predates tools/hub.py",
+   "prompt_at_read": "Routine: keep OpenSpineConsortium/beethoven (the project hub) current. greg chose \"Push to main\" (card, 2026-10-05 00:13Z): once PR #1 is merged, syncs go straight to main with no pull request; until it is merged they go to the branch claude/handoff-state-file-m0rg4r and update PR #1. In /home/user/beethoven: check whether PR #1 is merged; if it is, fetch and check out main (fast-forward only) before syncing; then, from a clean tree, run python3 tools/sync.py --push with the commit trailers. Only sync commits go to main this way; changes to the hub's own files (README, tools, REPOS, SEAMS, HISTORY) still go through a pull request. Refresh linear/ISSUES.md and linear/issues.json only if the last refresh is more than a day old and Linear answers. Report CONFLICT lines to greg in the thread; if nothing changed and nothing needs him, end the turn without a reply. Keep it light: greg is near his weekly limit."
+  }
+ ]
+}

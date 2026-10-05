@@ -1,0 +1,106 @@
+{
+ "read_utc": "2026-10-05T00:24Z",
+ "source": "hearthbot list_thread_sessions",
+ "note": "A thread cannot be moved to another account; its record is state/THREADS.md and its work is in the repositories. Ids are this project's own.",
+ "threads": [
+  {
+   "title": "Map engine repos against the goal",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mRF9em5noWFNEK3eacDip4D",
+   "session_id": "cse_01VftUiMs7r6Wj6ptcCdEZLy",
+   "created_utc": "2026-10-03T21:14:02Z",
+   "last_activity_utc": "2026-10-03T21:14:58Z",
+   "status": "completed",
+   "resolved": false
+  },
+  {
+   "title": "Turn the notebook into a build roadmap",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mHyJphgQZ2Xf9tWAruMwg7J",
+   "session_id": "cse_01DbWbzFa9kf3skhGVPeqe56",
+   "created_utc": "2026-10-03T21:16:27Z",
+   "last_activity_utc": "2026-10-03T21:21:23Z",
+   "status": "completed",
+   "resolved": false
+  },
+  {
+   "title": "Draft the REFORMS compliance checklist",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mWRBtHixzsgkHwqNvwfiL35",
+   "session_id": "cse_0138SfozruPdHQCNwAGUN91p",
+   "created_utc": "2026-10-03T21:16:29Z",
+   "last_activity_utc": "2026-10-03T23:44:25Z",
+   "status": "completed",
+   "resolved": false
+  },
+  {
+   "title": "Replan the build and seed Linear",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8m95HhoKgts7u8qPLv48SKR9",
+   "session_id": "cse_01UKfRdtryoFQbLHPV4PxCSw",
+   "created_utc": "2026-10-03T22:37:19Z",
+   "last_activity_utc": "2026-10-04T14:14:39Z",
+   "status": "review_ready",
+   "resolved": false
+  },
+  {
+   "title": "Lay down the engine repo skeleton",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mVwzdrSJQyPXTRRfCLMcB2J",
+   "session_id": "cse_01RZErsYRYf278qhqRaYjbhd",
+   "created_utc": "2026-10-03T23:55:15Z",
+   "last_activity_utc": "2026-10-04T16:21:28Z",
+   "status": "completed",
+   "resolved": false
+  },
+  {
+   "title": "Build the Claude Desktop ssh plugin",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8m3KSccv8f9KZdoYiLkxZons",
+   "session_id": "cse_01JJvrjwHWRskTjJNoW3eGVE",
+   "created_utc": "2026-10-04T01:13:43Z",
+   "last_activity_utc": "2026-10-05T00:17:20Z",
+   "status": "working",
+   "resolved": false
+  },
+  {
+   "title": "Seamless account switching",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mSNgHzdyEJy3URwJtFY9rRh",
+   "session_id": "cse_013mrfnp8iWCuaNiW4Xb3Dso",
+   "created_utc": "2026-10-04T04:14:14Z",
+   "last_activity_utc": "2026-10-04T16:22:10Z",
+   "status": "completed",
+   "resolved": false
+  },
+  {
+   "title": "Three-repo separation",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mTY4EBQjdtHsPXP8iwJoc9c",
+   "session_id": "cse_01Af5AU5dZXtMWjonQpSKtNR",
+   "created_utc": "2026-10-04T04:54:32Z",
+   "last_activity_utc": "2026-10-04T19:47:55Z",
+   "status": "completed",
+   "resolved": true
+  },
+  {
+   "title": "Write the hand-off state file",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mVhWVCDnpMjFY5GuUpJB4jy",
+   "session_id": "cse_015fmXsHBpKKjGFwwMHxU2QR",
+   "created_utc": "2026-10-04T18:34:51Z",
+   "last_activity_utc": "2026-10-05T00:20:13Z",
+   "status": "working",
+   "resolved": false
+  },
+  {
+   "title": "Independent code-quality gates",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8mKGFJfGGY87GoSjLtzXoYao",
+   "session_id": "cse_01SNXoctnJyZBMtgG73Rq3rx",
+   "created_utc": "2026-10-04T23:31:49Z",
+   "last_activity_utc": "2026-10-05T00:20:14Z",
+   "status": "working",
+   "resolved": false
+  },
+  {
+   "title": "Wayne State as a site module",
+   "thread_id": "cmsg_01JbwQwHoYeBWptjPB5c6u8m1TrinioxjhHQ9P3GLbx1Xj",
+   "session_id": "cse_01RuS6thuXkWoYCH6Jdfya4n",
+   "created_utc": "2026-10-04T23:48:58Z",
+   "last_activity_utc": "2026-10-05T00:20:13Z",
+   "status": "working",
+   "resolved": false
+  }
+ ]
+}

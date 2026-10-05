@@ -1,0 +1,49 @@
+{
+ "read_utc": "2026-10-05T00:24Z",
+ "source": "ListConnectors in the hand-off thread",
+ "note": "Connectors belong to the Claude account and its sign-ins (OAuth); nothing here is a credential. In a new account connect them under Settings, Connectors. GitHub is not a connector here: threads use the Claude GitHub App on the organisation and the session's git proxy; Claude Docs is first-party and needs no connection.",
+ "connectors": [
+  {
+   "name": "Linear",
+   "directory_uuid": "fa50c30c-9f62-4f94-b851-217868185db6",
+   "connected_here": true,
+   "use": "the issue tracker: workspace ashl3y, team Beethoven; the common ledger of work"
+  },
+  {
+   "name": "Google Drive",
+   "directory_uuid": "b89f7865-a755-4f86-8062-c3bd651740ce",
+   "connected_here": true,
+   "use": "greg's Drive folders Beethoven-notebook, claude-artefacts and spine (the project's context sources)"
+  },
+  {
+   "name": "Google Docs",
+   "directory_uuid": "7259add7-b6de-4783-a026-dd470c6db680",
+   "connected_here": true,
+   "use": "reading greg's Drive documents"
+  },
+  {
+   "name": "Gmail",
+   "directory_uuid": "2701e52f-b826-4aaf-8b25-11f2a97c98b0",
+   "connected_here": true,
+   "use": "connected; no thread depends on it"
+  },
+  {
+   "name": "Google Calendar",
+   "directory_uuid": "2a838eaa-f7b4-4bc2-bd47-c326f3c813c5",
+   "connected_here": true,
+   "use": "connected; no thread depends on it"
+  },
+  {
+   "name": "ABCommunity",
+   "directory_uuid": "9d078545-45c8-4dd6-9af0-19451ae01269",
+   "connected_here": true,
+   "use": "connected; no thread depends on it"
+  },
+  {
+   "name": "Sequentum MCP",
+   "directory_uuid": "50fdb402-66a8-41d5-b02e-6e3e4efb4331",
+   "connected_here": false,
+   "use": "connect_incomplete; not used"
+  }
+ ]
+}
