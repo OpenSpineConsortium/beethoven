@@ -462,19 +462,23 @@ Each step is one pull request. **Hand** marks what you do yourself.
 - **c2, about 850 lines.** Recounted at about 550: the terms core, floors and sentences are out of base.
 - **First design, `site.ts` and `names.ts`.** Dropped, as critique 2 showed.
 
-## 12. Decisions for greg
+## 12. Decision record
 
-| # | Question | Options | Recommendation |
-|---|---|---|---|
-| D1 | Where does VS Code's `claude -p` queue go? | **helper** (a small VS Code-only grid helper with its own job and grid scripts 9's safety) / **engine** (beethoven-agents' step runner, not built yet) / **drop** (ask, send and result go) | **helper** now, **engine** when it exists. It is VS Code's one distinctive feature, and hpcworker must not run it. |
-| D2 | Keep `bypassPermissions` in the queue? | keep / drop | **drop**. hpcworker refuses it, and it is the riskiest mode alongside tokens in the environment. |
-| D3 | GPU workers and image choice in hpcworker? | gain (`--gpus` and a lab image list in the profile) / drop | **drop**, unless a student uses GPU workers today (not yet measured). |
-| D4 | GitHub and Hugging Face tokens on the grid? | helper (secrets.env stays with the queue) / hpcworker `env set` (with a per-worker opt-in, refusing the 33 names) / drop | **helper**. Nothing new reaches browser-started workers. |
-| D5 | The grid-side licence check at 7.0.0? | drop (the laptop gate stays) / keep | **drop** |
-| D6 | FRAMEWORK_MIN? | lead-only (a fact in the lead's diagnostics; the rule stands) / notice (change the rule so students are told) | **lead-only** |
-| D7 | Desktop's link order? | session / environment / both | **both**: Open goes to the session, as the browser does; New session goes to the environment. |
-| D8 | Propagation credential? | none (sessions open the pull requests) / token / app | **none** for now |
-| D9 | VS Code `@types/vscode` against `engines`? | pin (back to 1.100.0) / raise (engines to ^1.138.0, which drops older VS Code) | **pin**. Settled: a199f19 records your choice of 21:10Z and is on main. |
+greg decided on 2026-10-05 at 00:28Z: "All of the decisions look good except for d2." D1 and D3 to
+D8 are therefore taken as recommended; D2 is decided against the recommendation (keep); D9 was
+already settled.
+
+| # | Question | Options | Recommendation | Decided |
+|---|---|---|---|---|
+| D1 | Where does VS Code's `claude -p` queue go? | **helper** (a small VS Code-only grid helper with its own job and grid scripts 9's safety) / **engine** (beethoven-agents' step runner, not built yet) / **drop** (ask, send and result go) | **helper** now, **engine** when it exists. It is VS Code's one distinctive feature, and hpcworker must not run it. | **helper** now, **engine** when it exists, as recommended (greg, 2026-10-05 00:28Z). |
+| D2 | Keep `bypassPermissions` in the queue? | keep / drop | **drop**. hpcworker refuses it, and it is the riskiest mode alongside tokens in the environment. | **keep**, against the recommendation (greg, 2026-10-05 00:28Z): `bypassPermissions` stays in VS Code's `claude -p` queue helper. hpcworker still refuses it. The helper therefore keeps grid scripts 9's safety, and a run in that mode must never hold a credential variable. |
+| D3 | GPU workers and image choice in hpcworker? | gain (`--gpus` and a lab image list in the profile) / drop | **drop**, unless a student uses GPU workers today (not yet measured). | **drop** unless a student uses GPU workers, as recommended (greg, 2026-10-05 00:28Z). |
+| D4 | GitHub and Hugging Face tokens on the grid? | helper (secrets.env stays with the queue) / hpcworker `env set` (with a per-worker opt-in, refusing the 33 names) / drop | **helper**. Nothing new reaches browser-started workers. | **helper**, as recommended (greg, 2026-10-05 00:28Z). |
+| D5 | The grid-side licence check at 7.0.0? | drop (the laptop gate stays) / keep | **drop** | **drop**, as recommended (greg, 2026-10-05 00:28Z). |
+| D6 | FRAMEWORK_MIN? | lead-only (a fact in the lead's diagnostics; the rule stands) / notice (change the rule so students are told) | **lead-only** | **lead-only**, as recommended (greg, 2026-10-05 00:28Z). |
+| D7 | Desktop's link order? | session / environment / both | **both**: Open goes to the session, as the browser does; New session goes to the environment. | **both**, as recommended (greg, 2026-10-05 00:28Z). |
+| D8 | Propagation credential? | none (sessions open the pull requests) / token / app | **none** for now | **none** for now, as recommended (greg, 2026-10-05 00:28Z). |
+| D9 | VS Code `@types/vscode` against `engines`? | pin (back to 1.100.0) / raise (engines to ^1.138.0, which drops older VS Code) | **pin**. Settled: a199f19 records your choice of 21:10Z and is on main. | **pin**, settled before this record (a199f19, greg's choice of 2026-10-04 21:10Z). |
 
 ## 13. Risks
 

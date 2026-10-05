@@ -1,4 +1,4 @@
-**Describes:** 2026-10-05 00:15Z (how to read the hand-off; the state itself is in the files it names)
+**Describes:** 2026-10-05 01:25Z (how to read the hand-off; the state itself is in the files it names)
 
 # Continue the Beethoven project from the hand-off
 
@@ -30,7 +30,7 @@ Outside the project (another Claude account, Claude Code on a laptop, a grid job
 `git clone https://github.com/OpenSpineConsortium/beethoven` (private; greg's 23:26Z ask): it
 carries this folder as `state/`, the plan, the ledger, the base design and the staging folder
 under the same folder names, the project memory as `memory/`, and a Linear snapshot, kept current
-from the project by `tools/sync.py`. Read its README. Then, in the repository you work
+from the project by `tools/sync.py`. Read its README; to bring the claude.ai project itself up in another account, and to load that account's progress back here, follow its `IMPORT.md` (on branch `claude/handoff-state-file-m0rg4r`, PR #2, until greg merges it). Then, in the repository you work
 in, `bee handoff import state/repos/<repository>.md` puts that repository's hand-off where the
 `/hydrate` command and `bee continue` read it (`.claude/state/claude_context.md`, ignored by git;
 `bee` replaces any secret-shaped string with `[redacted]` and checks the six sections). The

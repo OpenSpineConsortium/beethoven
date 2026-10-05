@@ -1,6 +1,6 @@
 # CLAUDE STATE SERIALIZATION
 
-**Timestamp:** 2026-10-05T00:20Z **Phase:** Implementation
+**Timestamp:** 2026-10-05T01:25Z **Phase:** Implementation
 
 Repository hand-off: `OpenSpineConsortium/beethoven` (private), the project hub. Project-wide state, rules and greg's open steps: `/mnt/project-files/state/claude_context.md` (in a clone of the hub, `state/claude_context.md`); how to use this file: `HYDRATE.md`. Checked against GitHub at 00:00-00:10Z; whatever says "not yet measured" was not checked.
 
@@ -32,9 +32,12 @@ Be the one repository greg clones to continue the project from another Claude ac
 1. Attached with push access, inspected and checked against the split repositories (2026-10-04 23:35-23:40Z).
 2. Retired the tree on greg's 23:26Z word (re-cited by the coordinator at 23:43Z after auto mode asked for it), wrote the hub, copied the project in, snapshotted Linear, pushed `claude/handoff-state-file-m0rg4r` and opened PR #1 ready (2026-10-05 00:00Z).
 3. greg merged PR #1 at 2026-10-05 00:14:01Z (merge 9e8a7f7, head 7ca551e); the two commits pushed to the branch after that minute (the merge-policy text, 6522f12, and a sync) did not go in: the sync is redone on `main`, the text goes into the next pull request with `SEAMS.md`.
+4. greg's 00:17Z ask (export everything a new Claude account needs, and load its progress back): PR #2 opened ready at 01:2xZ, pushed early on greg's 01:20Z "make an immediate push". It holds `tools/hub.py` (two-way three-way sync, 23 tests green, mutation-checked; `tools/sync.py` forwards to it), `tools/HUB_SPEC.md`, `IMPORT.md` (the steps both ways), `LANES.md` (one account per repository), `SEAMS.md` (corrected from two verifiers), and README/CLAUDE.md describing them. The project's own records are in `projects/chan_01JbwQwHoYeBWptjPB5c6u8m/` (settings, topic, instructions, tools, threads, routines, connectors, session).
 
 ## 5. Active Blockers & Errors
 
+- PR #2 is greg's merge. Not in it yet: the memory-index rule (never write `MEMORY.md` into a memory folder; the coordinator owns it) and the stale-copy rule of `tools/HUB_SPEC.md`'s last section; the adversarial review of `hub.py` and the second check of `SEAMS.md` were still running at the push. Until the index rule is built, after any `hub.py` run check that no `MEMORY.md` was written into the memory folder. The first real `init` of this project will report CONFLICT on files changed since the last copy: run `status` first, then `init --prefer project`.
+- The hub's `memory/MEMORY.md` came from a stale container copy (00:25Z); the coordinator was asked at 01:23Z to write its current index to `projects/chan_01JbwQwHoYeBWptjPB5c6u8m/MEMORY.md` for the next sync.
 - The next pull request (the merge-policy text in `CLAUDE.md` and `README.md`, and `SEAMS.md`) is greg's merge; until then `CLAUDE.md` on `main` still says a pull request is his merge for every change.
 - The public site's `build_site.py` found the terms texts in a sibling checkout named `beethoven` (desktop thread's finding): set `BEETHOVEN_REPO` to a beethoven-extension checkout before the next site build. hpcworker's `tools/push_org.sh` pushes `main:main --tags` here; hpcworker PR #4 (66a1076, open) points it at hpcworker. With PR #1 merged, a push of `main` from the old checkout is refused as non-fast-forward; its `--tags` could still add tags. The desktop thread suggested a ruleset on this `main`; one that blocks force-push and deletion keeps the direct syncs, while one that requires a pull request would stop them.
 - The repository description on GitHub still describes the browser extension (not changed).
@@ -42,6 +45,7 @@ Be the one repository greg clones to continue the project from another Claude ac
 
 ## 6. Immediate Next Actions (Hydration Directives)
 
+0. If PR #2 is merged: from then on `python3 tools/hub.py sync --push` (on `main`, clean tree) replaces `tools/sync.py`; first run `hub.py status`, then `hub.py init --project-id chan_01JbwQwHoYeBWptjPB5c6u8m --prefer project --push`. If not: finish the two memory rules on the branch (`tools/HUB_SPEC.md` last section, with tests), then ask greg to merge. Moving to another account: `IMPORT.md`.
 1. `gh api "repos/OpenSpineConsortium/beethoven/pulls?state=all"` and `git ls-remote https://github.com/OpenSpineConsortium/beethoven`: what is on `main`, and is the pull request with `SEAMS.md` open or merged?
 2. Inside the project, after every refresh of `state/`: from a clean checkout of the hub's branch, `python3 tools/sync.py --push --trailer '<the commit trailers>'`; refresh `linear/ISSUES.md` when Linear is reachable; settle any CONFLICT line by hand.
 3. Outside the project: edit the files in the clone and commit; the project's next sync will report them as conflicts rather than overwrite them.
