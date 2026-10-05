@@ -22,17 +22,19 @@ Anthropic's marks, used here to say what it runs; "Open OnDemand" is the mark of
 
    | In the project | In this clone |
    | --- | --- |
-   | `/mnt/project-files/state/`, `plan/`, `ledger/`, `base/`, `github/`, `promo/`, `staging/` | `state/`, `plan/`, `ledger/`, `base/`, `github/`, `promo/`, `staging/` |
+   | `/mnt/project-files/<folder>/` (every folder but `uploads/`) | `<folder>/` |
    | `/tmp/claude/memory/team/silo/` (the project memory) | `memory/` |
 
 4. Clone the repositories the task needs ([REPOS.md](REPOS.md) lists each with its rules) and read
    its `CLAUDE.md`. [SEAMS.md](SEAMS.md) says when a change in one needs a change in another.
-5. Working from another account, change the files here directly and commit them: the project's
-   copy never overwrites a file changed here; it reports it as a conflict for a person to
-   reconcile. Linear stays the record of issues; `linear/ISSUES.md` is only a snapshot.
-6. To rebuild the claude.ai project itself: a new project with the repositories attached, and
-   `plan/PROJECT_INSTRUCTIONS.md` pasted as its instructions. The memory files are plain Markdown,
-   one fact each; bring over the ones the work needs.
+5. Working from a plain clone, change the files here and commit them: each project's next sync
+   takes the change in for every file that project has not changed since; a file changed on both
+   sides is reported as a conflict and left alone on both. Linear stays the record of issues;
+   `linear/ISSUES.md` is only a snapshot.
+6. To bring the claude.ai project up in another Claude account (name, goal, instructions,
+   repositories, connectors, memory, files) and load its progress back into this one, follow
+   [IMPORT.md](IMPORT.md). [LANES.md](LANES.md) is how several accounts work at once, each on its
+   own repository.
 
 ## What is here
 
@@ -46,8 +48,10 @@ Anthropic's marks, used here to say what it runs; "Open OnDemand" is the mark of
 | `promo/` | The first promotional text (Linear project O, Outreach and Adoption) | the replan thread |
 | `staging/` | Work saved before it reached GitHub: the desktop thread's patches and git bundle, the base survey and design critiques, with a README each | the thread that saved it |
 | `memory/` | The project's shared memory: `MEMORY.md` is the index, every other file one fact | the coordinator and the threads |
+| `projects/` | One folder per Claude project (this one is `chan_01JbwQwHoYeBWptjPB5c6u8m`): its name, goal, instructions and settings as read from the project, its threads, routines, connectors and environment, and `sync.json`, the record of its last sync | that project's coordinator and hand-off thread |
+| `sites/` | The design of the university site modules | the site-module thread |
 | `linear/` | A snapshot of the Linear team Beethoven, its projects and issues, and how the project uses Linear | `linear/README.md` by hand; `ISSUES.md` by the snapshot |
-| `tools/` | `sync.py` (the copy from the project), `scan.py` (what must not leave it) | this repository |
+| `tools/` | `hub.py` (the two-way sync; `HUB_SPEC.md` is its specification), `sync.py` (forwards to it), `scan.py` (what must not leave the project) | this repository |
 
 [HISTORY.md](HISTORY.md) says what this repository was before (the launcher's monorepo, now split
 into hpcworker and beethoven-extension) and where each part went. The old tree, its tags `v4.0.0`
@@ -55,13 +59,16 @@ to `v12.0.0` and their releases stay in its history.
 
 ## How it stays up to date
 
-Inside the Claude project, `python3 tools/sync.py --push` copies the project files and the memory
-here and pushes them. It runs after every refresh of the hand-off and on a schedule. Before it
-copies anything it runs `tools/scan.py` over every file it would copy and copies nothing if one
-fails: no secret, credential, patient data or unexamined binary leaves the project this way.
-`.hub-exclude` names what never comes, each with its reason (people's attachments to project
-messages are never copied). The copy never deletes and never overwrites a file changed here by
-hand; it lists those for a person.
+Inside a Claude project, `python3 tools/hub.py sync --push` (on `main`, from a clean tree) brings
+the project files and the memory here and the hub's newer files into the project, and pushes
+straight to `main` (greg's choice, 2026-10-05). It runs after every refresh of the hand-off and
+twice a day on a schedule. Per file it compares both sides with the record of the last sync
+(`projects/<id>/sync.json`): a side that changed is copied to the other, a file both changed is a
+conflict left alone on both (`hub.py diff <path>` shows the three versions), ledger rows from both
+sides are merged, and nothing is ever deleted. Before it writes anything it runs `tools/scan.py`
+over every file it would write, either way, and writes nothing if one fails: no secret,
+credential, patient data or unexamined binary moves this way. `.hub-exclude` names what never
+moves, each with its reason (people's attachments to project messages never do).
 
 ## The rules
 

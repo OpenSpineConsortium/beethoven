@@ -1,3 +1,15 @@
 * text=auto eol=lf
 *.bundle binary
 *.png binary
+# The synced folders and the memory are stored byte for byte, so a file with CRLF line ends comes
+# back to a project exactly as it left it, and tools/hub.py never sees the two sides differ.
+state/** -text
+plan/** -text
+ledger/** -text
+base/** -text
+github/** -text
+promo/** -text
+staging/** -text
+projects/** -text
+sites/** -text
+memory/** -text
