@@ -2,6 +2,12 @@
 
 Checked 2026-10-05, against the commits listed under "How to read the evidence".
 
+Since 2026-10-07 every repository follows [INTERFACES.md](INTERFACES.md): what crosses a seam is
+published in the provider's `interface/INTERFACE.json` at a version and taken as a pinned, checked
+copy, and each repository's own tests fail when its tree reaches another's checkout. Where a row below
+still names a hand copy or a sibling checkout, the provider's export replaces it as each consumer
+takes it; the rows are kept until then.
+
 Each Beethoven repository changes alone, in its own pull request, unless the change touches a seam:
 a file, line format, path, grid folder or copied rule that another repository reads, writes or
 repeats. Anything not named under "What crosses" is that repository's own. Before a change merges,

@@ -26,7 +26,9 @@ Anthropic's marks, used here to say what it runs; "Open OnDemand" is the mark of
    | `/tmp/claude/memory/team/silo/` (the project memory) | `memory/` |
 
 4. Clone the repositories the task needs ([REPOS.md](REPOS.md) lists each with its rules) and read
-   its `CLAUDE.md`. [SEAMS.md](SEAMS.md) says when a change in one needs a change in another.
+   its `CLAUDE.md`. [INTERFACES.md](INTERFACES.md) is how one repository may use another (only
+   through what the other publishes, as a pinned copy); [SEAMS.md](SEAMS.md) says when a change in
+   one needs a change in another.
 5. Working from a plain clone, change the files here and commit them: each project's next sync
    takes the change in for every file that project has not changed since; a file changed on both
    sides is reported as a conflict and left alone on both. Linear stays the record of issues;
