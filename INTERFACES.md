@@ -74,8 +74,15 @@ machine-readable.
   `interface/contract/` puts `interface/contract/lines.json` at `lines.json`). Besides those files the
   folder may hold only `ORIGIN`, `README.md` and `pull.sh`. A copy taken before its provider published `INTERFACE.json` has no `export` line; the
   next pull writes one. beethoven-qa's own copy keeps its record (`vendor/beethoven-qa/ORIGIN`:
-  repository, ref, commit, tree digest) and its check (`vendor-check`).
-- Fetched only by that folder's `pull.sh` (beethoven-qa's `vendor` command for its copy), from GitHub
+  repository, ref, commit, tree digest) and its check (`vendor-check`). It is also the one copy fetched
+  another way: beethoven-qa's `vendor` command, run from a checkout of beethoven-qa at a release tag,
+  writes the copy from that tag's own git objects, and `vendor-check --source` rebuilds it from the
+  commit `ORIGIN` names. That command runs the provider's code and reads a checkout, which the next
+  bullet forbids for every other copy; a release tag is made only on `main`, by the maintainer.
+  Whether `vendor` should fetch from GitHub like the others is the maintainer's decision. The exports
+  a consumer takes from beethoven-qa (`python`, `cli`, `kit`, `plugin`) share that one folder, each
+  its own entry in `imports`.
+- Fetched only by that folder's `pull.sh`, from GitHub
   at one commit through the person's own `gh` sign-in: never from a checkout, never by running the
   provider's code, only from a commit the provider's default branch contains (a merged change, never
   a pull request's branch), and only the paths the provider's `INTERFACE.json` lists for that export
