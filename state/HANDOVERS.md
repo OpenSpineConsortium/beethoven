@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 17:58Z, with the QA thread's qa 5.0.0 measurement of 17:42-17:50Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 17:59Z, with the QA thread's qa 5.0.0 plan of 17:59Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -240,9 +240,23 @@ vscode e7526f9, qa b73d4f4).
      before.
    - beethoven-research: exits 0 (0 confirmed, 6 not confirmed at the bound, 1 min 44 s); nothing
      to do.
-   - The 5.0.0 re-pin also brings kit changes and three tools each consumer adds to its
-     `pixi.toml` (jscpd, zizmor, lizard), and waits on greg tagging v5.0.0, which the QA thread
-     will flag when its pull request is up.
+   - What else the 5.0.0 re-pin brings, from the QA thread's build plan (17:59Z, through the
+     coordinator; not checkable until its branch is pushed):
+     - **Kit changes**, carried by each consumer's next `vendor --kit`: the QA thread says five kit
+       files change and names `ci.yml`, `standards.yml`, `session-start.sh` (a sha256 check on the
+       pixi download, and the report job) and `rulesets/main.json` (strict required checks). The
+       kit at v2.0.0 to v3.0.0 is four files (`.githooks/pre-push`, `automerge.yml`,
+       `rulesets.yml`, `session-start.sh`), so 5.0.0 also widens it.
+     - **Three tools** each consumer adds to its `pixi.toml`: jscpd (in place of the home-made
+       duplication detector), zizmor (beside the supply-chain reader, with Scorecard as a
+       non-blocking CI reporter) and lizard (function length). qa's `docs/CONSUMING.md` will give
+       the exact step; the lock changes on purpose.
+     - Also new: a no-suppression check in the gate, and `python -m beethoven_qa report`, which
+       writes an evidence report (`report.md`, `report.json`: tool versions from the lock, every
+       verdict with its command and exit code, proof counts, enforcement, and what no model
+       decided).
+     - All of it waits on greg tagging v5.0.0; the QA thread will say when its pull request is up
+       and when it merges.
 2. **beethoven-agents:** `containers/managed-settings.json:15` says the pinned plugin has "no
    hooks"; that is stale once the copy is 4.0.0.
 3. **beethoven-agents:** `containers/claude-verify.def` is not reproducible as a recipe: line 47
