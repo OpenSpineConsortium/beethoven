@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 17:59Z, with the QA thread's qa 5.0.0 plan of 17:59Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 18:01Z, with the QA thread's correction of 18:01Z to the qa 5.0.0 kit (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -221,8 +221,9 @@ vscode e7526f9, qa b73d4f4).
 
 1. **beethoven-agents and beethoven-research, after greg tags beethoven-qa v4.0.0** (still only
    v1.0.0 to v3.0.0, checked): re-pin both off the tag with `pixi run --locked python -m
-   beethoven_qa vendor --into . --ref v4.0.0 --kit`. The four kit files are byte-identical at
-   v2.0.0, v3.0.0 and qa main (checked), so `--kit` changes nothing. Optionally name
+   beethoven_qa vendor --into . --ref v4.0.0 --kit`. The five kit files (`KIT` in qa's
+   `src/beethoven_qa/vendor.py`) are byte-identical at v2.0.0, v3.0.0 and qa main (checked), so
+   `--kit` changes nothing. Optionally name
    `plugin/hooks/coach.sh` in each `.claude/settings.json` (qa `docs/CONSUMING.md`).
    **Then qa 5.0.0** (the QA thread, 17:57Z through the coordinator; being built on qa's branch
    `claude/qa-assessment-4x85zq`, not on GitHub at 17:58Z): the plain gate runs CrossHair with
@@ -242,11 +243,17 @@ vscode e7526f9, qa b73d4f4).
      to do.
    - What else the 5.0.0 re-pin brings, from the QA thread's build plan (17:59Z, through the
      coordinator; not checkable until its branch is pushed):
-     - **Kit changes**, carried by each consumer's next `vendor --kit`: the QA thread says five kit
-       files change and names `ci.yml`, `standards.yml`, `session-start.sh` (a sha256 check on the
-       pixi download, and the report job) and `rulesets/main.json` (strict required checks). The
-       kit at v2.0.0 to v3.0.0 is four files (`.githooks/pre-push`, `automerge.yml`,
-       `rulesets.yml`, `session-start.sh`), so 5.0.0 also widens it.
+     - **Kit changes**, carried by each consumer's next `vendor --kit` (corrected by the QA thread
+       at 18:01Z from qa's own source). The kit has been five files since 2.0.0 and stays so:
+       `.githooks/pre-push`, `.github/workflows/automerge.yml`, `.github/workflows/rulesets.yml`,
+       `.claude/hooks/session-start.sh` and `.github/workflows/standards.yml` (checked: `KIT` in
+       `vendor.py` and the `kit` export, version 1, in `interface/INTERFACE.json` on qa main
+       b73d4f4). Three change in 5.0.0: `standards.yml` (the pixi digest check and the Scorecard
+       reporter job), `session-start.sh` (the digest check) and `automerge.yml` (its header comment
+       on the strict-checks policy); the `kit` export goes to version 2.
+     - **Not kit files:** `ci.yml` and `.github/rulesets/main.json` are each repository's own. qa's
+       `docs/CONSUMING.md` will tell each consumer to make the same two edits there by hand (the
+       pixi digest check, the strict-checks flag) in the same change as the re-pin.
      - **Three tools** each consumer adds to its `pixi.toml`: jscpd (in place of the home-made
        duplication detector), zizmor (beside the supply-chain reader, with Scorecard as a
        non-blocking CI reporter) and lizard (function length). qa's `docs/CONSUMING.md` will give
