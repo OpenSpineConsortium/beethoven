@@ -74,12 +74,14 @@ machine-readable.
   `interface/contract/` puts `interface/contract/lines.json` at `lines.json`). Besides those files the
   folder may hold only `ORIGIN`, `README.md` and `pull.sh`. A copy taken before its provider published `INTERFACE.json` has no `export` line; the
   next pull writes one. beethoven-qa's own copy keeps its record (`vendor/beethoven-qa/ORIGIN`:
-  repository, ref, commit, tree digest) and its check (`vendor-check`). It is also the one copy fetched
-  another way: beethoven-qa's `vendor` command, run from a checkout of beethoven-qa at a release tag,
-  writes the copy from that tag's own git objects, and `vendor-check --source` rebuilds it from the
-  commit `ORIGIN` names. That command runs the provider's code and reads a checkout, which the next
-  bullet forbids for every other copy; a release tag is made only on `main`, by the maintainer.
-  Whether `vendor` should fetch from GitHub like the others is the maintainer's decision. The exports
+  repository, ref, commit, tree digest) and its check (`vendor-check`), and is taken by beethoven-qa's
+  `vendor` command instead of a `pull.sh`. From beethoven-qa 3.0.0 (the maintainer's decision of
+  2026-10-07) that command fetches as the next bullet says: from GitHub through the person's own `gh`
+  sign-in, at a release tag on `main`, each file checked against the blob id the commit's tree gives
+  it, never from a checkout. It is the one pull that runs the provider's code: the consumer's own
+  pinned copy of it, or, for a consumer's first copy of 3.0.0, a clone of that release. A release tag
+  is made only on `main`, by the maintainer. `vendor-check --source`, the maintainer's audit run from
+  a beethoven-qa checkout's own environment, rebuilds the copy from the commit `ORIGIN` names. The exports
   a consumer takes from beethoven-qa (`python`, `cli`, `kit`, `plugin`) share that one folder, each
   its own entry in `imports`.
 - Fetched only by that folder's `pull.sh`, from GitHub
