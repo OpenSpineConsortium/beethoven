@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 11:20Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 11:20Z, with the site-module thread's second note of 11:18Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -95,6 +95,19 @@ Nothing of the site-module thread's is in flight in either repository.
   Before changing `extension/src/core/contract.ts`, tell the server lane; the extension's main has
   no auto-merge.
 
-The site-module thread keeps beethoven-sites: U-2's synthetic example site, built on the interface
-standard; its pull request and a note on what hpcworker needs to take the example as a test fixture
-follow.
+The site-module thread keeps beethoven-sites. Its second note (11:18Z, not checked here: this
+session cannot read beethoven-sites):
+
+- **beethoven-sites:** branch `claude/site-module-9x2ggm` at 24309e4 on main c6bc0f4; PR #4 is
+  ready and merges itself on green. It adds `examples/example/`, Example University, a synthetic
+  site for BEE-200, offered as a new export, `example-modules` version 1 (`examples/*/site.json`,
+  `examples/*/labs/*.json`), never inside `modules`, so hpcworker's `pull.sh` never takes it and no
+  example profile ships. The checker refuses an example with a host or link that is not reserved,
+  a measurement, or an id a real deployment has.
+- **hpcworker, BEE-200's second half** (details in a Linear comment there): take `example-modules`
+  into the tests with a pull of its own (for example `framework/tests/sites/` with an ORIGIN),
+  compose it into a temporary folder, never into `framework/profiles/`, and run each suite once per
+  module. Composed with hpcworker main 3b22e70 the example already validates with `profile.py` and
+  `profile.awk`, and its worker job renders and passes `bash -n`. Two Wayne-only assumptions it
+  shows: the workspace guide calls every lab bind "the person's folder on the lab's storage", and
+  the worker job never reads `cache_dir`.
