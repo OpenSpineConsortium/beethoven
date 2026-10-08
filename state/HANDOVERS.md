@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 13:05Z, with the site-module thread's third note of 13:02Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 13:02Z, with the site-module thread's third note of 13:02Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -133,7 +133,7 @@ The code-quality thread keeps beethoven-qa.
 - **U-22 (BEE-220) merged in beethoven-qa** at 13:01Z (PR #7, merge commit b73d4f4 on main,
   checked; one docs commit, 552c0af, after 615ed3e). qa's docs now say hpcworker keeps to the oldest
   Python on a supported site's login node (3.6 today, Wayne State's CentOS 7, as its site module
-  records), not "the grid's". At 13:04Z qa still has no v4.0.0 tag (checked); the release tag that
+  records), not "the grid's". At 13:02Z qa still has no v4.0.0 tag (checked); the release tag that
   carries this to consumers is greg's.
 - **The same wording is still on main in two repositories outside this project's lanes**, in files
   that are not kit files, so no pinned copy carries the fix (each line checked on main):
