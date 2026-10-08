@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 15:32Z, with beethoven-extension back in the home project since 15:30Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 17:00Z, with the extension thread's measure-first step for the worker race (16:59Z) (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -64,6 +64,31 @@ confirmed on GitHub at 11:15-11:20Z, and everything else is as reported.
      copy of hpcworker's (since f22c7a2), and hpcworker main's `docs/V12_CONTRACT.md` already has the
      signed-installer lines from line 109; compare before carrying anything.
    - The site-module thread needs the final `worker_queues` shape (see its note below).
+   - **Measure first** (the extension thread, 16:59Z, through the coordinator; it may show the race
+     is not needed). Inside a Slurm job, before building anything: `sbatch --test-only -p reqp,secp
+     -q requeue`, the same with `-q secondary`, `scontrol show partition reqp secp` and `sacctmgr
+     show assoc user=$USER`. If one QoS is accepted on both partitions, the two-job race becomes one
+     job over `-p reqp,secp` and no client changes; the race is needed only if each partition
+     insists on its own QoS. Either way the Claude sign-in sitting is single-queue
+     (`framework/bin/hpcworker:1358` and `:1601` call `adapter_interactive` with the profile's CPU
+     partition and QoS and a 600 s allocation wait; `framework/lib/adapters/slurm.sh:122` is its
+     `srun`; checked on main 3b22e70). The extension thread places hy9698's exit-3 sign-ins of
+     2026-10-03 there (a 4 min 20 s wait inside the sitting); the snapshot does not touch it, and
+     the sitting is the first place a multi-queue launch would help.
+   - **If the race is built**, the extension thread's list, in its words, for framework 19 from the
+     snapshot ported to main 3b22e70: `worker_queues` as a lab field in `FIELD_LAYERS`
+     (`framework/lib/profile.py` from line 394); the module schema regenerated (`profile.py
+     schema`) so beethoven-sites can carry it; `interface/contract/cli.json` `connect [--race]` and
+     the gate's seventh word `race`; a `lines.json` entry `{"id":"candidates","pattern":"^HPCW-STEP
+     candidates ([0-9]+(?:,[0-9]+)+)$","groups":["jobs"]}`; `candidates` in `status.schema.json`
+     (queued) and `worker-status.schema.json`; the testbed's fake `sbatch` and `scancel` for two
+     jobs and a claim; the vectors rewritten (`python3 framework/tests/vectors.py --write`);
+     `docs/V11_CONTRACT.md` rule R1' and `docs/V12_CONTRACT.md`'s gate word; the `contract` export's
+     version raised so clients act. Then the site-module thread adds `"worker_queues":
+     ["reqp/requeue", "secp/secondary"]` to beethoven-sites' `labs/oschome.json` after the schema
+     lands, and hpcworker pulls and composes.
+   - The extension builds its `candidates` reader only after that contract export is published:
+     its conformance tests and `interface/pull.sh` refuse a reader the export does not carry.
 2. **beethoven-vscode 5.0.0 on the grid.** greg chose "Test on grid first" on a card at 01:17Z on
    2026-10-05: `npm run test:vscode`, then 5.0.0 on his own grid account (setup, claude login,
    phone, Reset), then `tools/release.mjs` and the listing. The desktop thread promised him a
