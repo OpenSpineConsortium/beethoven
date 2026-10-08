@@ -1,38 +1,41 @@
 ---
 name: qa-code-standards
-description: beethoven-qa 2.0.0 code standards (greg's "Auditable Code Quality Standards" as PR blockers): six groups, the one required check, merged 2026-10-05 01:03Z, what consumers and greg still do
+description: beethoven-qa code standards (greg's "Auditable Code Quality Standards" as PR blockers): six groups, one required check, in qa since 2.0.0, in both consumers since 2026-10-07; the PostToolUse coaching hook merged as 4.0.0 on 2026-10-08, untagged
 metadata:
   type: project
-  modified: 2026-10-05T01:04:37.543Z
+  modified: 2026-10-08T11:02:55.534Z
 ---
 
 greg's ask (2026-10-04 23:26Z, desktop thread; coordinator split it to the code-quality thread
 cmsg_01JbwQwHoYeBWptjPB5c6u8mKGFJfGGY87GoSjLtzXoYao): his Drive doc "Auditable Code Quality
 Standards" as pull-request blockers, each group independent, coaching later.
 
-**Built and merged:** beethoven-qa PR #3 merged on green 2026-10-05 01:03Z (main 40227fa,
-merged_by github-actions[bot]). `python -m beethoven_qa standards <group>|all`, groups readability,
-design, duplication, coverage, security, supply-chain; each its own job in the kit's
-`standards.yml`; the one required check is `standards (every group green)`, applied to qa's main
-by a dispatched rulesets.yml run at 01:04Z ("updated 24457138 main: checks before merge"). Only
-new or worse findings block (matched against the base commit). Limits change only in a qa release;
-no repo config or suppression comment loosens them. Coaching: plugin skill `code-standards`.
-Docs: qa `docs/STANDARDS.md`. The gate task now runs the standards; the local gate takes ~9 min,
-GitHub's gate job ~15 min.
+**Built and merged:** beethoven-qa PR #3 merged on green 2026-10-05 01:03Z (main 40227fa). Tag
+v2.0.0 is NOT on 40227fa but on 53d5ae5 (40227fa plus an interface-standard "boundary" check), and
+v3.0.0 on 08aca99, both made 2026-10-07 by session_01Rvv9SUDARQdG2w3LefMj3K, which is not a thread
+of this project (branch claude/repo-encapsulation-9hmh9f; most likely greg's other account).
+`python -m beethoven_qa standards <group>|all`, groups readability, design, duplication, coverage,
+security, supply-chain; each its own job in the kit's `standards.yml`; the one required check is
+`standards (every group green)`. Only new or worse findings block (matched against the base
+commit). Limits change only in a qa release; no repo config or suppression comment loosens them.
+Coaching: plugin skill `code-standards`. Docs: qa `docs/STANDARDS.md`.
 
-**Still to do:** greg publishes release v2.0.0 on 40227fa (sessions cannot push tags). The re-pin
-prep is pushed as wip commits on branch claude/quality-gates-qvn6wa: beethoven-agents 2e668ed,
-beethoven-research effe751 (SKIP_GATE=1, greg's 01:20Z push-now ask). PRs opened from the UI at
-01:25Z, research #5 and agents #3, are held as DRAFTS with auto-merge off until the copy lands
-(merged early they would break the gate); mark ready for review when done, which re-arms it. Done there: the
-standards' dependency lines (agents takes complexipy from PyPI on osx-arm64 only, conda-forge has
-no build there), `standards` task, locks re-solved (additions only; linux-64 builds equal qa's),
-the check in main.json, ci.yml checkout pinned plus read-only permissions, CLAUDE.md (five kit
-files). Left after the tag: from each consumer, `vendor --into . --kit` at v2.0.0 (CONSUMING.md
-"Updating"), vendor-check, the gate, amend into one commit, open the PR, dispatch rulesets.yml.
-Dry run on 2.0.0's code (01:10Z): both consumers pass all six groups; agents' old code holds 48
-readability, 3 design (LCOM4 of `_TextStream`) and 4 security (B108 /tmp literals) findings,
-recorded as unchanged. Next feature, not started: a PostToolUse hook running the cheap groups as a
-session edits (coordinator 01:05Z: after the re-pin, not put to greg).
+**Consumers (checked 2026-10-08 11:0xZ on origin/main):** beethoven-agents and beethoven-research
+both carry the copy at v3.0.0 with `standards.yml` and the check in `.github/rulesets/main.json`.
+History: greg marked the held draft prep PRs ready at 01:26Z on 10-05 (research #5 auto-merged,
+agents #3 he merged by hand at 01:30Z), so both mains ran the standards task on a 1.0.0 copy
+until that outside session re-pinned 2.0.0 and 3.0.0 on 10-07. The code-quality thread
+was blocked on its account's seven-day usage window from 10-05 01:33Z to 10-08 11:00Z. Its agents
+branch commit 998fc55 (copy from untagged 40227fa) is unused. Ledger and INTERVENTIONS rows
+written 10-08.
+
+**Coaching hook (4.0.0):** at the coordinator's go (10-08 11:06Z, on qa 3.0.0, agents and research
+untouched; greg had a lane card open) qa PR #6 merged by auto-merge 10-08 12:11:57Z as 615ed3e.
+`python -m beethoven_qa coach` plus plugin/hooks/{hooks.json,coach.sh}: after each Edit/Write it
+says what CI would block in that file (never coverage), about 3 s, or nothing; exit 0 always;
+`pixi run --as-is`. **Left:** greg tags v4.0.0 on 615ed3e; then whoever owns agents and research
+re-pins them with `vendor --ref v4.0.0 --kit` (optional .claude/settings.json snippet in qa
+docs/CONSUMING.md). Not yet measured: the hook in a live session; allowManagedHooksOnly in the
+agents' image.
 
 Related: [[pr-convention-test-determined]], [[three-repo-staging]].
