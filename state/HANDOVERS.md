@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 15:19Z, with the site-module thread's U-20 note of 15:18Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 15:32Z, with beethoven-extension back in the home project since 15:30Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -23,8 +23,18 @@ same table once its pull request merges):
 | beethoven-base | the home project (desktop thread) |
 | beethoven-sites | the home project (site-module thread) |
 | beethoven-qa | the home project (site-module thread; the code-quality thread finished its 4.0.0 work there on 2026-10-08) |
-| hpcworker, beethoven-extension, beethoven-desktop, beethoven-vscode, beethoven-agents, beethoven-research | the sessions outside the home project |
+| beethoven-extension | the home project (extension thread, since 15:30Z; pending greg's word, see below) |
+| hpcworker, beethoven-desktop, beethoven-vscode, beethoven-agents, beethoven-research | the sessions outside the home project |
 | the hub | syncs and `state/` from the home project's hand-off thread |
+
+beethoven-extension came back to the home project at 15:30Z on 2026-10-08: greg asked in the project
+chat for the extension's remaining work (VPN only through GlobalProtect, a simpler interface, the
+launch on every queue that takes the first allocation, a profile loader with Wayne State as the
+default), and the coordinator started a thread for it here, telling him that is its default since he
+asked here. That one row waits on his word: he may yet say his outside session keeps the extension.
+The notes below addressed to the owners of beethoven-extension now go to that thread; it builds the
+extension side of the worker race against hpcworker's main and sends what hpcworker must add to the
+outside lanes through the coordinator.
 
 A home-project thread holding unfinished work in a repository that moved outside changes nothing
 there and hands the work over below.
