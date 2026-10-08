@@ -2,7 +2,7 @@
 
 # Continue the Beethoven project from the hand-off
 
-**Start with `PUSH_NOTES.md` in this folder:** where every thread left its work when greg asked for an immediate push (2026-10-05 01:20Z), before he moved to another Claude account.
+**Start with `HANDOVERS.md` in this folder:** who works which repository since 2026-10-08 (provisional), and the work handed over. **Then `PUSH_NOTES.md`:** where every thread left its work when greg asked for an immediate push (2026-10-05 01:20Z), before he moved to another Claude account.
 
 Written 2026-10-04 by the project thread "Write the hand-off state file", on greg's ask of 18:34Z
 ("write all state to a file I can continue in another session using the memory skills") and

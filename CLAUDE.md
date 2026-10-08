@@ -15,7 +15,7 @@ Anthropic's marks, used here to say what it runs; "Open OnDemand" is the mark of
   six sections. In this clone `/mnt/project-files/<folder>/` is `<folder>/` and the project
   memory `/tmp/claude/memory/team/silo/` is `memory/`.
 - `plan/BUILD_PLAN.md` governs the build (180 KB: read it by section, `grep -n '^#'`).
-- [REPOS.md](REPOS.md), [INTERFACES.md](INTERFACES.md), [SEAMS.md](SEAMS.md), [linear/README.md](linear/README.md).
+- [REPOS.md](REPOS.md), [SEAMS.md](SEAMS.md), [linear/README.md](linear/README.md).
 
 ## Rules that are not negotiable (each repository's CLAUDE.md has them in full; they bind here)
 
@@ -48,7 +48,7 @@ Anthropic's marks, used here to say what it runs; "Open OnDemand" is the mark of
 | `memory/` | the coordinator | A copy of the project memory; `MEMORY.md` is the index (16 KB limit) |
 | `linear/` | Linear | `ISSUES.md` and `issues.json` are a snapshot; change issues in Linear |
 | `projects/<id>/` | that Claude project | Its settings, records and `sync.json` |
-| everything else | this repository | `README.md`, `REPOS.md`, `INTERFACES.md`, `SEAMS.md`, `IMPORT.md`, `LANES.md`, `HISTORY.md`, `tools/` |
+| everything else | this repository | `README.md`, `REPOS.md`, `SEAMS.md`, `IMPORT.md`, `LANES.md`, `HISTORY.md`, `tools/` |
 
 ## Keeping it up to date
 

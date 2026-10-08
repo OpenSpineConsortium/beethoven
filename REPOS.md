@@ -3,11 +3,8 @@
 Every repository of the project, what it is for, and how a change reaches its default branch.
 State as of the hand-off of 2026-10-04 (`state/claude_context.md` section 3 and
 `state/repos/<repository>.md`); check a repository's own GitHub before relying on a row. Each
-repository's `CLAUDE.md` binds work in it. [INTERFACES.md](INTERFACES.md) is the standard every one
-of them follows (since 2026-10-07): a repository reaches another only through what that one lists in
-its `interface/INTERFACE.json`, as a copy pinned to a merged commit with an `ORIGIN` record, never
-through a checkout of it. [SEAMS.md](SEAMS.md) lists where two of them must change together;
-everything else changes in one repository alone.
+repository's `CLAUDE.md` binds work in it. [SEAMS.md](SEAMS.md) lists where two of them must change
+together; everything else changes in one repository alone.
 
 ## The launcher: a student's own Claude Code worker on the grid
 
