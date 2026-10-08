@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 12:20Z, with the code-quality thread's note of 12:13Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 12:15Z, with the code-quality thread's note of 12:13Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -117,7 +117,7 @@ session cannot read beethoven-sites):
 - **beethoven-qa 4.0.0 merged at 12:11Z** (PR #6, merge commit 615ed3e on main, checked). It adds
   the `coach` command and a `PostToolUse` hook to the plugin: after each Edit or Write it tells the
   session what CI would block in that file, and it never stops the edit.
-- **greg's hand step:** create the tag `v4.0.0` on 615ed3e (checked at 12:20Z: the tags are
+- **greg's hand step:** create the tag `v4.0.0` on 615ed3e (checked at 12:14Z: the tags are
   v1.0.0, v2.0.0 and v3.0.0; no v4.0.0 yet).
 - **After the tag:** whoever owns beethoven-agents and beethoven-research (the outside sessions,
   under the provisional split) re-pins both with `vendor --into <repo> --ref v4.0.0 --kit`; qa's
