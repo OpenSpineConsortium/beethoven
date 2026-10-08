@@ -37,24 +37,24 @@ repository's projects ([linear/README.md](linear/README.md) has the table), move
 lands, and names the issue key in its commits and pull requests. A lane that needs another lane's
 change opens an issue in that lane's project and links it from its own.
 
-## Lanes now (provisional since 2026-10-08 11:07Z, until greg answers the coordinator's card)
+## Lanes now (greg's choice of 2026-10-08 14:46Z)
 
 On 2026-10-07 two Claude Code sessions outside the home project worked on the repositories, and greg
 merged their pull requests: branch `claude/repo-encapsulation-9hmh9f` (hpcworker,
 beethoven-extension, beethoven-desktop, beethoven-vscode, beethoven-qa, beethoven-agents,
 beethoven-research and this hub) and branch `claude/oschome-access-approval-6prr38` (hpcworker and
-beethoven-vscode). The home project's coordinator has asked greg on a card how to split the work.
-Until he answers, work follows its recommendation:
+beethoven-vscode). The home project's coordinator asked greg on a card how to split the work, and
+at 14:46Z he chose "Split by repo", its recommendation:
 
 | Repository | Worked by |
 | --- | --- |
 | `OpenSpineConsortium/beethoven-base` | the home project (its desktop thread) |
 | `OpenSpineConsortium/beethoven-sites` | the home project (its site-module thread) |
-| `OpenSpineConsortium/beethoven-qa` | the home project (its code-quality thread); the outside session also merged qa's PRs #4 and #5 on 2026-10-07 |
+| `OpenSpineConsortium/beethoven-qa` | the home project (its site-module thread; its code-quality thread made 4.0.0 there on 2026-10-08); the outside session also merged qa's PRs #4 and #5 on 2026-10-07 |
 | `OpenSpineConsortium/hpcworker`, `beethoven-extension`, `beethoven-desktop`, `beethoven-vscode`, `beethoven-agents`, `beethoven-research` | the sessions outside the home project |
 | this hub | syncs and `state/` from the home project's hand-off thread; the outside session merged hub PRs #3 and #4 (`INTERFACES.md`) |
 
-A home-project thread that holds unfinished work in a repository that moved outside changes nothing
+A home-project thread that held unfinished work in a repository that moved outside changes nothing
 there. It hands that work over in `state/HANDOVERS.md`: the branch, the commit, what is done and
 what is not, and the next step. The table below stays as the target shape.
 
