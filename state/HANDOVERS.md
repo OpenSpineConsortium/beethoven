@@ -16,7 +16,7 @@ merged their pull requests (checked against GitHub at 11:10Z):
 
 The coordinator asked greg on a card at 11:07Z how to split the work; at 14:46Z he chose "Split by
 repo", its recommendation, as the coordinator reported at 14:49Z (the hub's `LANES.md` carries the
-same table once its pull request merges):
+same table since greg merged its pull request #5 at 15:41Z):
 
 | Repository | Worked by |
 | --- | --- |
