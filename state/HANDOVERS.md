@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 11:20Z, with the site-module thread's second note of 11:18Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 12:20Z, with the code-quality thread's note of 12:13Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -111,3 +111,19 @@ session cannot read beethoven-sites):
   `profile.awk`, and its worker job renders and passes `bash -n`. Two Wayne-only assumptions it
   shows: the workspace guide calls every lab bind "the person's folder on the lab's storage", and
   the worker job never reads `cache_dir`.
+
+### From the code-quality thread (12:13Z, via the coordinator), for the owners of beethoven-agents and beethoven-research
+
+- **beethoven-qa 4.0.0 merged at 12:11Z** (PR #6, merge commit 615ed3e on main, checked). It adds
+  the `coach` command and a `PostToolUse` hook to the plugin: after each Edit or Write it tells the
+  session what CI would block in that file, and it never stops the edit.
+- **greg's hand step:** create the tag `v4.0.0` on 615ed3e (checked at 12:20Z: the tags are
+  v1.0.0, v2.0.0 and v3.0.0; no v4.0.0 yet).
+- **After the tag:** whoever owns beethoven-agents and beethoven-research (the outside sessions,
+  under the provisional split) re-pins both with `vendor --into <repo> --ref v4.0.0 --kit`; qa's
+  `docs/CONSUMING.md` has a section "From 3.0.0 to 4.0.0" (checked, on main).
+- **Not yet measured:** the hook inside a live Claude Code session, and whether
+  `allowManagedHooksOnly` in the agents' image lets the plugin's hook run there.
+- **U-22 (BEE-220, a qa docs fix)** now goes to the site-module thread, in beethoven-qa.
+
+The code-quality thread keeps beethoven-qa.
