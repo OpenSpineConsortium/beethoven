@@ -1,17 +1,17 @@
 # Linear team Beethoven (workspace ashl3y): issues snapshot
 
-Snapshot taken: 2026-10-05T00:00Z, through the Linear connector of the hand-off thread.
+Snapshot taken: 2026-10-08T15:36Z, through the Linear connector of the hand-off thread.
 
 Non-archived issues of the team (one page held them all). Not here: BEE-5 to BEE-97, the launcher backlog from before the engine, archived together on 2026-10-03 at 22:33Z (Linear shows them with "include archived"), and BEE-175, which Linear does not return at all. Titles, status, priority, labels and assignee only; no descriptions or comments.
 
-Total issues: 103. Projects: 14.
+Total issues: 128. Projects: 15.
 
 | Status type | Issues |
 |---|---|
-| backlog | 74 |
+| backlog | 91 |
 | unstarted | 5 |
-| started | 6 |
-| completed | 18 |
+| started | 7 |
+| completed | 25 |
 
 ## P0 — Foundations & Open Decisions
 
@@ -265,6 +265,42 @@ Total issues: 103. Projects: 14.
 | [BEE-182](https://linear.app/ashl3y/issue/BEE-182/first-study-acceptance-criteria-per-engine-phase-the-gates-the-spine) | First-study acceptance criteria per engine phase (the gates the spine study adds) | Backlog | Medium |  |  |
 | [BEE-183](https://linear.app/ashl3y/issue/BEE-183/verify-the-market-analysiss-three-accuracy-attributions-against-tab) | Verify the Market Analysis's three accuracy attributions against tab_all_results.csv | Backlog | Medium |  |  |
 | [BEE-184](https://linear.app/ashl3y/issue/BEE-184/fill-the-access-licence-irb-and-phi-rows-for-every-corpus-before) | Fill the access, licence, IRB and PHI rows for every corpus before ingestion | Backlog | Medium |  |  |
+
+## U — University Site Modules
+
+- Id: P-BEE-16
+- URL: https://linear.app/ashl3y/project/u-university-site-modules-7960525d08c5
+- Status: Backlog (backlog)
+- Summary: Every Wayne State specific moves into a loadable site module (site + lab layers, data only), so another university writes its own module instead of changing the protocol.
+- Issues: 25
+
+| Issue | Title | Status | Priority | Labels | Assignee |
+|---|---|---|---|---|---|
+| [BEE-198](https://linear.app/ashl3y/issue/BEE-198/u-0-design-where-the-protocol-ends-and-a-university-begins-research) | U-0 — Design: where the protocol ends and a university begins (research, model, gap inventory) | Done | High | Docs, E0 Program and governance |  |
+| [BEE-199](https://linear.app/ashl3y/issue/BEE-199/u-1-hpcworker-wayne-state-as-a-site-module-and-a-lab-module-composed) | U-1 — hpcworker: Wayne State as a site module and a lab module, composed into today's profile byte for byte | Done | High | E3 Execution plane, Infra, Improvement | Gregory Schwing |
+| [BEE-200](https://linear.app/ashl3y/issue/BEE-200/u-2-hpcworker-a-synthetic-second-site-and-every-suite-run-once-per) | U-2 — hpcworker: a synthetic second site, and every suite run once per site module | Backlog | High | E10 Test harness, Test, Improvement | Gregory Schwing |
+| [BEE-201](https://linear.app/ashl3y/issue/BEE-201/u-3-hpcworker-a-lint-that-fails-any-core-line-spelling-a-sites-host) | U-3 — hpcworker: a lint that fails any core line spelling a site's host, path, partition or link | Done | High | E10 Test harness, Test, Improvement |  |
+| [BEE-202](https://linear.app/ashl3y/issue/BEE-202/u-4-hpcworker-wayne-state-values-out-of-the-frameworks-code) | U-4 — hpcworker: Wayne State values out of the framework's code | Backlog | Medium | E3 Execution plane, Infra, Improvement |  |
+| [BEE-203](https://linear.app/ashl3y/issue/BEE-203/u-5-hpcworker-the-allocation-account-is-never-passed-to-the-sign-in) | U-5 — hpcworker: the allocation account is never passed to the sign-in, short jobs or the probe | Backlog | Medium | E3 Execution plane, Infra, Bug |  |
+| [BEE-204](https://linear.app/ashl3y/issue/BEE-204/u-6-hpcworker-slurm-only-options-out-of-scheduler-neutral-calls-each) | U-6 — hpcworker: Slurm-only options out of scheduler-neutral calls; each adapter says what it can do | Backlog | Medium | E3 Execution plane, Infra, Improvement |  |
+| [BEE-205](https://linear.app/ashl3y/issue/BEE-205/u-7-hpcworker-tools-no-wayne-state-defaults-in-deploy-access-list-and) | U-7 — hpcworker tools: no Wayne State defaults in deploy, access list and grid CI | Backlog | Medium | Infra, E0 Program and governance, Improvement |  |
+| [BEE-206](https://linear.app/ashl3y/issue/BEE-206/u-8-hpcworker-site-rules-carry-their-source-the-products-floors-are) | U-8 — hpcworker: site rules carry their source; the product's floors are minimums a site can only raise | Backlog | Medium | Infra, E0 Program and governance, Improvement |  |
+| [BEE-207](https://linear.app/ashl3y/issue/BEE-207/u-9-hpcworker-measured-facts-kept-apart-from-declarations-the-probe) | U-9 — hpcworker: measured facts kept apart from declarations; the probe checks a module and reports disagreement | Backlog | Medium | E3 Execution plane, Infra, Feature |  |
+| [BEE-208](https://linear.app/ashl3y/issue/BEE-208/u-10-hpcworker-an-accounts-profile-keeps-only-the-students-own-choices) | U-10 — hpcworker: an account's profile keeps only the student's own choices | Backlog | Medium | E3 Execution plane, Infra, Improvement |  |
+| [BEE-209](https://linear.app/ashl3y/issue/BEE-209/u-11-hpcworker-docs-writing-a-site-module-and-wayne-states-guides) | U-11 — hpcworker docs: "Writing a site module", and Wayne State's guides moved into its module | Backlog | Low | Docs, E0 Program and governance |  |
+| [BEE-210](https://linear.app/ashl3y/issue/BEE-210/u-12-extension-the-site-is-chosen-by-the-modules-own-match-list-never) | U-12 — extension: the site is chosen by the module's own match list, never a default or a guess | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
+| [BEE-211](https://linear.app/ashl3y/issue/BEE-211/u-13-extension-every-wayne-state-value-read-from-the-profile-with-the) | U-13 — extension: every Wayne State value read from the profile, with the site-literal lint | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
+| [BEE-212](https://linear.app/ashl3y/issue/BEE-212/u-14-extension-the-students-words-come-from-the-sites-text-bundle-with) | U-14 — extension: the student's words come from the site's text bundle, with Wayne State's sentences unchanged | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
+| [BEE-213](https://linear.app/ashl3y/issue/BEE-213/u-15-extension-portal-sign-in-second-factor-account-names-and-vpn) | U-15 — extension: portal sign-in, second factor, account names and VPN follow the module's declared kind | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
+| [BEE-214](https://linear.app/ashl3y/issue/BEE-214/u-16-bridge-helper-its-built-in-allow-list-is-generated-from-the) | U-16 — bridge helper: its built-in allow list is generated from the bundled site modules | Backlog | Medium | E8 Bridges, Security, Improvement |  |
+| [BEE-215](https://linear.app/ashl3y/issue/BEE-215/u-17-extension-tests-the-mock-portal-the-ssh-stand-in-and-the-fixtures) | U-17 — extension tests: the mock portal, the ssh stand-in and the fixtures serve any site module | Backlog | Medium | E10 Test harness, Test, Improvement |  |
+| [BEE-216](https://linear.app/ashl3y/issue/BEE-216/u-18-desktop-edition-no-default-site-ssh-options-and-sign-in-words) | U-18 — desktop edition: no default site; ssh options and sign-in words from the module | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
+| [BEE-217](https://linear.app/ashl3y/issue/BEE-217/u-19-vs-code-edition-after-the-move-onto-hpcworker-its-laptop-side) | U-19 — VS Code edition: after the move onto hpcworker, its laptop side reads the site module too | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
+| [BEE-218](https://linear.app/ashl3y/issue/BEE-218/u-20-beethoven-base-one-client-reader-for-site-modules-match-text) | U-20 — beethoven-base: one client reader for site modules (match, text lookup, layered fields) | In Progress | Medium | Infra, E1 Access layer, Feature |  |
+| [BEE-219](https://linear.app/ashl3y/issue/BEE-219/u-21-beethoven-agents-the-engine-reads-the-site-profile-as-data-bee) | U-21 — beethoven-agents: the engine reads the site profile as data; bee and the image build take their site values from it | Done | High | E3 Execution plane, Infra, Improvement |  |
+| [BEE-220](https://linear.app/ashl3y/issue/BEE-220/u-22-beethoven-qa-its-docs-call-centos-7-and-python-36-the-grids) | U-22 — beethoven-qa: its docs call CentOS 7 and Python 3.6 "the grid's" floors; say the strictest supported site's | Done | Low | Docs, E0 Program and governance |  |
+| [BEE-221](https://linear.app/ashl3y/issue/BEE-221/u-23-decision-site-modules-stay-in-hpcworker-or-move-to-a-repository) | U-23 — Decision: site modules stay in hpcworker, or move to a repository of their own | Done | Low | decision, E0 Program and governance |  |
+| [BEE-222](https://linear.app/ashl3y/issue/BEE-222/u-24-decision-the-agreement-privacy-statement-and-store-texts-keep) | U-24 — Decision: the agreement, privacy statement and store texts keep naming Wayne State until a second site is approved | Done | Low | decision, E0 Program and governance |  |
 
 ## No project
 
