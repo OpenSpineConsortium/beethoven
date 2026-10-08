@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 12:15Z, with the code-quality thread's note of 12:13Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 13:05Z, with the site-module thread's third note of 13:02Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -127,3 +127,22 @@ session cannot read beethoven-sites):
 - **U-22 (BEE-220, a qa docs fix)** now goes to the site-module thread, in beethoven-qa.
 
 The code-quality thread keeps beethoven-qa.
+
+### From the site-module thread (13:02Z), for the owners of beethoven-agents and beethoven-research
+
+- **U-22 (BEE-220) merged in beethoven-qa** at 13:01Z (PR #7, merge commit b73d4f4 on main,
+  checked; one docs commit, 552c0af, after 615ed3e). qa's docs now say hpcworker keeps to the oldest
+  Python on a supported site's login node (3.6 today, Wayne State's CentOS 7, as its site module
+  records), not "the grid's". At 13:04Z qa still has no v4.0.0 tag (checked); the release tag that
+  carries this to consumers is greg's.
+- **The same wording is still on main in two repositories outside this project's lanes**, in files
+  that are not kit files, so no pinned copy carries the fix (each line checked on main):
+  - beethoven-research 7e8fd69, `.github/workflows/ci.yml:3`: "none reaches the grid: GitHub's
+    runners cannot (VPN and a one-time code stand between)". qa's version now reads "none reaches a
+    university's cluster: GitHub's runners cannot (the university's own sign-in stands between, at
+    Wayne State a VPN and a one-time code)".
+  - beethoven-agents a40a71a: `.github/workflows/ci.yml:3` (the same line),
+    `src/beethoven_agents/site.sh:8` ("Python 3.6 on CentOS 7 nodes") and
+    `docs/bee/STATE_HANDOFF.md:172` ("the grid's CentOS 7"). `docs/bee/RUNBOOK.md:148` is a
+    Wayne State measurement and can stay.
+- Details in Linear BEE-220.
