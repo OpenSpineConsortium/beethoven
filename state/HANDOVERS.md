@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 17:00Z, with the extension thread's measure-first step for the worker race (16:59Z) (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 17:31Z, with the QA thread's note of 17:31Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -213,3 +213,32 @@ checked on main, except where it says otherwise, at 15:19Z: hpcworker 3b22e70, b
 3. **beethoven-desktop.** Design step 10 can replace `profileFrom`'s checks (`src/profile.ts:44`)
    with base's `sshTargetOf` and `stateDirOf`, mapping their codes to the desktop edition's own
    sentences.
+
+### From the QA thread (17:31Z, through the coordinator), for the owners of beethoven-agents, beethoven-research and beethoven-vscode
+
+The QA thread read these and pushed nothing (each point checked on main at 17:31Z: agents a40a71a,
+vscode e7526f9, qa b73d4f4).
+
+1. **beethoven-agents and beethoven-research, after greg tags beethoven-qa v4.0.0** (still only
+   v1.0.0 to v3.0.0, checked): re-pin both off the tag with `pixi run --locked python -m
+   beethoven_qa vendor --into . --ref v4.0.0 --kit`. The four kit files are byte-identical at
+   v2.0.0, v3.0.0 and qa main (checked), so `--kit` changes nothing. Optionally name
+   `plugin/hooks/coach.sh` in each `.claude/settings.json` (qa `docs/CONSUMING.md`).
+2. **beethoven-agents:** `containers/managed-settings.json:15` says the pinned plugin has "no
+   hooks"; that is stale once the copy is 4.0.0.
+3. **beethoven-agents:** `containers/claude-verify.def` is not reproducible as a recipe: line 47
+   pipes the nodesource setup script into `bash`, line 50 installs `@anthropic-ai/claude-code`
+   unpinned, and lines 56-57 fetch pixi with no checksum. The grid build and the committed digest
+   (BEE-103) are still open.
+4. **beethoven-vscode:** no CI workflow at all (`.github/` holds only `CODEOWNERS`,
+   `dependabot.yml` and the pull request template), and its repository half (ruleset, auto-merge,
+   pre-push gate) is unbuilt. hpcworker and the extension (`ci.yml` only, hand merges) are already
+   in greg's pending list.
+
+An operational fact, as the QA thread reports it (not checked here): in these sessions `gh run
+list` and `gh api` answer through the proxy even though `gh auth status` calls the token invalid;
+only the GitHub MCP server is refused with a 403. Its skeptics read six live rulesets and three CI
+runs that way.
+
+The QA thread keeps two items of its own: the stale beethoven-qa docs pull request (on greg's word)
+and the G1 Linear corrections for BEE-105, 106, 107, 109 and 110.
