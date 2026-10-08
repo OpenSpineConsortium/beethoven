@@ -1,4 +1,4 @@
-**Describes:** 2026-10-05 00:15Z (refreshed for the hub: GitHub, the threads and Linear read again from 23:40Z; before that, decisions read from the threads, `ledger/INTERVENTIONS.md`, `plan/BUILD_PLAN.md` section 13, `plan/REPO_SPLIT.md`, Linear and GitHub between 18:35Z and 20:22Z, every row re-checked by an independent checker; the desktop thread's pushed branches checked at 20:32Z; its 20:58Z changes by three independent checkers at 21:15-21:20Z)
+**Describes:** 2026-10-05 00:15Z (refreshed for the hub: GitHub, the threads and Linear read again from 23:40Z; before that, decisions read from the threads, `ledger/INTERVENTIONS.md`, `plan/BUILD_PLAN.md` section 13, `plan/REPO_SPLIT.md`, Linear and GitHub between 18:35Z and 20:22Z, every row re-checked by an independent checker; the desktop thread's pushed branches checked at 20:32Z; its 20:58Z changes by three independent checkers at 21:15-21:20Z); since then only the lane decision of 2026-10-08 14:46Z was added, nothing else re-read
 
 # Beethoven: greg's decisions, open questions and his steps
 
@@ -76,6 +76,12 @@ section 6, the three-repo thread's) and this file.
 | 10-05 00:13Z | Card in the hand-off thread, "Push to main": once PR #1 is merged, each sync of the project files into the hub is pushed straight to its `main`, with no pull request; until then syncs update PR #1 | this thread's card |
 | 10-05 00:14Z | Hand step: merged the hub's PR #1 (merge 9e8a7f7, head 7ca551e) | GitHub, read 00:16Z |
 | 10-05 00:28:04Z | In the desktop thread: "All of the decisions look good except for d2. The only time I want you to interact with me is for decisions where you have a recommended approach and alternatives": the base design's D1 and D3 to D8 accepted as recommended, D2 (drop `bypassPermissions`) not accepted; and from now on Claude messages him only for a decision, with a recommendation and the alternatives. Progress stays in each thread's status; what he must do himself goes to the coordinator's to-do notice | desktop thread; coordinator relay 00:30Z |
+
+## Decided on 2026-10-08
+
+| UTC | Decision or step | Where it is recorded |
+| --- | --- | --- |
+| 10-08 14:46Z | Card "Pick which repos this project's threads keep" (asked 11:07Z): "Split by repo", the recommendation. This project keeps beethoven-base, beethoven-sites and beethoven-qa; hpcworker, beethoven-extension, beethoven-desktop, beethoven-vscode, beethoven-agents and beethoven-research stay with greg's sessions outside the project, with the handover notes in the hub | the coordinator's card and its report of 14:47Z; `state/HANDOVERS.md`; the hub's `LANES.md` (PR #5) |
 
 ## Questions greg asked, and the answers on record
 

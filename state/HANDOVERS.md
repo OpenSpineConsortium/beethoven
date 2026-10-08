@@ -1,8 +1,8 @@
-**Describes:** 2026-10-08 13:02Z, with the site-module thread's third note of 13:02Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 14:52Z, with greg's choice of the split at 14:46Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
-## The split, provisional until greg answers the coordinator's card (2026-10-08 11:07Z)
+## The split, decided by greg on 2026-10-08 at 14:46Z
 
 On 2026-10-07 two Claude Code sessions outside the home project worked on the repositories, and greg
 merged their pull requests (checked against GitHub at 11:10Z):
@@ -14,14 +14,15 @@ merged their pull requests (checked against GitHub at 11:10Z):
 - branch `claude/oschome-access-approval-6prr38`: hpcworker PRs #7 to #12; beethoven-vscode PRs
   #13 and #14.
 
-The coordinator asked greg how to split the work. Until he answers, work follows its
-recommendation (the hub's `LANES.md` carries the same table once its pull request merges):
+The coordinator asked greg on a card at 11:07Z how to split the work; at 14:46Z he chose "Split by
+repo", its recommendation, as the coordinator reported at 14:49Z (the hub's `LANES.md` carries the
+same table once its pull request merges):
 
 | Repository | Worked by |
 | --- | --- |
 | beethoven-base | the home project (desktop thread) |
 | beethoven-sites | the home project (site-module thread) |
-| beethoven-qa | the home project (code-quality thread) |
+| beethoven-qa | the home project (site-module thread; the code-quality thread finished its 4.0.0 work there on 2026-10-08) |
 | hpcworker, beethoven-extension, beethoven-desktop, beethoven-vscode, beethoven-agents, beethoven-research | the sessions outside the home project |
 | the hub | syncs and `state/` from the home project's hand-off thread |
 
@@ -120,13 +121,14 @@ session cannot read beethoven-sites):
 - **greg's hand step:** create the tag `v4.0.0` on 615ed3e (checked at 12:14Z: the tags are
   v1.0.0, v2.0.0 and v3.0.0; no v4.0.0 yet).
 - **After the tag:** whoever owns beethoven-agents and beethoven-research (the outside sessions,
-  under the provisional split) re-pins both with `vendor --into <repo> --ref v4.0.0 --kit`; qa's
+  under the split) re-pins both with `vendor --into <repo> --ref v4.0.0 --kit`; qa's
   `docs/CONSUMING.md` has a section "From 3.0.0 to 4.0.0" (checked, on main).
 - **Not yet measured:** the hook inside a live Claude Code session, and whether
   `allowManagedHooksOnly` in the agents' image lets the plugin's hook run there.
 - **U-22 (BEE-220, a qa docs fix)** now goes to the site-module thread, in beethoven-qa.
 
-The code-quality thread keeps beethoven-qa.
+The code-quality thread's work in beethoven-qa is finished; the repository stays with the home
+project through the site-module thread (coordinator, 14:49Z).
 
 ### From the site-module thread (13:02Z), for the owners of beethoven-agents and beethoven-research
 
