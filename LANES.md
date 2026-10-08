@@ -37,6 +37,35 @@ repository's projects ([linear/README.md](linear/README.md) has the table), move
 lands, and names the issue key in its commits and pull requests. A lane that needs another lane's
 change opens an issue in that lane's project and links it from its own.
 
+## Lanes now (greg's choice of 2026-10-08 14:46Z)
+
+On 2026-10-07 two Claude Code sessions outside the home project worked on the repositories, and greg
+merged their pull requests: branch `claude/repo-encapsulation-9hmh9f` (hpcworker,
+beethoven-extension, beethoven-desktop, beethoven-vscode, beethoven-qa, beethoven-agents,
+beethoven-research and this hub) and branch `claude/oschome-access-approval-6prr38` (hpcworker and
+beethoven-vscode). The home project's coordinator asked greg on a card how to split the work, and
+at 14:46Z he chose "Split by repo", its recommendation:
+
+| Repository | Worked by |
+| --- | --- |
+| `OpenSpineConsortium/beethoven-base` | the home project (its desktop thread) |
+| `OpenSpineConsortium/beethoven-sites` | the home project (its site-module thread) |
+| `OpenSpineConsortium/beethoven-qa` | the home project (its site-module thread; its code-quality thread made 4.0.0 there on 2026-10-08); the outside session also merged qa's PRs #4 and #5 on 2026-10-07 |
+| `OpenSpineConsortium/beethoven-extension` | the home project (its extension thread, since 15:30Z on 2026-10-08; pending greg's word, see below) |
+| `OpenSpineConsortium/hpcworker`, `beethoven-desktop`, `beethoven-vscode`, `beethoven-agents`, `beethoven-research` | the sessions outside the home project |
+| this hub | syncs and `state/` from the home project's hand-off thread; the outside session merged hub PRs #3 and #4 (`INTERFACES.md`) |
+
+beethoven-extension came back to the home project at 15:30Z on 2026-10-08: greg asked in the
+project chat for the extension's remaining work (VPN only through GlobalProtect, a simpler
+interface, the launch on every queue that takes the first allocation, a profile loader with Wayne
+State as the default), and the coordinator started a thread for it here, telling him that is its
+default since he asked here. That one row waits on his word: he may yet say his outside session
+keeps the extension.
+
+A home-project thread that held unfinished work in a repository that moved outside changes nothing
+there. It hands that work over in `state/HANDOVERS.md`: the branch, the commit, what is done and
+what is not, and the next step. The table below stays as the target shape.
+
 ## Lanes as proposed (greg decides which accounts take which)
 
 | Lane | Repository | Notes |
