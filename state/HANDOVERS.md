@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 14:52Z, with greg's choice of the split at 14:46Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 15:19Z, with the site-module thread's U-20 note of 15:18Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -148,3 +148,33 @@ project through the site-module thread (coordinator, 14:49Z).
     `docs/bee/STATE_HANDOFF.md:172` ("the grid's CentOS 7"). `docs/bee/RUNBOOK.md:148` is a
     Wayne State measurement and can stay.
 - Details in Linear BEE-220.
+
+### From the site-module thread (15:18Z), for the owners of hpcworker, beethoven-extension and beethoven-desktop
+
+U-20 (BEE-218) part one is beethoven-base PR #2 (not checked here: this session cannot read
+beethoven-base): `src/profile.ts`, base's first module, in two new exports, `desktop` and `browser`.
+Its tests take hpcworker's `profiles` and `module-schema` and beethoven-sites' `modules` and
+`example-modules` as pinned imports. The rest of BEE-218 is in the outside lanes (each point below
+checked on main, except where it says otherwise, at 15:19Z: hpcworker 3b22e70, beethoven-extension ae11a00, beethoven-desktop 9ce98bb):
+
+1. **hpcworker.** BEE-218 names keys that module-schema 1 lacks: `match`, `texts`, `portal`,
+   `second_factor`, `account_id`, `vpn`, `ssh_options`, `rules`, and a `text(key, site, vars)`
+   lookup (checked: none is in `framework/lib/profile.py`). Base reads only what the schema states,
+   so they go into `FIELD_LAYERS`, `SUBFIELDS` and the `module-schema` export first, and base reads
+   them after that. Informative only: add OpenSpineConsortium/beethoven-base to the `consumers` of the
+   `profiles` and `module-schema` exports in `interface/INTERFACE.json` (checked: not there).
+2. **beethoven-extension.**
+   - `SiteProfile` types `ssh_relay` as `{ url?, ticket_url? } | null`
+     (`extension/src/core/contract.ts:680`, and `relayConfigFrom` in `extension/src/core/bridge.ts:109`
+     reads it so). Module-schema 1 says `str_or_none` (hpcworker `framework/lib/profile.py:110`), and
+     Example University's relay is a `wss://` string (in beethoven-sites, not checked here), so the
+     type is wrong.
+   - Design step 11 (taking base's `browser` export) can replace `DEFAULT_SITE = 'wayne'`
+     (`extension/src/entrypoints/background.ts:135`) and `siteFromHostname`
+     (`extension/src/core/keys.ts:336`) with base's `deploymentFor` (U-12, BEE-210).
+   - The extension's `expandPath` (`extension/src/core/contract.ts:190`) turns `$USERNAME` into the
+     user name followed by `NAME`, since its pattern `\$\{?USER\}?` has no word boundary; base's
+     `expandPath` expands on a word boundary.
+3. **beethoven-desktop.** Design step 10 can replace `profileFrom`'s checks (`src/profile.ts:44`)
+   with base's `sshTargetOf` and `stateDirOf`, mapping their codes to the desktop edition's own
+   sentences.
