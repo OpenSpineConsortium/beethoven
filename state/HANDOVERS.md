@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 17:31Z, with the QA thread's note of 17:31Z (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-08 17:58Z, with the QA thread's qa 5.0.0 measurement of 17:42-17:50Z (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -224,6 +224,25 @@ vscode e7526f9, qa b73d4f4).
    beethoven_qa vendor --into . --ref v4.0.0 --kit`. The four kit files are byte-identical at
    v2.0.0, v3.0.0 and qa main (checked), so `--kit` changes nothing. Optionally name
    `plugin/hooks/coach.sh` in each `.claude/settings.json` (qa `docs/CONSUMING.md`).
+   **Then qa 5.0.0** (the QA thread, 17:57Z through the coordinator; being built on qa's branch
+   `claude/qa-assessment-4x85zq`, not on GitHub at 17:58Z): the plain gate runs CrossHair with
+   `--report-all` on every push, so a precondition no input can meet fails the gate. The QA
+   thread's read-only measurement at 17:42-17:50Z, nothing pushed:
+   - beethoven-agents: `python -m beethoven_qa gate --report-all` exits 1 at a40a71a. Four targets
+     report "Unable to meet precondition": `beethoven_agents.bee.accounts.host_transcript`
+     (`accounts.py:544`), `bee.handoff.extraction_prompt` (`handoff.py:451`),
+     `bee.handoff.hydration_prompt` (`handoff.py:484`) and `guard.check_path` (`guard.py:415`)
+     (the four functions checked on main; the gate's verdicts as reported). 11 conditions
+     confirmed over all paths, 54 not confirmed at the bound, 5 min 56 s on 4 cores. Fix, as in
+     qa's own `level_for`: restate each precondition over values CrossHair 0.0.111 can build (a
+     `Literal` or an enum instead of a string checked against a set), or list the function under
+     `[tool.beethoven-qa.unproven]` with that reason. Needed before agents re-pins to 5.0.0, not
+     before.
+   - beethoven-research: exits 0 (0 confirmed, 6 not confirmed at the bound, 1 min 44 s); nothing
+     to do.
+   - The 5.0.0 re-pin also brings kit changes and three tools each consumer adds to its
+     `pixi.toml` (jscpd, zizmor, lizard), and waits on greg tagging v5.0.0, which the QA thread
+     will flag when its pull request is up.
 2. **beethoven-agents:** `containers/managed-settings.json:15` says the pinned plugin has "no
    hooks"; that is stale once the copy is 4.0.0.
 3. **beethoven-agents:** `containers/claude-verify.def` is not reproducible as a recipe: line 47
