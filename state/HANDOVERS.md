@@ -1,4 +1,4 @@
-**Describes:** 2026-10-08 18:01Z, with the QA thread's correction of 18:01Z to the qa 5.0.0 kit (who works which repository now, and the work handed over between them)
+**Describes:** 2026-10-09 02:39Z, with qa 5.0.0's pull request #8 (who works which repository now, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
@@ -225,20 +225,25 @@ vscode e7526f9, qa b73d4f4).
    `src/beethoven_qa/vendor.py`) are byte-identical at v2.0.0, v3.0.0 and qa main (checked), so
    `--kit` changes nothing. Optionally name
    `plugin/hooks/coach.sh` in each `.claude/settings.json` (qa `docs/CONSUMING.md`).
-   **Then qa 5.0.0** (the QA thread, 17:57Z through the coordinator; being built on qa's branch
-   `claude/qa-assessment-4x85zq`, not on GitHub at 17:58Z): the plain gate runs CrossHair with
-   `--report-all` on every push, so a precondition no input can meet fails the gate. The QA
-   thread's read-only measurement at 17:42-17:50Z, nothing pushed:
+   **Then qa 5.0.0, which supersedes the 4.0.0 re-pin once greg tags v5.0.0.** It is beethoven-qa
+   PR #8, head a4ac562 on `claude/qa-assessment-4x85zq` (checked 2026-10-09 02:39Z; auto-merge armed
+   and the pre-push gate green, as the QA thread reports); greg tags v5.0.0 on its merge commit,
+   and v4.0.0 is still untagged on 615ed3e. The steps for consumers are qa's `docs/CONSUMING.md`,
+   section "From 4.0.0 to 5.0.0" (line 731 at a4ac562), which names the four functions below. The
+   gate runs CrossHair with every condition's verdict on every run, so a precondition no input can
+   meet fails it. The QA thread's read-only measurement at 17:42-17:50Z on 2026-10-08, nothing
+   pushed:
    - beethoven-agents: `python -m beethoven_qa gate --report-all` exits 1 at a40a71a. Four targets
      report "Unable to meet precondition": `beethoven_agents.bee.accounts.host_transcript`
      (`accounts.py:544`), `bee.handoff.extraction_prompt` (`handoff.py:451`),
      `bee.handoff.hydration_prompt` (`handoff.py:484`) and `guard.check_path` (`guard.py:415`)
      (the four functions checked on main; the gate's verdicts as reported). 11 conditions
      confirmed over all paths, 54 not confirmed at the bound, 5 min 56 s on 4 cores. Fix, as in
-     qa's own `level_for`: restate each precondition over values CrossHair 0.0.111 can build (a
-     `Literal` or an enum instead of a string checked against a set), or list the function under
-     `[tool.beethoven-qa.unproven]` with that reason. Needed before agents re-pins to 5.0.0, not
-     before.
+     qa's own `level_for`: restate each precondition over values CrossHair 0.0.111 can build (an
+     enum instead of a string checked against a set; CONSUMING.md at a4ac562 says a `Literal`
+     makes CrossHair 0.0.111 raise, correcting the earlier note), state a path's domain in a form
+     it can build, or list the function under `[tool.beethoven-qa.unproven]` with that reason.
+     Needed before agents re-pins to 5.0.0, not before.
    - beethoven-research: exits 0 (0 confirmed, 6 not confirmed at the bound, 1 min 44 s); nothing
      to do.
    - What else the 5.0.0 re-pin brings, from the QA thread's build plan (17:59Z, through the
