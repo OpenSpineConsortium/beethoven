@@ -1,9 +1,9 @@
 ---
 name: desktop-thread-in-flight
-description: What the desktop thread holds at 2026-10-08 15:00Z: only beethoven-base (skeleton PR #1 merged, ruleset active, auto-merge setting pending); its hpcworker and edition work handed to the lanes outside the project
+description: What the desktop thread holds at 2026-10-08 15:45Z: only beethoven-base (PR #1 and #2 merged, design step 9 being built on branch claude/project-thread-fx3wkp); its hpcworker and edition work handed to the lanes outside the project
 metadata:
   type: project
-  modified: 2026-10-08T12:39:52.227Z
+  modified: 2026-10-08T15:45:00.000Z
 ---
 
 Thread "Build the Claude Desktop ssh plugin" (cmsg_01JbwQwHoYeBWptjPB5c6u8m3KSccv8f9KZdoYiLkxZons), branch `claude/project-thread-fx3wkp` everywhere. It was paused 2026-10-05 01:33Z to 2026-10-08 11:00Z on the seven-day usage limit.
@@ -12,5 +12,6 @@ Thread "Build the Claude Desktop ssh plugin" (cmsg_01JbwQwHoYeBWptjPB5c6u8m3KScc
 - **Handed to the hub (hand-off session, 11:08Z):** the worker race (greg 23:26Z, all queues; snapshot 9208ca2 on old main; rebuild as framework 19; worker_queues goes in the lab module); the 5.0.0 grid-test steps greg asked for at 01:17Z on Oct 5 (the draft is stale against scripts 10; redo it); the contract re-pin in the extension and desktop after the race merges.
 - **beethoven-base PR #1 MERGED** by greg 2026-10-08 14:59:07Z (main 1cfc4ce): the skeleton built to the interface standard (`interface/INTERFACE.json` with exports and imports empty until step 9, the standard's `interface/pull.sh` taking imports only under `test/`, the boundary test, the export check; no vendor command, check.mjs, editions/*.json or release tags). rulesets.yml ran on the merge with the organisation's RULESETS_TOKEN, and the ruleset "main: checks before merge" (required check `gate`) is active. Still open for greg: Settings, General, Allow auto-merge (false at 15:00Z). The coordinator was told at 15:00Z; the site-module thread's U-20 (BEE-218, the site-module reader) goes on top. The branch claude/project-thread-fx3wkp is level with main.
 - **Base after PR #1 (coordinator, 2026-10-08 15:20Z):** beethoven-base is the site-module thread's until its PR #2 merges (U-20 part one, head 2e64cc1: `src/profile.ts`, base's first module, in new exports desktop and browser, with four pinned test imports: hpcworker's profiles and module-schema, beethoven-sites' modules and example-modules; no vscode export yet, VS Code takes profile.ts from its 7.0.0). When this thread returns to base, design step 9 builds on that profile.ts, never a second one: add the other twelve modules beside it and the vscode export once it has modules. Keys profile.ts names that module-schema 1 lacks go into hpcworker's schema first, in the outside lanes (handover note in the hub).
+- **Base is this thread's again (coordinator 15:27Z):** greg merged base PR #2 at 15:26Z (main c7682f6). Design step 9 in progress on claude/project-thread-fx3wkp: commit 'Pin hpcworker's contract and bee's registry' (imports contract -> test/hpcworker at hpcworker 3b22e70, registry -> test/registry at agents a40a71a), src/steps.ts seeded with cleanLine/KEEPALIVE, workflow base-step-9 (run wf_a3c5daaf-a8a) builds links, steps, status, gate, run, meaning, redact, strip, signin, accounts, sshopts, diagnostics, exports desktop/browser/vscode v1, removes the index.ts placeholder, then reviews. strip.ts equals hpcworker's 15-name list until hpcworker adopts the 33-name union (outside lanes). A base PR still needs greg's hand merge (Allow auto-merge off).
 
 Related: [[beethoven-desktop]], [[greg-contact-only-for-decisions]].
