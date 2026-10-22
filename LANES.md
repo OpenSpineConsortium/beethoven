@@ -51,7 +51,7 @@ at 14:46Z he chose "Split by repo", its recommendation:
 | `OpenSpineConsortium/beethoven-base` | the home project (its desktop thread) |
 | `OpenSpineConsortium/beethoven-sites` | the home project (its site-module thread) |
 | `OpenSpineConsortium/beethoven-qa` | the home project (its site-module thread; its code-quality thread made 4.0.0 there on 2026-10-08); the outside session also merged qa's PRs #4 and #5 on 2026-10-07 |
-| `OpenSpineConsortium/beethoven-extension` | the home project (its extension thread, since 15:30Z on 2026-10-08; pending greg's word, see below) |
+| `OpenSpineConsortium/beethoven-extension` | the home project (its extension thread, since 15:30Z on 2026-10-08; pending greg's word, see below); since 2026-10-11, in practice, sessions outside the home project |
 | `OpenSpineConsortium/hpcworker`, `beethoven-desktop`, `beethoven-vscode`, `beethoven-agents`, `beethoven-research` | the sessions outside the home project |
 | this hub | syncs and `state/` from the home project's hand-off thread; the outside session merged hub PRs #3 and #4 (`INTERFACES.md`) |
 
@@ -61,6 +61,15 @@ interface, the launch on every queue that takes the first allocation, a profile 
 State as the default), and the coordinator started a thread for it here, telling him that is its
 default since he asked here. That one row waits on his word: he may yet say his outside session
 keeps the extension.
+
+Read on 2026-10-22: every beethoven-extension change after the home project's extension thread
+finished (its last, PR #9, documents written 2026-10-09) came from sessions outside the home
+project: PRs #10 to #23, 20.0.0 to 23.0.0, 2026-10-11 to 2026-10-21, each merged by greg. greg has
+said nothing either way on record, so the hand-off reads the row as worked outside the project,
+like hpcworker ([state/HANDOVERS.md](state/HANDOVERS.md), section "Since 2026-10-09"). Since
+2026-10-22 02:02Z an organization rule, "Require owner approval to merge", also covers every
+repository in the table and this hub: a change reaches main only through a pull request with an
+approving review, or an organization admin's bypass.
 
 A home-project thread that held unfinished work in a repository that moved outside changes nothing
 there. It hands that work over in `state/HANDOVERS.md`: the branch, the commit, what is done and
