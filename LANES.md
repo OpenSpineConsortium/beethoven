@@ -64,12 +64,14 @@ keeps the extension.
 
 Read on 2026-10-22: every beethoven-extension change after the home project's extension thread
 finished (its last, PR #9, documents written 2026-10-09) came from sessions outside the home
-project: PRs #10 to #23, 20.0.0 to 23.0.0, 2026-10-11 to 2026-10-21, each merged by greg. greg has
+project: PRs #10 to #23, 20.0.0 to 23.0.0, 2026-10-11 to 2026-10-21, each merged under greg's
+account. greg has
 said nothing either way on record, so the hand-off reads the row as worked outside the project,
 like hpcworker ([state/HANDOVERS.md](state/HANDOVERS.md), section "Since 2026-10-09"). Since
-2026-10-22 02:02Z an organization rule, "Require owner approval to merge", also covers every
-repository in the table and this hub: a change reaches main only through a pull request with an
-approving review, or an organization admin's bypass.
+2026-10-22 02:02Z an organization rule, "Require owner approval to merge", also covers this hub and
+every repository in the table that a session can read (all but beethoven-base and beethoven-sites,
+not checked): a change reaches main only through a pull request with an approving review by someone
+other than its author and last pusher, or an organization admin's bypass.
 
 A home-project thread that held unfinished work in a repository that moved outside changes nothing
 there. It hands that work over in `state/HANDOVERS.md`: the branch, the commit, what is done and

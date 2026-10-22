@@ -26,7 +26,7 @@ hub syncs go by pull request, recommending yes.
 What follows (checked 2026-10-22 with `gh api .../pulls`): session pull requests are opened as
 greg, and GitHub never lets an author approve their own, so they merge only through his bypass;
 auto-merge armed by `automerge.yml` waits for a review it cannot get, so qa, agents, research and
-desktop no longer merge on green (none merged after 02:02Z). vscode #16, #18, #19 and hpcworker
+desktop should no longer merge on green (inferred: none of the four has opened a PR since). vscode #16, #18, #19 and hpcworker
 #31, #32 merged after the rule with 0 reviews, merged_by greg: the bypass.
 
 **Why:** a rule named "owner approval" with an admin bypass is meant for greg's hand, not for

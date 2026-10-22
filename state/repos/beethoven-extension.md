@@ -1,8 +1,8 @@
 # CLAUDE STATE SERIALIZATION
 
-**Timestamp:** 2026-10-22T10:20Z **Phase:** Implementation (23.0.0 released through CI)
+**Timestamp:** 2026-10-22T14:57Z **Phase:** Implementation (23.0.0 released through CI)
 
-Repository hand-off: `OpenSpineConsortium/beethoven-extension` (private), the client half of the Beethoven launcher. Project-wide state, rules and greg's open steps: `/mnt/project-files/state/HANDOVERS.md` (section "Since 2026-10-09") and `DECISIONS.md` (list "Waiting on greg, 2026-10-22"); how to use this file: `HYDRATE.md`. Checked against `origin/main` e6ee0f6 with git and `gh api` at 09:17-10:05Z; whatever says "not yet measured" or "not established" was not checked. This file replaces the one of 2026-10-05, which described 15.0.0.
+Repository hand-off: `OpenSpineConsortium/beethoven-extension` (private), the client half of the Beethoven launcher. Project-wide state, rules and greg's open steps: `/mnt/project-files/state/HANDOVERS.md` (section "Since 2026-10-09") and `DECISIONS.md` (list "Waiting on greg, 2026-10-22"); how to use this file: `HYDRATE.md`. Checked against `origin/main` e6ee0f6 with git and `gh api` at 09:17-10:05Z, and every claim again by an independent reader at 14:25-14:50Z; whatever says "not yet measured" or "not established" was not checked. This file replaces the one of 2026-10-05, which described 15.0.0.
 
 **Read first, in the repository itself, on `origin/main`:** `CLAUDE.md` (every rule, including those 20.0.0 to 23.0.0 added); `docs/V19_STATUS.md` (the home project's extension thread's hand-off of 2026-10-09: where 19.0.0 stood, what to do when the store's or C&IT's answer comes, the race handover, the open items; its sections 2.1 to 2.6 and 3 are what this file's section 5 updates); `docs/OPEN_QUESTIONS.md`; `release/20.0.0/README.md`; `docs/store/SUBMISSION.md`. A local checkout may be old: fetch first (this session's checkout was at a7db369, 79 commits behind).
 
@@ -19,7 +19,7 @@ Keep the Beethoven Chrome extension (`extension/`, WXT and TypeScript), the stud
 - **21.0.0 to 23.0.0**: Settings takes the address of the student's Claude project, opened before a plain session (`CLAUDE.md:119-133`); a lab lead's "Connect GitHub Actions" and "Remove" type hpcworker's published lines `grid-gate-setup` and `grid-gate-off` through the portal's shell (`:134-150`); Beethoven restarts into a downloaded version only while nothing would be lost (`:151-159`).
 - **Texts**: `LICENSE.txt` version 15 (2026-10-16), `PRIVACY.md` version 17 (2026-10-18; greg's "Statement only" kept the agreement at 15), `TERMS_VERSION` 15 and `TERMS_DATE` 2026-10-16 (`extension/src/core/terms.ts:28-29`); the `extension/public/` copies are byte-identical.
 - **Pins**: hpcworker's contract at a0ac0ed (`framework/contract/ORIGIN`, framework 18's vectors); contract text and profiles at hpcworker e77863c; beethoven-base's `browser` export at c7682f6 (`extension/src/base/`). Change a pin only with `interface/pull.sh`, never by hand.
-- **Merging**: no `automerge.yml`, `rulesets.yml` or `.github/rulesets/` here; since 2026-10-22 02:02Z the organization's rule "Require owner approval to merge" needs one approving review on main, and a session's pull request (opened as greg) merges only through his bypass. Every pull request so far was his merge.
+- **Merging**: no `automerge.yml`, `rulesets.yml` or `.github/rulesets/` here; since 2026-10-22 02:02Z the organization's rule "Require owner approval to merge" needs one approving review on main, and a session's pull request (opened under greg's account) merges only through an organization admin's bypass. Every pull request so far was merged under his account.
 
 ## 3. Files Modified & State
 
@@ -29,15 +29,15 @@ Keep the Beethoven Chrome extension (`extension/`, WXT and TypeScript), the stud
 | extension/src/core/terms.ts | Complete | `TERMS_VERSION` 15, `TERMS_DATE` 2026-10-16 |
 | LICENSE.txt, PRIVACY.md | Complete | 15 and 17; counsel notes exist up to `docs/TEXTS_V14_V15.md`, none for agreement 15 or privacy 16 and 17 |
 | .github/workflows/release.yml | Complete | PR #13, fixed in PR #15; runs #1 and #2 failed (no zip found), #3 onward succeeded; the store job has run on every push since run #8 (e48c345, 2026-10-18) |
-| docs/V19_STATUS.md | Stale | The newest status document; there is none for 20.0.0 to 23.0.0, which only `CLAUDE.md` and `PRIVACY.md:537-543` describe |
-| release/20.0.0/ | Complete | The last release record; none for 21.0.0 to 23.0.0. Its `store-kit/05-promo-video-1280x720.mp4` is still 9.0.0's (PR #16 changed only `extension/store-assets/promo/`) |
+| docs/V19_STATUS.md | Stale | The newest status document; there is none for 20.0.0 to 23.0.0. 22.0.0 and 23.0.0 are described only in `CLAUDE.md` (and 22.0.0's privacy change in `PRIVACY.md:537-543`); 20.0.0 and 21.0.0 also in `release/20.0.0/README.md`, `docs/store/SUBMISSION.md` and `docs/ARCHITECTURE.md` |
+| release/20.0.0/ | Complete | The last release record; none for 21.0.0 to 23.0.0. Its `store-kit/05-promo-video-1280x720.mp4` is still 9.0.0's (PR #16 rebuilt the promo under `extension/store-assets/` and never touched `release/20.0.0/`) |
 | framework/profiles/ORIGIN | Stale | hpcworker e77863c; hpcworker's `wayne.json` changed in 8563065 (framework 26: `galhp`, `qos_gpu`, `node_domain`) |
 | README.md | Stale | Line 254 says "the extension is 21.0.0" |
 | extension/src/ui/panel.ts | Pending | `NEEDS_GRID` (line 80) holds `connect`, `retry` and `sign-in-claude`; the test (`extension/test/ui-fixtures.test.ts:503-512`) covers `connect` only (review finding R2-22) |
 
 ## 4. Completed Milestones
 
-1. 16.0.0 to 19.0.0 (PRs #5 to #8, 2026-10-08 and 09), by the home project's extension thread: the direct way removed, base's profile reader pinned, the grid sign-in in front, "Beethoven signs in". PR #9 (`docs/V19_STATUS.md`, `docs/V19_DESIGN.md`) merged by greg on 2026-10-13.
+1. 16.0.0 to 19.0.0 (PRs #5 to #8, 2026-10-08 and 09), by the home project's extension thread: the direct way removed, base's profile reader pinned, the grid sign-in in front, "Beethoven signs in". PR #9 (`docs/V19_STATUS.md`, `docs/V19_DESIGN.md`) merged under greg's account on 2026-10-13.
 2. The store accepted 19.0.0 (greg, 2026-10-13; `docs/V19_STATUS.md:43`).
 3. 20.0.0 (PRs #10 to #12, 2026-10-11 to 13): every installation of one person; the public listing; the release record.
 4. Releases from CI (PRs #13 and #15); first tag `extension-v20.0.0.102` (e900bae). Store screenshots and the submission kit (PR #14); the promo video at 1440p with sound (PR #16).
@@ -50,13 +50,13 @@ Keep the Beethoven Chrome extension (`extension/`, WXT and TypeScript), the stud
 - **The word "AccessID"** (2.4) waits on a site-module text key in hpcworker's module schema (`extension/src/core/model.ts:48-49`).
 - **hpcworker's CLAUDE.md lines 67-76** (2.5) are still stale; it is hpcworker's lane's pull request (`HANDOVERS.md`).
 - **C&IT's answer** on the Remember tick (2.2) is not on record anywhere read; open question 4 stands.
-- **Not yet measured:** all eleven questions of `docs/OPEN_QUESTIONS.md:3` (the listener on the live portal, Windows Hello or Touch ID from the side panel, the PRF result, whether failed Basic sign-ins count toward the five, the order race, a right saved password held); `docs/guides/LAB_LEAD.md` section 10; a finished gate press on the grid (the press of 2026-10-21 failed; the fix in e6ee0f6 is tested only in `shell-evidence.test.ts`); 23.0.0's restart in a real Chrome (`update.test.ts` runs on a fake browser); whether `release.yml`'s store step ever uploaded (its log and the repository's variables are refused through the proxy); the Wayne State quotes in `docs/research/v19/policy-wayne.md:42-44` on the live pages.
+- **Not yet measured:** all eleven questions of `docs/OPEN_QUESTIONS.md:3` (the listener on the live portal, Windows Hello or Touch ID from the side panel, the PRF result, whether failed Basic sign-ins count toward the five, the order race, a right saved password held); `docs/guides/LAB_LEAD.md` section 10; a finished gate press on the grid (the press of 2026-10-21 failed; the fix in e6ee0f6 is tested only in `shell-evidence.test.ts`); 23.0.0's restart in a real Chrome (`update.test.ts` runs on a fake browser); whether `release.yml`'s store step ever uploaded (its log and the repository's variables are refused through the proxy); the Wayne State quotes in `docs/research/v19/policy-wayne.md:42-44` and `:54-56` on the live pages (`V19_STATUS.md:160-162`).
 - **Waiting on greg:** whether the `CWS_` secrets and `CWS_ON_PUSH` are set; the site's `privacy.html` at 17 and `terms.html` at 15 before 22.0.0 and 23.0.0 reach students (`docs/store/SUBMISSION.md:31-33` still gates only 21.0.0's 16 and 15); the order race (a terms change, `V19_STATUS.md:154-157`); the 20.0.0 grid test and the access check from two installations (`release/20.0.0/README.md:75-79`); the merge of every pull request.
 
 ## 6. Immediate Next Actions (Hydration Directives)
 
 1. `git -C <checkout> fetch origin --prune --tags`, then read `CLAUDE.md` and `docs/V19_STATUS.md` on `origin/main` and `gh api "repos/OpenSpineConsortium/beethoven-extension/pulls?state=open"`; the lane outside the home project may have moved on since this file.
 2. Before any change to `extension/src/core/contract.ts`: hpcworker's contract export changes first; then `interface/pull.sh` re-pins it.
-3. Re-pull the profiles (`bash framework/profiles/pull.sh`) once `extension/src/base/profile.ts` is shown to accept `qos_gpu` and `node_domain` (both optional in module-schema 1, so expected to, not yet run).
+3. Re-pull the profiles (`bash interface/pull.sh framework/profiles`; `framework/profiles/pull.sh` went in f22c7a2) once `extension/src/base/profile.ts` is shown to accept `qos_gpu` and `node_domain` (both optional in module-schema 1, so expected to, not yet run).
 4. Candidates for the lane, none asked for by greg: a status document for 20.0.0 to 23.0.0; release records 21.0.0 to 23.0.0; `README.md:254`; the store kit's promo video; the R2-22 test.
 5. Open each pull request ready for review; it waits on greg's merge under the organization rule.

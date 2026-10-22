@@ -1,45 +1,64 @@
-**Describes:** 2026-10-22 10:00Z for the section "Since 2026-10-09" (git and GitHub read at 09:17-09:55Z); the sections after it describe 2026-10-09 02:39Z, with qa 5.0.0's pull request #8 (who works which repository, and the work handed over between them)
+**Describes:** 2026-10-22 14:57Z for the section "Since 2026-10-09" (git and GitHub read at 09:17-10:00Z, every claim checked again by five independent readers at 14:25-14:50Z); the sections after it describe 2026-10-09 02:39Z, with qa 5.0.0's pull request #8 (who works which repository, and the work handed over between them)
 
 # Who works which repository, and what was handed over
 
 ## Since 2026-10-09 (read from git and GitHub on 2026-10-22, 09:17-09:55Z)
 
 The home project's threads stopped on the organization's spend limit at 18:52Z on 2026-10-09 (this
-thread and the extension thread; again on 2026-10-13 and 2026-10-14) and did nothing more until
-2026-10-22. Sessions outside the project kept working, and greg merged their pull requests:
-hpcworker #13 to #32, beethoven-extension #10 to #23, beethoven-qa #10 and #11 (merged by its own
-auto-merge on 2026-10-20) and beethoven-vscode's Dependabot #16, #18 and #19. Their branches:
-`claude/grid-runner` (hpcworker #13), `claude/grid-ssh-gate-4wx0ul` (hpcworker #14 to #17,
-extension #18), `claude/project-thread-h72c2u` (hpcworker #18 to #30, extension #20 to #23,
-beethoven-vscode's draft PR #20), `claude/project-thread-jr9apa` (hpcworker #31),
-`claude/project-thread-00ov1t` (hpcworker #32), and one branch for each of extension #10 to #17
-and #19. Which sessions those are is not on record in this project. beethoven-agents,
-beethoven-research and beethoven-desktop have no commit since 2026-10-07. beethoven-base and
-beethoven-sites cannot be read from this session.
+thread and the extension thread; again on 2026-10-13 and 2026-10-14; the record is the threads'
+own error turns, `THREADS.md`) and changed nothing until 2026-10-22, when both ran again; this
+thread stopped once more on the same error from 10:05Z to 14:19Z that day. Sessions outside the
+project kept working: hpcworker #13 to #32, beside one commit made in GitHub's web editor under
+greg's account (12e34b2, 2026-10-17 18:13Z, the runner's test step in `ci.yml`), beethoven-extension
+#10 to #23 and beethoven-qa #10 and #11 (merged by qa's own auto-merge on 2026-10-20);
+beethoven-vscode took Dependabot's #16, #18 and #19. Each of those pull requests was merged under
+greg's account; sessions act as that account, so GitHub does not show who pressed. The branches,
+and the sessions their commits name in their `Claude-Session` lines (none is a thread of this
+project; which account or project each belongs to is not on record):
+
+- `claude/grid-runner` (hpcworker #13): `session_01DMFNxL4f71XReWsmCdEVsm`.
+- `claude/grid-ssh-gate-4wx0ul` (hpcworker #14 to #17, extension #18) and `claude/update-check`
+  (extension #19): `session_01UR7rJM2QMkL1g2oRBKhRVT`.
+- `claude/project-thread-h72c2u` (hpcworker #18 to #30, extension #20 to #23, beethoven-vscode's
+  draft PR #20): `session_015rfHkSz1dpZJCo22ofiFTR`.
+- `claude/project-thread-jr9apa` (hpcworker #31): `session_01EkjUa44HX16NhFcV5LLZzJ`;
+  `claude/project-thread-00ov1t` (hpcworker #32): `session_01SaaHffGtrFBXcWrnWqNnto`.
+- extension #10 (`claude/any-installation`): `session_01SEcUB5mdFshEKgiQqdpdK2`; #11 to #15 (five
+  branches): `session_01NPTuud8aWm8oQSpE2uc7H3`; #16: `session_01EdvjAjU6Rc7mjxH34gJzdp`; #17
+  (`claude/project-route`): `session_01U3X5TZ4yMBo3srmV3anMWu`.
+- qa #10 (`claude/kit-hook-name`) and #11 (`claude/release-by-workflow`):
+  `session_01Pc1tx7LutSxyU1XKXSV5Qc`.
+- vscode #16, #18 and #19: Dependabot's own `dependabot/npm_and_yarn/extension/*` branches.
+
+beethoven-agents, beethoven-research and beethoven-desktop have no commit since 2026-10-07.
+beethoven-base and beethoven-sites cannot be read from this session.
 
 **A new merge rule, 2026-10-22 02:02:46Z.** Organization ruleset 25608346, "Require owner approval
-to merge", is active on the default branch of hpcworker, beethoven-extension, beethoven-qa,
-beethoven-agents, beethoven-research, beethoven-desktop, beethoven-vscode and this hub (read with
-`gh api repos/OpenSpineConsortium/<repo>/rulesets`; the organization's own endpoint is refused to
-sessions): no deletion, no force-push, changes only through a pull request with one approving
-review, stale approvals dismissed, the last push approved by someone else. Organization admins
-bypass it. Who made it and why is not on record here. Inferred from the rule, and checked only as
-far as named: sessions open their pull requests as greg (every pull request named above has the user
-`Gregory-Schwing-MD-PhD`), GitHub does not let an author approve their own pull request, so such a
-pull request merges only through greg's admin bypass; and an auto-merge armed by `automerge.yml`
-waits for a review it cannot get, so "self-merge on green" has stopped in qa, agents, research and
-desktop (none of the four merged a pull request after 02:02Z). The vscode Dependabot bumps
-(04:38-04:39Z) and hpcworker #31 and #32 (04:54Z, 05:34Z) merged after the rule with no review,
-so through the bypass. This thread's hub sync c1dd9b9 (09:19Z) also went in through the bypass,
-before the rule was seen; greg is asked on a card (09:21Z) whether hub syncs go by pull request,
-and until he answers, this refresh is a pull request.
+to merge", is active on the default branch of at least hpcworker, beethoven-extension,
+beethoven-qa, beethoven-agents, beethoven-research, beethoven-desktop, beethoven-vscode and this
+hub (read with `gh api repos/OpenSpineConsortium/<repo>/rulesets`; the organization's own endpoint
+is refused to sessions, and beethoven-base, beethoven-sites and the organization's other
+repositories cannot be read; the study repositories under Gregory-Schwing-MD-PhD are outside the
+organization and carry no ruleset): no deletion, no force-push, changes only through a pull request
+with one approving review by someone other than its author and its last pusher, stale approvals
+dismissed. Organization admins bypass it. Who made it and why is not on record here. Inferred from
+the rule: session pull requests are opened under greg's account (every session pull request named
+above has the user `Gregory-Schwing-MD-PhD`; the Dependabot ones are `dependabot[bot]`'s), and
+GitHub never lets an author approve their own, so a session's pull request merges only through an
+organization admin's bypass; and an auto-merge armed by `automerge.yml` would wait for a review it
+cannot get, so qa, agents, research and desktop should no longer merge on green (not yet seen:
+none of the four has opened a pull request since the rule). The vscode Dependabot bumps
+(04:38-04:39Z) and hpcworker #31 and #32 (04:54Z, 05:34Z) merged after the rule with no review, so
+through the bypass. This thread's hub sync c1dd9b9 (09:19Z) also went in through the bypass, before
+the rule was seen; greg is asked on a card (09:21Z) whether hub syncs go by pull request, and until
+he answers this refresh is hub pull request #6, from branch `claude/handoff-state-file-m0rg4r`.
 
 **beethoven-extension's lane.** The table below has the extension as the home project's, pending
 greg's word. In practice every extension change since 2026-10-11 (PRs #10 to #23, 20.0.0 to
 23.0.0) came from outside the project, and the home project's extension thread's last change is
-PR #9 (documents written 2026-10-09, merged by greg on 2026-10-13); it holds nothing in flight.
-This file now reads the row as: worked outside the project, like hpcworker. greg has said nothing
-either way on record; the hub's `LANES.md` says the same in this refresh's pull request.
+PR #9 (documents written 2026-10-09, merged under greg's account on 2026-10-13); it holds nothing
+in flight. This file now reads the row as: worked outside the project, like hpcworker. greg has
+said nothing either way on record; the hub's `LANES.md` says the same in pull request #6.
 
 ### What changed, by repository
 
@@ -48,13 +67,14 @@ either way on record; the hub's `LANES.md` says the same in this refresh's pull 
   then ends its chain). 20 (#19): the chain ends at once when Remote Control is not enabled for the
   account (go2432's grid sign-in belonged to a cancelled account, the commit says). 21 (#20):
   `hpcworker accounts`, up to 32 numbered accounts under `~/.beethoven/accounts/<N>`, the profile's
-  sign-in folder a link to the one in use, an automatic switch at 90 % of a window. 22 (#21):
-  several workers at once, each pinned to an account. 23 (#22): `accounts log`. 24 (#27): the
+  sign-in folder a link to the one in use; in auto mode (`hpcworker accounts auto on`), the main
+  worker moves at 90 % of a window to the signed-in account with the most room. 22 (#21):
+  several workers at once, each kept to its account (no swap, no auto mode). 23 (#22): `accounts log`. 24 (#27): the
   sign-in and usage jobs run `bin/hpcworker` through bash. 25 and 27 (#28, #30): `hpcworker job
   submit|status|log|cancel|version`, placement from the site profile by class, job interface 2; the
   profile gains `qos_gpu` and `node_domain`. 26 (#29): `framework/sites` re-pinned to
   beethoven-sites 198c834 (Wayne State gains the GPU partition `galhp`). Beside the framework: a
-  GitHub Actions runner on the grid as a chain of Slurm jobs (#13); the ssh gate, a forced-command
+  GitHub Actions runner on the grid as a chain of Slurm jobs (#13, with 12e34b2); the ssh gate, a forced-command
   key a GitHub workflow uses to say start, status or stop (#14 to #17, with `grid-gate-setup` and
   `grid-gate-off` in `cli.json`); and the gate words `accounts`, `update`, `promoter`, `schwingnet`
   and `artifacts` (#20 to #32), sent by workflows of symphony-template, SchwingNet and
@@ -63,20 +83,20 @@ either way on record; the hub's `LANES.md` says the same in this refresh's pull 
 - **beethoven-extension** (main e6ee0f6, 2026-10-21 20:18Z; 23.0.0): `repos/beethoven-extension.md`,
   refreshed today.
 - **beethoven-qa** (main 3cdaa17): 6.0.0 (PR #10: the kit's session hook renamed
-  `.claude/hooks/beethoven-qa-session-start.sh`, kit export 3); tag v6.0.0 on 8e5628a, published by
-  greg on 2026-10-20 at 16:52Z. PR #11 added `release.yml` to tag each release from main (greg,
+  `.claude/hooks/beethoven-qa-session-start.sh`, kit export 3); tag v6.0.0 on 8e5628a, its release
+  published under greg's account on 2026-10-20 at 16:52Z. PR #11 added `release.yml` to tag each release from main (greg,
   2026-10-20: tags by the workflow, never by hand); it has never run (`total_count` 0), since a
   merge by `automerge.yml`'s `GITHUB_TOKEN` starts no workflow. v4.0.0 and v5.0.0 were never
   tagged, yet `docs/CONSUMING.md:725` and `:734` name them, and its step 1 (`:73`, `:83`) still
   adopts v3.0.0.
-- **beethoven-vscode** (main 74d73d8): three Dependabot bumps only, merged by greg on 2026-10-22 at
-  04:38-04:39Z with no CI (the repository has none). Draft PR #20 (15c0764, 2026-10-21) takes the
+- **beethoven-vscode** (main 74d73d8): three Dependabot bumps only, merged under greg's account on
+  2026-10-22 at 04:38-04:39Z with no CI (the repository has none). Draft PR #20 (15c0764, 2026-10-21) takes the
   grid placement from the site profile through beethoven-base; its `npm run test:vscode` has not
   run. Still 5.0.0, untagged and unreleased.
 
 ### The items handed over, as of 2026-10-22
 
-| Item (its section below) | Now | Checked |
+| Item (where it was handed over) | Now | Checked |
 | --- | --- | --- |
 | hpcworker, workers on every queue (desktop thread, 1) | Not built under any number; the snapshot 9208ca2 is still unmerged; the measure-first job has no record. It would now be framework 28 or later | `git grep -E 'worker_queues\|HPCW-STEP candidates\|--race' origin/main` finds nothing |
 | beethoven-vscode 5.0.0 on the grid (desktop thread, 2) | No record of the test; the step-by-step for grid scripts 10 was never written | vscode main has only the Dependabot commits since e7526f9 |
@@ -90,9 +110,9 @@ either way on record; the hub's `LANES.md` says the same in this refresh's pull 
 | U-22's wording in agents and research | Unchanged | `ci.yml:3` in both; agents `site.sh:8`, `docs/bee/STATE_HANDOFF.md:172` |
 | agents `managed-settings.json:15` "no hooks", the image recipe, BEE-103 | Unchanged; BEE-103 In Progress since 2026-10-04 | agents a40a71a; Linear |
 | vscode CI and its repository half | Still none; the organization rule now covers its main | vscode `.github/` |
-| hpcworker CLAUDE.md lines 67-76 (extension thread, 2026-10-09) | Still stale: `webRequest` among the permissions never requested (`:69`), the 12.0.0 bridge (`:70-73`), "No automated login of the portal" (`:75-76`). Also stale: `:155-156` (the gate as start, status and stop only) and `:183` (texts 8 and 9; hpcworker's own are 9 and 10, the extension's 15 and 17). The replacement text is beethoven-extension `CLAUDE.md:71-89`. It needs an hpcworker pull request, then greg's merge; none is open | `git log -L67,76:CLAUDE.md origin/main`: last de02ee0 (2026-10-02) |
-| `automerge.yml`, `rulesets.yml` and `rulesets/main.json` into hpcworker and the extension | Not done; under the organization rule they would not merge anything by themselves | `.github/` in both |
-| hpcworker `queue report --days 30 --limits` on the grid | The command is on main; no run on record | `framework/bin/hpcworker:2139-2160` |
+| hpcworker CLAUDE.md lines 67-76 (extension thread, 2026-10-09: beethoven-extension `docs/V19_STATUS.md` 2.5) | Still stale: `webRequest` among the permissions never requested (`:69`), the 12.0.0 bridge (`:70-73`), "No automated login of the portal" (`:75-76`). Also stale: `:155-156` (the gate as start, status and stop only) and `:183` (texts 8 and 9; hpcworker's own are 9 and 10, the extension's 15 and 17). The replacement text is beethoven-extension `CLAUDE.md:71-89`. It needs an hpcworker pull request, then greg's merge; none is open | `git log -L67,76:CLAUDE.md origin/main`: last de02ee0 (2026-10-02) |
+| `automerge.yml`, `rulesets.yml` and `rulesets/main.json` into hpcworker and the extension (`DECISIONS.md`, list of 2026-10-05, item 2; the QA thread, point 4) | Not done; under the organization rule they would not merge anything by themselves | `.github/` in both |
+| hpcworker `queue report --days 30 --limits` on the grid (the coordinator's pending list; `repos/hpcworker.md`) | The command is on main; no run on record | `framework/bin/hpcworker:2139-2191` (`--limits` at `:2165-2190`) |
 
 ### Read today, for the outside lanes
 
@@ -118,9 +138,11 @@ in the sessions that built these may cover them, and none of those words is on r
 - Stale since the gate: `SECURITY.md:176-178` and `:196`, `README.md:338`, `CLAUDE.md:375-376`,
   `.github/workflows/ci.yml:3-5`, `docs/OPEN_QUESTIONS.md:168-169` (each says the gate, or GitHub's
   runners, can do less than they now do).
-- The `HPCW-JOB`, `HPCW-ACCOUNTS` and `HPCW-GRID-GATE` lines, the accounts verbs and the newer gate
-  words are in no published contract file, though symphony-template, SchwingNet and spine-datasets
-  read them.
+- The `HPCW-ACCOUNTS` lines (with `-JSON` and `-LOG-*`), the `HPCW-GRID-GATE` lines, the
+  `accounts` verbs and the gate's words (start, status and stop as well as the newer ones) are in
+  no published contract file; `cli.json`'s `grid-gate-setup` and `grid-gate-off` cover only the
+  lab lead's two lines. The `HPCW-JOB` lines are in `cli.json`'s job entries (`:28-32`) but have no
+  pattern in `lines.json`. symphony-template, SchwingNet and spine-datasets read them.
 - hpcworker's account layout (`accounts/<N>`, the old folder renamed into account 1) differs from
   beethoven-agents' D4 layout (`accounts/<label>/claude`, nothing moved); whether the two were
   reconciled is not established.
