@@ -1,6 +1,6 @@
 # Linear team Beethoven (workspace ashl3y): issues snapshot
 
-Snapshot taken: 2026-10-08T15:36Z, through the Linear connector of the hand-off thread.
+Snapshot taken: 2026-10-08T15:36Z, through the Linear connector of the hand-off thread; brought up to date at 2026-10-23T00:15Z from the seven issues and no projects Linear reports as changed since then (only BEE-214 changed in a field kept here: Backlog to Canceled).
 
 Non-archived issues of the team (one page held them all). Not here: BEE-5 to BEE-97, the launcher backlog from before the engine, archived together on 2026-10-03 at 22:33Z (Linear shows them with "include archived"), and BEE-175, which Linear does not return at all. Titles, status, priority, labels and assignee only; no descriptions or comments.
 
@@ -8,10 +8,11 @@ Total issues: 128. Projects: 15.
 
 | Status type | Issues |
 |---|---|
-| backlog | 91 |
+| backlog | 90 |
 | unstarted | 5 |
 | started | 7 |
 | completed | 25 |
+| canceled | 1 |
 
 ## P0 — Foundations & Open Decisions
 
@@ -292,7 +293,7 @@ Total issues: 128. Projects: 15.
 | [BEE-211](https://linear.app/ashl3y/issue/BEE-211/u-13-extension-every-wayne-state-value-read-from-the-profile-with-the) | U-13 — extension: every Wayne State value read from the profile, with the site-literal lint | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
 | [BEE-212](https://linear.app/ashl3y/issue/BEE-212/u-14-extension-the-students-words-come-from-the-sites-text-bundle-with) | U-14 — extension: the student's words come from the site's text bundle, with Wayne State's sentences unchanged | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
 | [BEE-213](https://linear.app/ashl3y/issue/BEE-213/u-15-extension-portal-sign-in-second-factor-account-names-and-vpn) | U-15 — extension: portal sign-in, second factor, account names and VPN follow the module's declared kind | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
-| [BEE-214](https://linear.app/ashl3y/issue/BEE-214/u-16-bridge-helper-its-built-in-allow-list-is-generated-from-the) | U-16 — bridge helper: its built-in allow list is generated from the bundled site modules | Backlog | Medium | E8 Bridges, Security, Improvement |  |
+| [BEE-214](https://linear.app/ashl3y/issue/BEE-214/u-16-bridge-helper-its-built-in-allow-list-is-generated-from-the) | U-16 — bridge helper: its built-in allow list is generated from the bundled site modules | Canceled | Medium | E8 Bridges, Security, Improvement |  |
 | [BEE-215](https://linear.app/ashl3y/issue/BEE-215/u-17-extension-tests-the-mock-portal-the-ssh-stand-in-and-the-fixtures) | U-17 — extension tests: the mock portal, the ssh stand-in and the fixtures serve any site module | Backlog | Medium | E10 Test harness, Test, Improvement |  |
 | [BEE-216](https://linear.app/ashl3y/issue/BEE-216/u-18-desktop-edition-no-default-site-ssh-options-and-sign-in-words) | U-18 — desktop edition: no default site; ssh options and sign-in words from the module | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
 | [BEE-217](https://linear.app/ashl3y/issue/BEE-217/u-19-vs-code-edition-after-the-move-onto-hpcworker-its-laptop-side) | U-19 — VS Code edition: after the move onto hpcworker, its laptop side reads the site module too | Backlog | Medium | Infra, E1 Access layer, Improvement |  |
