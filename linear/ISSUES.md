@@ -1,14 +1,14 @@
 # Linear team Beethoven (workspace ashl3y): issues snapshot
 
-Snapshot taken: 2026-10-08T15:36Z, through the Linear connector of the hand-off thread; brought up to date at 2026-10-23T00:15Z from the seven issues and no projects Linear reports as changed since then (only BEE-214 changed in a field kept here: Backlog to Canceled).
+Snapshot taken: 2026-10-08T15:36Z, through the Linear connector of the hand-off thread; brought up to date at 2026-10-23T00:15Z from the seven issues and no projects Linear reports as changed since then (only BEE-214 changed in a field kept here: Backlog to Canceled), and at 2026-10-29T11:10Z from the six issues changed since (BEE-223 to BEE-226 created on 2026-10-27 at 04:01Z; BEE-169 and BEE-184 updated then, with no change to a field kept here).
 
 Non-archived issues of the team (one page held them all). Not here: BEE-5 to BEE-97, the launcher backlog from before the engine, archived together on 2026-10-03 at 22:33Z (Linear shows them with "include archived"), and BEE-175, which Linear does not return at all. Titles, status, priority, labels and assignee only; no descriptions or comments.
 
-Total issues: 128. Projects: 15.
+Total issues: 132. Projects: 15.
 
 | Status type | Issues |
 |---|---|
-| backlog | 90 |
+| backlog | 94 |
 | unstarted | 5 |
 | started | 7 |
 | completed | 25 |
@@ -227,7 +227,7 @@ Total issues: 128. Projects: 15.
 - URL: https://linear.app/ashl3y/project/r-imaging-data-migration-and-catalog-1d5b57d456b9
 - Status: Backlog (backlog)
 - Summary: Copy greg's imaging data from the go2432 home directory to CephFS with checksums (copy, verify, lock; never delete), then build a SQL catalog of the DICOM metadata on the grid.
-- Issues: 6
+- Issues: 10
 
 | Issue | Title | Status | Priority | Labels | Assignee |
 |---|---|---|---|---|---|
@@ -237,6 +237,10 @@ Total issues: 128. Projects: 15.
 | [BEE-168](https://linear.app/ashl3y/issue/BEE-168/verify-job-and-read-only-lock-of-the-destination) | Verify job and read-only lock of the destination | Backlog | High | Feature |  |
 | [BEE-169](https://linear.app/ashl3y/issue/BEE-169/catalog-builder-sqlite-schema-and-pydicom-metadata-extraction-on-a) | Catalog builder: SQLite schema and pydicom metadata extraction on a compute node | Backlog | High | Feature |  |
 | [BEE-170](https://linear.app/ashl3y/issue/BEE-170/patient-level-split-table-for-g2-and-g6) | Patient-level split table for G2 and G6 | Backlog | Medium | Feature |  |
+| [BEE-223](https://linear.app/ashl3y/issue/BEE-223/public-ct-collections-count-each-subject-once-across-abdomenatlas-and) | Public CT collections: count each subject once across AbdomenAtlas and TotalSegmentator | Backlog | No priority |  |  |
+| [BEE-224](https://linear.app/ashl3y/issue/BEE-224/abdomenatlas-fetch-the-20-mini-cases-missing-from-30-mini-keyed-by) | AbdomenAtlas: fetch the 2.0 Mini cases missing from 3.0 Mini, keyed by BDMAP ID | Backlog | No priority | Feature |  |
+| [BEE-225](https://linear.app/ashl3y/issue/BEE-225/abdomenatlas-decide-how-to-handle-overlap-with-source-collections-we) | AbdomenAtlas: decide how to handle overlap with source collections we already hold | Backlog | No priority | decision |  |
+| [BEE-226](https://linear.app/ashl3y/issue/BEE-226/totalsegmentator-register-v3-as-the-subject-set-and-add-the-three) | TotalSegmentator: register v3 as the subject set and add the three Zenodo task datasets as new subjects | Backlog | No priority | Feature |  |
 
 ## O — Outreach & Adoption
 
