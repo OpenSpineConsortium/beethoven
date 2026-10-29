@@ -1,4 +1,4 @@
-**Describes:** 2026-10-05 00:15Z (refreshed for the hub with `list_thread_sessions` and `fetch_thread` from 23:40Z; before that, threads read with `fetch_thread` and `list_thread_sessions`, sessions with `get_session`, 19:36-20:22Z; the desktop thread's pushes and staging folder checked 20:32-20:33Z, its thread and staging folder again at 21:12-21:18Z)
+**Describes:** 2026-10-22 14:57Z for the section "Now" (`list_thread_sessions` and `fetch_thread` at 09:55-10:03Z and 14:19-14:45Z); the sections after it describe 2026-10-05 00:15Z (refreshed for the hub with `list_thread_sessions` and `fetch_thread` from 23:40Z; before that, threads read with `fetch_thread` and `list_thread_sessions`, sessions with `get_session`, 19:36-20:22Z; the desktop thread's pushes and staging folder checked 20:32-20:33Z, its thread and staging folder again at 21:12-21:18Z)
 
 # Threads of the Beethoven project, and how they are metered
 
@@ -7,7 +7,37 @@ the project; its work lives in GitHub and `/mnt/project-files`, never only in th
 message a running one through the coordinator (it relays with `message_thread`), never by
 posting in it.
 
-## Who owns what
+## Now (2026-10-22)
+
+| Thread (root message id, session) | Holds | State |
+| --- | --- | --- |
+| Write the hand-off state file (`cmsg_01JbwQwHoYeBWptjPB5c6u8mVhWVCDnpMjFY5GuUpJB4jy`, `cse_015fmXsHBpKKjGFwwMHxU2QR`) | `/mnt/project-files/state/` and the hub | working: today's refresh of this folder, as a hub pull request; its card of 09:21Z asks greg how hub syncs reach main under the new owner-approval rule |
+| Extension: what's left, VPN-first (`cmsg_01JbwQwHoYeBWptjPB5c6u8mDsfnkztLwXsWzkBe2Q9v76`, `cse_01YUUNCpsosLjo1XwEdQ27aW`) | nothing in flight | finished, not resolved: 16.0.0 to 19.0.0 (PRs #5 to #8), then PR #9 (`docs/V19_STATUS.md`, its hand-off), merged under greg's account on 2026-10-13; every extension change after it came from outside the project |
+| Build the Claude Desktop ssh plugin (`cmsg_01JbwQwHoYeBWptjPB5c6u8m3KSccv8f9KZdoYiLkxZons`, `cse_01JJvrjwHWRskTjJNoW3eGVE`) | beethoven-base | finished, not resolved; last active 2026-10-09 02:42Z, after base PRs #3 and #4 (memory `desktop-thread-in-flight`); base's edition steps 10, 11 and 13 are the outside lanes' |
+| QA: what's left, how real; Wayne State as a site module; Independent code-quality gates | nothing | resolved 2026-10-16 22:32Z |
+| Replan the build and seed Linear; Lay down the engine repo skeleton; Seamless account switching | nothing | resolved 2026-10-12 15:47Z |
+| Map engine repos against the goal; Turn the notebook into a build roadmap; Draft the REFORMS compliance checklist | nothing | resolved 2026-10-11 10:07Z |
+| Three-repo separation | nothing | resolved 2026-10-04 19:47Z |
+
+No home-project thread changed a repository between 2026-10-09 19:00Z and 2026-10-22; the work in
+that time came from sessions outside the project (`HANDOVERS.md`, "Since 2026-10-09"). The
+coordinator's session changed in between: on 2026-10-09 it was `cse_01QcitebmTzSvkEmij8ZUdmR`
+(which relayed greg's 18:44Z ask), on 2026-10-22 it is `cse_01QsCaDWz3koZ7tm877HiLUg`; its
+standing to-do notice is still
+`cmsg_01JbwQwHoYeBWptjPB5c6u8m3HqBdB9niaNyWTpCQNBALz`.
+
+**The stop of 2026-10-09 to 2026-10-22.** This thread's turn at 18:52Z on 2026-10-09 and the
+extension thread's at the same minute ended with the error `seat_org_spend_limit`: "Your
+organization has reached its extra usage spend limit", again for the extension thread on
+2026-10-13 at 19:45Z and for this one on 2026-10-14 at 00:11Z ("Your plan's included usage resets
+in about 35 hours"). Both threads ran again on 2026-10-22 (the extension thread edited its reply
+at 09:14Z; this thread resumed at 09:17Z), and this thread stopped once more on the same error at
+10:05Z ("Your plan's included usage resets in about 4 hours"), until 14:19Z. Whether
+the organization drew any extra usage before that limit, or the limit is zero, is not readable from
+a session (greg's rules exclude usage credits for the engine and its students, and the desktop and
+VS Code CLAUDE.md files say "by anyone, ever").
+
+## Who owned what on 2026-10-05 (a record)
 
 | Thread (root message id) | Owns | State (times say when) |
 | --- | --- | --- |

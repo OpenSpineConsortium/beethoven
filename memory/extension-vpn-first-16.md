@@ -1,9 +1,9 @@
 ---
 name: extension-vpn-first-16
-description: Extension 16.0.0 to 19.0.0 merged (PRs 5-8, site PRs 4-5; 19.0.0 merged 2026-10-09 ~16:50Z as 774f0fa, site a375e6b); store upload is greg's; race client waits on hpcworker framework 19
+description: Extension 16.0.0 to 19.0.0 merged (PRs 5-8, site PRs 4-5; 19.0.0 merged 2026-10-09 ~16:50Z as 774f0fa, site a375e6b; store accepted it 2026-10-13); 20.0.0-23.0.0 came from outside the project; the race client waits on hpcworker publishing the race
 metadata:
   type: project
-  modified: 2026-10-09T15:50:46.214Z
+  modified: 2026-10-22T14:18:34.948Z
 ---
 
 greg, 2026-10-08 15:30Z (project chat): VPN-first, GlobalProtect path only, seamless access (multi-queue launch taking the first worker), a profile loader with Wayne State as default. His card **Remove** (17:52Z) removed the direct way: never reopen it.
@@ -14,6 +14,6 @@ greg, 2026-10-08 15:30Z (project chat): VPN-first, GlobalProtect path only, seam
 
 greg's card answers (16:28Z, 16:29Z): "Add it now" put the lockout in as the fourth Known Risk inside v12 (section 8 and summary line 3; extension d5c4db1, site 595d1af). "Keep, ask C&IT" kept the Remember tick; greg sent the note to hpc@wayne.edu (16:47Z).
 
-Outside lanes: hpcworker CLAUDE.md lines 67-76 are stale (webRequest never requested, no automated login, the 12-15 bridge); told the coordinator cse_01QcitebmTzSvkEmij8ZUdmR. Not yet measured: the listener on the live portal, side-panel WebAuthn on real Windows/macOS (Chromium 378966968), Windows Hello/Touch ID PRF for an extension RP, whether Basic failures count toward the five, which request ends first when a box sign-in races Beethoven's.
+Outside lanes: hpcworker CLAUDE.md lines 67-76 are still stale (hub state/HANDOVERS.md). Not yet measured: the listener on the live portal, side-panel WebAuthn on real Windows/macOS (Chromium 378966968), Hello/Touch ID PRF, whether Basic failures count toward the five, the order race.
 
-greg uploaded 19.0.0 to the store (18:44Z Oct 9); it waits on review. **Continue here:** beethoven-extension docs/V19_STATUS.md (PR 9, docs only, merged by greg 2026-10-13; extension main has since moved on through other threads' PRs 10-23, e.g. e6ee0f6 on 2026-10-22): the store and C&IT outcomes, the race handover, open items; docs/V19_DESIGN.md is the design. **Next:** the multi-queue race client after hpcworker framework 19 (snapshot 9208ca2); today's client never follows a winning job (measured on 19.0.0). **How to apply:** greg's contact rule holds (decisions only). Related: [[project-hub-export]].
+greg uploaded 19.0.0 to the store (18:44Z Oct 9); the store accepted it on 2026-10-13 (docs/V19_STATUS.md:43). **Continue here:** beethoven-extension docs/V19_STATUS.md (PR 9, docs only, merged by greg 2026-10-13); extension main has since moved on through PRs 10-23 from sessions outside the project (20.0.0-23.0.0, last e6ee0f6 on 2026-10-21T20:18Z); the hub's state/repos/beethoven-extension.md (2026-10-22) has where it stands. **Next:** the multi-queue race client once hpcworker publishes the race; "framework 19" went to another change (PR #18), so the race would now be framework 28 or later (snapshot 9208ca2 still unmerged); today's client never follows a winning job (measured on 19.0.0). **How to apply:** greg's contact rule holds (decisions only). Related: [[project-hub-export]], [[org-owner-approval-ruleset]].

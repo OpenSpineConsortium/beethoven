@@ -1,4 +1,4 @@
-**Describes:** 2026-10-05 00:15Z (refreshed for the hub: GitHub, the threads and Linear read again from 23:40Z; before that, decisions read from the threads, `ledger/INTERVENTIONS.md`, `plan/BUILD_PLAN.md` section 13, `plan/REPO_SPLIT.md`, Linear and GitHub between 18:35Z and 20:22Z, every row re-checked by an independent checker; the desktop thread's pushed branches checked at 20:32Z; its 20:58Z changes by three independent checkers at 21:15-21:20Z); since then only the lane decision of 2026-10-08 14:46Z was added, nothing else re-read
+**Describes:** 2026-10-22 14:57Z for the rows dated 10-08 17:52Z to 10-22 (each checked again by an independent reader at 14:25-14:50Z), the open decisions marked 2026-10-22 and the list "Waiting on greg, 2026-10-22" (read from git, GitHub, the threads and the memory at 09:17-10:00Z); everything else describes 2026-10-05 00:15Z (refreshed for the hub: GitHub, the threads and Linear read again from 23:40Z; before that, decisions read from the threads, `ledger/INTERVENTIONS.md`, `plan/BUILD_PLAN.md` section 13, `plan/REPO_SPLIT.md`, Linear and GitHub between 18:35Z and 20:22Z, every row re-checked by an independent checker; the desktop thread's pushed branches checked at 20:32Z; its 20:58Z changes by three independent checkers at 21:15-21:20Z); since then only the lane decision of 2026-10-08 14:46Z was added, nothing else re-read
 
 # Beethoven: greg's decisions, open questions and his steps
 
@@ -77,11 +77,27 @@ section 6, the three-repo thread's) and this file.
 | 10-05 00:14Z | Hand step: merged the hub's PR #1 (merge 9e8a7f7, head 7ca551e) | GitHub, read 00:16Z |
 | 10-05 00:28:04Z | In the desktop thread: "All of the decisions look good except for d2. The only time I want you to interact with me is for decisions where you have a recommended approach and alternatives": the base design's D1 and D3 to D8 accepted as recommended, D2 (drop `bypassPermissions`) not accepted; and from now on Claude messages him only for a decision, with a recommendation and the alternatives. Progress stays in each thread's status; what he must do himself goes to the coordinator's to-do notice | desktop thread; coordinator relay 00:30Z |
 
-## Decided on 2026-10-08
+## Decided on 2026-10-08 to 2026-10-22
 
 | UTC | Decision or step | Where it is recorded |
 | --- | --- | --- |
 | 10-08 14:46Z | Card "Pick which repos this project's threads keep" (asked 11:07Z): "Split by repo", the recommendation. This project keeps beethoven-base, beethoven-sites and beethoven-qa; hpcworker, beethoven-extension, beethoven-desktop, beethoven-vscode, beethoven-agents and beethoven-research stay with greg's sessions outside the project, with the handover notes in the hub | the coordinator's card and its report of 14:47Z; `state/HANDOVERS.md`; the hub's `LANES.md` (PR #5) |
+| 10-08 17:52Z | Card "Remove": the extension's direct way to the grid goes whole; the university's VPN and the portal are the only way (extension 16.0.0, PR #5) | memory `extension-vpn-first-16`; extension CLAUDE.md |
+| 10-09, by 02:16Z | Hand step: Allow auto-merge turned on in beethoven-base, so base pull requests merge on green | memory `desktop-thread-in-flight` |
+| 10-09 03:01:45Z, 03:02:21Z | Cards "Beethoven signs in" (option B) and "Keep side panel": the grid password behind a passkey in the side panel, one wrong try then stop (extension 19.0.0) | memory `extension-vpn-first-16`; `ledger/LEDGER.md` row 2026-10-09T16:05Z |
+| 10-09 16:28:55Z, 16:29:14Z, 16:47:43Z | Cards "Add it now" (the AccessID lockout as the fourth Known Risk inside terms 12) and "Keep, ask C&IT" (the Remember tick stays; greg wrote to hpc@wayne.edu); "I sent the email, now merge" | `LEDGER.md` row 2026-10-09T16:55Z; extension `docs/V19_STATUS.md` |
+| 10-09 18:44Z | Hand step: uploaded 19.0.0 to the Chrome Web Store; the store accepted it on 2026-10-13 (greg) | coordinator relay 18:48Z; extension `docs/V19_STATUS.md:43` |
+| 10-11 | One person's approval works from every installation of their own (extension 20.0.0, PR #10, merged under greg's account at 23:37Z); replaces "one approved account, one installation" | extension `CLAUDE.md:101-118` |
+| 10-13 | "i want to release 20 and public": the store listing is Public from 20.0.0; the Google Group and the invitation step retired (PR #11) | extension commit fd89262; `CLAUDE.md:160-177` |
+| 10-13 | Every build from main is released through OpenSpineConsortium/chrome-store-release-kit, uploading to the store once five `CWS_` secrets and `CWS_ON_PUSH` are set (PR #13); replaces the rule that no store sign-in goes into CI | extension `CLAUDE.md:160-177`, `docs/store/SUBMISSION.md:55-79` |
+| 10-16 | A GitHub Actions runner on the grid, run as a chain of Slurm jobs (hpcworker PR #13); the student's Claude project page opened before a plain session (extension 21.0.0, PR #17) | hpcworker `CLAUDE.md:140-164`; extension `CLAUDE.md:119-133` |
+| 10-17 | The gate reports the university's world-writable folders above the lab volume as a note and refuses nothing for them (hpcworker PR #15) | hpcworker `SECURITY.md`, citing greg's decision of 2026-10-17 |
+| 10-18 | "i want this to be done by a button click": the gate's setup from a lab lead's button in Beethoven (hpcworker PR #17, extension 22.0.0, PR #18); "Statement only": privacy 17 alone, the agreement stays at 15 | hpcworker PR #17; extension commit 8d3855d |
+| 10-20 | beethoven-qa release tags are made by `release.yml`, never by hand (qa PR #11); the v6.0.0 release was published under greg's account at 16:52Z | qa `CLAUDE.md:77-78`; GitHub release |
+| 10-21 | "Yes, build all of it": gate words for the promoter and SchwingNet jobs (hpcworker PR #23 onward) | hpcworker PR #23's commit message |
+| 10-22, before 04:54Z | The promoter's restart word (hpcworker PR #31) | its commit message, 69ff516: "greg chose a fixed gate word for this on 2026-10-22." |
+| 10-22 02:02:46Z | Organization ruleset "Require owner approval to merge" on the default branch of at least eight repositories (the hub, hpcworker, beethoven-extension, -qa, -agents, -research, -desktop, -vscode; base and sites cannot be read from a session): one approving review by someone other than the author and last pusher, organization admins bypass. Who made it is not on record; it overrides the 2026-10-04 02:11Z rule that no human gates a merge, in effect if not on purpose | `gh api repos/OpenSpineConsortium/<repo>/rulesets` (id 25608346); memory `org-owner-approval-ruleset`; `state/HANDOVERS.md` |
+| 10-22 04:38-04:39Z | beethoven-vscode's Dependabot #19, #18 and #16 merged under greg's account through the admin bypass (no review); who pressed is not on record | GitHub |
 
 ## Questions greg asked, and the answers on record
 
@@ -98,6 +114,11 @@ section 6, the three-repo thread's) and this file.
 
 | Id | Question | Blocks |
 | --- | --- | --- |
+| Hub syncs (2026-10-22) | Card in the hand-off thread, 09:21Z: hub syncs by pull request (recommended), straight to main through the bypass, or the hub taken out of the rule | This refresh and every later sync |
+| Merges under the owner-approval rule (2026-10-22) | Session pull requests are opened under greg's account, and GitHub never lets an author approve their own, so each merges only through an organization admin's bypass, and auto-merge in qa, agents, research and desktop would wait for a review (inferred: none of the four has opened a pull request since the rule); whether that is meant is his | Every session pull request in the organization's repositories |
+| beethoven-qa tags (2026-10-22) | Tag v4.0.0 (615ed3e) and v5.0.0 (85f0e1c) after the fact, or have `docs/CONSUMING.md` reworded; and how `release.yml` gets started, since a `GITHUB_TOKEN` merge starts no workflow | The consumers' re-pin steps; every qa release from 7.0.0 |
+| Extension Remember tick (2026-10-22) | C&IT's answer to greg's two questions of 2026-10-09 16:47Z; if saving is not acceptable, remove the tick everywhere or hide it per site | `docs/V19_STATUS.md:49-75` |
+| Extension order race (2026-10-22) | Keeping tab request ids, a terms change | `docs/V19_STATUS.md:154-157`; open question 9 |
 | D9 / BEE-181 | Twelve first-study questions (`plan/SPINE_FIRST_STUDY.md` section H) | Questions 1, 4 and 6 block the first run |
 | D7 / BEE-165 | Imaging source directories, CephFS destination, PHI statement, second copy | The imaging migration; wiring the split check into a run |
 | `plan/IMAGING_SOURCES.md` section I | Six questions (lines 307-315) | The migration batches |
@@ -106,17 +127,45 @@ section 6, the three-repo thread's) and this file.
 | D1c | Confirm his account's data-sharing setting near patient data | Any engine step near patient data |
 | BUILD_PLAN D4 | Confirm the engine is headless `claude -p` (assumed, never confirmed); not the settled multi-account D4 | Phase 0 probe shape |
 | D5 | Keep the human Publish click before Zenodo or Hugging Face (assumed yes) | G7 releases |
-| Launcher "One person, one account." | Re-apply the D4 sentence (branches `claude/project-thread-2udoqz` in hpcworker and beethoven-extension, unmerged and now conflicting) or drop it | `hpcworker claude login --account` and the status `account` field |
-| Two-queue worker policy | Settled in principle by greg's 23:26Z ask: launch on every queue and let the first allocation answer; the desktop thread designs it in hpcworker, the queue list goes into the Wayne State module | The all-queue PR (not opened); the queue report it can read landed as hpcworker PR #3 (21:52Z) |
+| Launcher "One person, one account." | 2026-10-22: hpcworker frameworks 21 and 22 keep up to 32 accounts and several workers, while its `CLAUDE.md:55` still has the sentence. Before: re-apply the D4 sentence (branches `claude/project-thread-2udoqz` in hpcworker and beethoven-extension, unmerged and now conflicting) or drop it | `hpcworker claude login --account` and the status `account` field |
+| Two-queue worker policy | Settled in principle by greg's 23:26Z ask: launch on every queue and let the first allocation answer; the desktop thread designs it in hpcworker, the queue list goes into the Wayne State module. 2026-10-22: still not built; "framework 19" went to another change, so it would be 28 or later; measure first in a job (`state/HANDOVERS.md`) | The all-queue PR (not opened); the queue report it can read landed as hpcworker PR #3 (21:52Z) |
 | Fourth repository (grid rules) | Floated 15:19Z | Nothing yet; both threads see it as a later move, and the beethoven-base design may take it in |
 | beethoven-base design D2 | Answered 00:28Z: D1 and D3 to D8 accepted, D2 not; what D2 becomes is the desktop thread's to put to him again. The question as sent: written at 23:34Z (`base/DESIGN.md`); greg decides D1 to D8 of its section 12, sent 23:35Z with "Take all my recommendations?": D1 VS Code's `claude -p` queue (helper now, engine later), D2 drop `bypassPermissions`, D3 drop GPU workers in hpcworker unless a student uses them, D4 GitHub and Hugging Face tokens on the grid stay with that helper, D5 drop the grid-side licence check, D6 `FRAMEWORK_MIN` lead-only, D7 desktop's Open goes to the session and New session to the environment, D8 no propagation credential for now. D9 (`@types/vscode` pinned) is settled. These replace the three questions of 20:58Z | Base PR #1 onward; VS Code 7.0.0 |
-| Desktop PR #1 | Keep or revert the 1.0.0 merge of 02:31Z | Nothing downstream |
+| Desktop PR #1 | Keep or revert the 1.0.0 merge of 02:31Z (2026-10-22: still on main as d60c0b2, no revert) | Nothing downstream |
 | D6 / BEE-158, D8 / BEE-173, M-7 / BEE-176 | Desktop distribution; where the promo is shown; paper venue | Their own projects only |
 | Roadmap decisions 2, 4, 5, 6 | BUILD_PLAN section 15.6 proposals | Nothing urgent |
 | PRIVACY.md debug log | How the in-memory debug log is described before any store upload | The next store upload |
 | Staging bundles | The two top-level `/mnt/project-files/staging/*.bundle` (agents and qa, 07:32Z) are superseded; removing them is his call, and the hub leaves them out (`.hub-exclude`). `staging/desktop-thread/` is the desktop thread's save of 20:27Z; its Mac release branches are now on the extension branch 9aa1171 and its hpcworker patches landed in PR #3 | Nothing |
 
-## Waiting on greg, most unblocking first
+## Waiting on greg, 2026-10-22, most unblocking first
+
+1. The hub-sync card in the hand-off thread, and this refresh, hub pull request #6 (opened under his
+   account, so it merges through an admin's bypass unless someone else approves it).
+2. The open row "Merges under the owner-approval rule": until he says otherwise, every session
+   pull request in the organization's repositories waits on an admin's merge.
+3. beethoven-qa: the v4.0.0 and v5.0.0 tags or the reworded `CONSUMING.md`; how `release.yml` starts.
+4. beethoven-extension: whether the five `CWS_` secrets and `CWS_ON_PUSH` are set (the store job of
+   `release.yml` has run on every push to main since run #8 on 2026-10-18; whether it uploaded is
+   not readable from a session); the site's `privacy.html` at 17 and `terms.html` at 15 before
+   22.0.0 and 23.0.0 reach students; C&IT's answer; the order race; the 20.0.0 grid test and the
+   access check from two installations (`release/20.0.0/README.md:75-79`, none done in that build).
+5. hpcworker: whether the race is built (after the measure-first job); `queue report --days 30
+   --limits` on the grid; the stale CLAUDE.md lines need a pull request from its lane first.
+6. beethoven-vscode: draft PR #20 needs `npm run test:vscode` on a machine with VS Code, then out
+   of draft and his merge; the 5.0.0 grid test, `tools/release.mjs` and the listing.
+7. beethoven-desktop: keep or revert PR #1; laptop checks 1 to 15.
+8. The engine's open decisions above: BEE-181 questions 1, 4 and 6 and BEE-165 first, the PHI
+   statement, the imaging questions, BEE-177, D6, D8, "nramcj", the base design's D2.
+
+From the list of 2026-10-05 below: item 1 is superseded by grid scripts 10; item 3 is moot for the
+extension, since 16.0.0 removed the direct way and its bridge (no `helper/` on main, no
+`nativeMessaging` in the manifest), and the store item id is
+`heoopgbkbkfckhhpbkkcgigohfekjicn` (`release/20.0.0/README.md:80-82`); item 5's hub pull requests
+merged, and hpcworker PR #4 (`tools/push_org.sh` pushes only to hpcworker) merged on 2026-10-05 at
+00:25Z; only the `BEETHOVEN_REPO` point was not checked again; item 6's framework is
+now 27, and which version the grid's shared copy names is not established.
+
+## Waiting on greg, as listed on 2026-10-05 (a record; the list above supersedes it)
 
 1. Do not run the VS Code edition's `uninstall`, `claude forget`, `access init`, `access admin approve` or `library publish` on the grid until grid scripts 9 land.
 2. Copy `automerge.yml`, `rulesets.yml` and `.github/rulesets/main.json` from beethoven-desktop into hpcworker and beethoven-extension, with each repository's own CI job names as the required checks.

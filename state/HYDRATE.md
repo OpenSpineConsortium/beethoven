@@ -1,8 +1,8 @@
-**Describes:** 2026-10-05 01:25Z (how to read the hand-off; the state itself is in the files it names)
+**Describes:** 2026-10-22 14:57Z (how to read the hand-off; the state itself is in the files it names)
 
 # Continue the Beethoven project from the hand-off
 
-**Start with `HANDOVERS.md` in this folder:** who works which repository since 2026-10-08 (greg's choice of 14:46Z), and the work handed over. **Then `PUSH_NOTES.md`:** where every thread left its work when greg asked for an immediate push (2026-10-05 01:20Z), before he moved to another Claude account.
+**Start with `HANDOVERS.md` in this folder:** its first section, "Since 2026-10-09", is what happened while the project's threads were stopped on the organization's spend limit (2026-10-09 18:52Z to 2026-10-22) and the organization's owner-approval rule of 2026-10-22 02:02Z, read on 2026-10-22; after it, who works which repository since 2026-10-08 (greg's choice of 14:46Z), and the work handed over. `DECISIONS.md` (its list "Waiting on greg, 2026-10-22"), `THREADS.md` (its section "Now") and `repos/beethoven-extension.md` were refreshed the same day; `claude_context.md`, `PUSH_NOTES.md` and the other `repos/` files still describe 2026-10-04 20:25Z to 2026-10-05 01:30Z, before the lane split of 2026-10-08, so check each against git before acting on it. **Then `PUSH_NOTES.md`:** where every thread left its work when greg asked for an immediate push (2026-10-05 01:20Z), before he moved to another Claude account.
 
 Written 2026-10-04 by the project thread "Write the hand-off state file", on greg's ask of 18:34Z
 ("write all state to a file I can continue in another session using the memory skills") and
@@ -32,7 +32,7 @@ Outside the project (another Claude account, Claude Code on a laptop, a grid job
 `git clone https://github.com/OpenSpineConsortium/beethoven` (private; greg's 23:26Z ask): it
 carries this folder as `state/`, the plan, the ledger, the base design and the staging folder
 under the same folder names, the project memory as `memory/`, and a Linear snapshot, kept current
-from the project by `tools/sync.py`. Read its README; to bring the claude.ai project itself up in another account, and to load that account's progress back here, follow its `IMPORT.md` (on branch `claude/handoff-state-file-m0rg4r`, PR #2, until greg merges it). Then, in the repository you work
+from the project by `tools/sync.py`. Read its README; to bring the claude.ai project itself up in another account, and to load that account's progress back here, follow its `IMPORT.md` (on main since greg merged hub PR #2 on 2026-10-05). Since 2026-10-22 the hub's main, like every OpenSpineConsortium repository's that a session can read, takes a change only through a pull request with one approving review by someone other than its author and last pusher, or an organization admin's bypass (session pull requests are opened under greg's account, so for them only the bypass applies); the hand-off thread's syncs go as pull requests until he says otherwise (its card of 09:21Z; the first is hub pull request #6). Then, in the repository you work
 in, `bee handoff import state/repos/<repository>.md` puts that repository's hand-off where the
 `/hydrate` command and `bee continue` read it (`.claude/state/claude_context.md`, ignored by git;
 `bee` replaces any secret-shaped string with `[redacted]` and checks the six sections). The
